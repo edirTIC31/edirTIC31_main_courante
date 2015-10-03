@@ -7,6 +7,7 @@
 django-bootstrap3==6.2.2
 django-tastypie==0.12.2
 django==1.8.4
+psycopg2==2.6.1
 python-dateutil==2.4.2    # via django-tastypie
 python-mimeparse==0.1.4   # via django-tastypie
 six==1.9.0                # via python-dateutil

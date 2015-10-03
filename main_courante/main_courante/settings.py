@@ -16,7 +16,7 @@ CONF_DIR = Path("/etc/django/" + PROJECT)
 
 def get_conf(path):
     try:
-        return (CONF_DIR / path).open().__read().strip()
+        return (CONF_DIR / path).open().read().strip()
     except FileNotFoundError:
         raise FileNotFoundError('La configuration de django n’est pas terminée: il manque %s' % path)
 
@@ -39,7 +39,6 @@ ADMINS = (
         ("Guilhem Saurel", "guilhem+admin-%s@saurel.me" % PROJECT),
         )
 MANAGERS = ADMINS
-TEMPLATE_DEBUG = DEBUG
 
 INSTALLED_APPS = [
     PROJECT,
