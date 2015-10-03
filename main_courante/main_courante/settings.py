@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tastypie',
+    'bootstrap3',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -100,6 +101,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = '/'
 
 CACHES = {
         "default": {

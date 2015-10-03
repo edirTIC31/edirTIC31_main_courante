@@ -5,9 +5,10 @@
 #    pip-compile requirements.in
 #
 django-bootstrap3==6.2.2
+django-braces==1.8.1
 django-tastypie==0.12.2
 django==1.8.4
 psycopg2==2.6.1
 python-dateutil==2.4.2    # via django-tastypie
 python-mimeparse==0.1.4   # via django-tastypie
-six==1.9.0                # via python-dateutil
+six==1.9.0                # via django-braces, python-dateutil

@@ -1,4 +1,5 @@
 Django
 django-tastypie
 django-bootstrap3
+django-braces
 psycopg2
