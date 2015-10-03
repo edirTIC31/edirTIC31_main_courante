@@ -9,4 +9,9 @@
         <button type="submit" class="btn btn-primary">Ok !</button>
         {% endbuttons %}
     </form>
+    <hr>
+    {% for object in object_list %}<div class="panel panel-default">
+        <div class="panel-heading">{{ object.expediteur }} → {{ object.recipiendaire }}</div>
+        <div class="panel-body">{{ object.corps }}</div>
+    </div>{% endfor %}
 {% endblock %}
