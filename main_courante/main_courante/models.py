@@ -27,7 +27,7 @@ class Message(TimeStampedModel):
     TYPE = IntEnum('type d’opération', 'creation suppression modification')
 
     operation = ForeignKey(Evenement)
-    type = IntegerField(choices=enum_to_choices(TYPE), default=TYPE.creation)
+    type = IntegerField(choices=enum_to_choices(TYPE), default=TYPE.creation.value)
     parent = ForeignKey('self')
     operateur = ForeignKey(User)
     expediteur = CharField(max_length=MAX_LENGTH, null=True)

@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             name='Message',
             fields=[
                 ('timestampedmodel_ptr', models.OneToOneField(to='main_courante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
-                ('type', models.IntegerField(choices=[(1, 'creation'), (2, 'suppression'), (3, 'modification')], default=<type d’opération.creation: 1>)),
+                ('type', models.IntegerField(choices=[(1, 'creation'), (2, 'suppression'), (3, 'modification')], default=1)),
                 ('expediteur', models.CharField(max_length=100, null=True)),
                 ('recipiendaire', models.CharField(max_length=100, null=True)),
                 ('corps', models.TextField(null=True)),
