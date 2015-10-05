@@ -2,4 +2,5 @@ Django
 django-bootstrap3
 django-braces
 django-tastypie
+gunicorn
 psycopg2

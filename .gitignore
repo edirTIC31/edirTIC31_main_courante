@@ -2,3 +2,5 @@
 *.swp
 *.swo
 *.sqlite3
+edirtic/conf
+edirtic/static_dest

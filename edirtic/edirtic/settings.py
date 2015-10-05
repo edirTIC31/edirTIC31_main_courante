@@ -2,14 +2,15 @@
 Django settings for edirtic project.
 """
 
-from os.path import dirname, abspath, join
+from os.path import dirname, abspath, join, isfile
 
 PROJECT = "edirtic"
 PROJECT_VERBOSE = "Main Courante edirTIC31"
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 SECRET_KEY = '11+)$2+ulb9nn)x4(g4wedajo4=!olbn%_d8ebqo!xw(j!r8&1'
-DEBUG = True
+DEBUG = not isfile('/etc/django/%s/prod' % PROJECT)
+
 ALLOWED_HOSTS = []
 EMAIL_SUBJECT_PREFIX = ("[%s Dev] " if DEBUG else "[%s] ") % PROJECT_VERBOSE
 
@@ -71,6 +72,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = join(BASE_DIR, 'static_dest') if DEBUG else '/var/www/%s/static_dest' % PROJECT
 LOGIN_REDIRECT_URL = '/'
 
 BOOTSTRAP3 = {
@@ -79,3 +81,61 @@ BOOTSTRAP3 = {
     'horizontal_label_class': 'col-md-3',
     'horizontal_field_class': 'col-md-6',
 }
+
+if not DEBUG:
+    from pathlib import Path
+
+    ALLOWED_HOSTS.append("edirtic.saurel.me")
+    ALLOWED_HOSTS.append("www.%s" % ALLOWED_HOSTS[-1])
+
+    CONF_DIR = Path("/etc/django/" + PROJECT)
+
+    def get_conf(path):
+        try:
+            return (CONF_DIR / path).open().read().strip()
+        except FileNotFoundError:
+            raise FileNotFoundError('La configuration de django n’est pas terminée: il manque %s' % path)
+
+    if not CONF_DIR.is_dir():
+        CONF_DIR.mkdir(parents=True)
+
+    SECRET_KEY = get_conf("secret_key")
+
+    ADMINS = (
+            ("Guilhem Saurel", "guilhem+admin-%s@saurel.me" % PROJECT),
+            )
+    MANAGERS = ADMINS
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': PROJECT,
+            'USER': PROJECT,
+            'PASSWORD': get_conf('db_password'),
+            'HOST': 'localhost',
+        }
+    }
+
+    CACHES = {
+            "default": {
+                "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+                "LOCATION": "127.0.0.1:11211",
+                }
+            }
+
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "null": {
+                "level": "DEBUG",
+                "class": "logging.NullHandler",
+            },
+        },
+        "loggers": {
+            "django.security.DisallowedHost": {
+                "handlers": ["null"],
+                "propagate": False,
+            },
+        },
+    }
