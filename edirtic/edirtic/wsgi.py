@@ -8,9 +8,13 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import os
+from os.path import dirname, abspath, join, isfile
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "edirtic.local_settings" if os.path.isfile('edirtic/local_settings.py') else "edirtic.settings")
+
+BASE_DIR = dirname(abspath(__file__))
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "edirtic.local_settings" if isfile(join(BASE_DIR, 'local_settings.py')) else "edirtic.settings")
 
 application = get_wsgi_application()
