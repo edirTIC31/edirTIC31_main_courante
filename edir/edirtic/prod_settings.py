@@ -1,16 +1,13 @@
 """
-Django settings for maincourante project.
+Django prod settings for edirtic project.
 """
 
 from edirtic.settings import *
 
-from os.path import dirname, abspath, join
 from pathlib import Path
 
-
-
-ALLOWED_HOSTS = ["to.do"]
-ALLOWED_HOSTS.append("www.%s" % ALLOWED_HOSTS[0])
+ALLOWED_HOSTS.append("edirtic.saurel.me")
+ALLOWED_HOSTS.append("www.%s" % ALLOWED_HOSTS[-1])
 
 CONF_DIR = Path("/etc/django/" + PROJECT)
 
@@ -25,22 +22,12 @@ if not CONF_DIR.is_dir():
 
 SECRET_KEY = get_conf("secret_key")
 
-DEBUG, INTEGRATION, PROD = False, False, False
+DEBUG = not (CONF_DIR / "prod").is_file()
 
-if (CONF_DIR / "integration").is_file():
-    INTEGRATION = True
-elif (CONF_DIR / "prod").is_file():
-    PROD = True
-else:
-    DEBUG = True
-
-EMAIL_SUBJECT_PREFIX = ("[%s Dev] " if DEBUG or INTEGRATION else "[%s] ") % PROJECT_VERBOSE
 ADMINS = (
         ("Guilhem Saurel", "guilhem+admin-%s@saurel.me" % PROJECT),
         )
 MANAGERS = ADMINS
-
-
 
 DATABASES = {
     'default': {
@@ -51,10 +38,6 @@ DATABASES = {
         'HOST': 'localhost',
     }
 }
-
-
-
-LOGIN_REDIRECT_URL = '/'
 
 CACHES = {
         "default": {
@@ -79,14 +62,3 @@ LOGGING = {
         },
     },
 }
-
-if (Path(BASE_DIR) / PROJECT / 'context_processors.py').is_file():
-    TEMPLATE_CONTEXT_PROCESSORS.append('%s.context_processors.%s' % (PROJECT, PROJECT))
-
-if not DEBUG:
-    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
-    RAVEN_CONFIG = {"dsn": get_conf("raven")}
-
-BOOTSTRAP3["jquery_url"] = "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
-
-
