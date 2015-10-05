@@ -4,3 +4,4 @@
 *.sqlite3
 edirtic/conf
 edirtic/static_dest
+edirtic/edirtic/local_settings.py

@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "edirtic.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "edirtic.local_settings" if os.path.isfile('edirtic/local_settings.py') else "edirtic.settings")
 
 application = get_wsgi_application()
