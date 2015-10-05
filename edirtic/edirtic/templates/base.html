@@ -8,6 +8,7 @@
     </head>
     <body>
         <div class="container">
+            {% if request.user.is_staff %}<a href="/admin">Administration</a>{% endif %}
             {% block content %}{% endblock %}
         </div>
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
