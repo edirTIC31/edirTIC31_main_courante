@@ -2,16 +2,16 @@
 Django settings for maincourante project.
 """
 
-from os.path import dirname, join
+from edirtic.settings import *
+
+from os.path import dirname, abspath, join
 from pathlib import Path
 
-PROJECT = "maincourante"
-PROJECT_VERBOSE = "Main Courante edirTIC31"
+
 
 ALLOWED_HOSTS = ["to.do"]
 ALLOWED_HOSTS.append("www.%s" % ALLOWED_HOSTS[0])
 
-BASE_DIR = dirname(dirname(__file__))
 CONF_DIR = Path("/etc/django/" + PROJECT)
 
 def get_conf(path):
@@ -40,48 +40,7 @@ ADMINS = (
         )
 MANAGERS = ADMINS
 
-INSTALLED_APPS = [
-    PROJECT,
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'tastypie',
-    'bootstrap3',
-]
 
-MIDDLEWARE_CLASSES = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-]
-
-ROOT_URLCONF = '%s.urls' % PROJECT
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = '%s.wsgi.application' % PROJECT
 
 DATABASES = {
     'default': {
@@ -93,14 +52,8 @@ DATABASES = {
     }
 }
 
-LANGUAGE_CODE = 'fr-FR'
-TIME_ZONE = 'Europe/Paris'
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
 
 
-STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 
 CACHES = {
@@ -134,13 +87,6 @@ if not DEBUG:
     INSTALLED_APPS.append('raven.contrib.django.raven_compat')
     RAVEN_CONFIG = {"dsn": get_conf("raven")}
 
-if 'bootstrap3' in INSTALLED_APPS:
-    BOOTSTRAP3 = {
-        "horizontal_label_class": "col-md-3",
-        "horizontal_field_class": "col-md-6",
-    }
-    if DEBUG:
-        BOOTSTRAP3["jquery_url"] = "/static/js/jquery.min.js"
-        BOOTSTRAP3["base_url"] = "/static/"
-    else:
-        BOOTSTRAP3["jquery_url"] = "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
+BOOTSTRAP3["jquery_url"] = "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
+
+
