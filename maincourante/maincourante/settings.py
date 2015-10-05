@@ -1,11 +1,11 @@
 """
-Django settings for main_courante project.
+Django settings for maincourante project.
 """
 
 from os.path import dirname, join
 from pathlib import Path
 
-PROJECT = "main_courante"
+PROJECT = "maincourante"
 PROJECT_VERBOSE = "Main Courante edirTIC31"
 
 ALLOWED_HOSTS = ["to.do"]

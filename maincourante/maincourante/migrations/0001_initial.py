@@ -23,25 +23,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Evenement',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='main_courante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
                 ('nom', models.CharField(max_length=100)),
                 ('clos', models.BooleanField(default=False)),
             ],
-            bases=('main_courante.timestampedmodel',),
+            bases=('maincourante.timestampedmodel',),
         ),
         migrations.CreateModel(
             name='Message',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='main_courante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
                 ('type', models.IntegerField(choices=[(1, 'creation'), (2, 'suppression'), (3, 'modification')], default=1)),
                 ('expediteur', models.CharField(max_length=100, null=True)),
                 ('recipiendaire', models.CharField(max_length=100, null=True)),
                 ('corps', models.TextField(null=True)),
                 ('suppression', models.CharField(max_length=100, null=True, verbose_name='raison de la suppression')),
                 ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('evenement', models.ForeignKey(to='main_courante.Evenement')),
-                ('parent', models.ForeignKey(to='main_courante.Message', null=True)),
+                ('evenement', models.ForeignKey(to='maincourante.Evenement')),
+                ('parent', models.ForeignKey(to='maincourante.Message', null=True)),
             ],
-            bases=('main_courante.timestampedmodel',),
+            bases=('maincourante.timestampedmodel',),
         ),
     ]
