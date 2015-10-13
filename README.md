@@ -17,3 +17,6 @@ Ensuite, vous pouvez aller sur http://localhost:8000/admin/, vous logger, créer
 
 Le reste de l’application est disponible sur http://localhost:8000/
 
+## API REST
+
+Par exemple: http://localhost:8000/api/v1/message/?format=json
