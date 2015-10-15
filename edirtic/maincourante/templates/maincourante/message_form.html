@@ -1,17 +1,56 @@
 {% extends 'base.html' %}
+
+{% load staticfiles %}
 {% load bootstrap3 %}
 
 {% block content %}
-    <form action="" method="post" class="form-horizontal">
-        {% csrf_token %}
-        {% bootstrap_form form layout="horizontal" %}
-        {% buttons layout="horizontal" %}
-        <button type="submit" class="btn btn-primary">Ok !</button>
-        {% endbuttons %}
+<diV ng-app="maincouranteApp">
+<div ng-controller="MainCtrl">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Expediteur</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Expediteur" ng-model="from">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Recipiendaire</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Recipiendaire" ng-model="to">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Message</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Message" ng-model="body">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" ng-click="addMessage()" class="btn btn-default">Envoyer</button>
+            </div>
+        </div>
     </form>
+
+
     <hr>
-    {% for object in object_list %}<div class="panel panel-default">
-        <div class="panel-heading">{{ object.expediteur }} → {{ object.recipiendaire }}</div>
-        <div class="panel-body">{{ object.corps }}</div>
-    </div>{% endfor %}
+    <div ng-repeat="message in messages | orderBy: '-cree' ">
+        <div class="panel panel-default">
+        <div class="panel-heading">{$ message.expediteur $} -> {$ message.recipiendaire $}
+            <a ng-click="deleteMessage($index,message)" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+        </div>
+        <div class="panel-body">{$ message.corps $}</div>
+    </div>
+</div>
+
+</div>
+ <br/>
+
+    <script src="{% static "/static/scripts/bower_components/angular/angular.js" %}" ></script>
+    <script src="{% static "/static/scripts/bower_components/angular-route/angular-route.js" %}" ></script>
+    <script src="{% static "/static/scripts/bower_components/angular-resource/angular-resource.js" %}" ></script>
+    <script src="{% static "/static/scripts/maincourante/entities/message.js" %}" ></script>
+    <script src="{% static "/static/scripts/maincourante/controllers/message_controller.js" %}" ></script>
+    <script src="{% static "/static/scripts/maincourante/app.js" %}" ></script>
+</div>
 {% endblock %}
