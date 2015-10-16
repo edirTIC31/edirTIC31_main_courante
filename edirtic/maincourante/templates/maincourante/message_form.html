@@ -36,12 +36,25 @@
     <hr>
 
     <div ng-repeat="message in messages | orderBy: '-cree' ">
-        <div class="panel panel-default">
-        <div class="panel-heading">{$ message.expediteur $} -> {$ message.recipiendaire $}
-            <span ng-if="message.suppression">DELETED {$ message.suppression $}</span>
-            <a ng-click="deleteMessage($index,message)" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+        <div ng-hide="message.parentId">
+            <div ng-class="{ 'panel': true, 'panel-default': !message.suppression ,'panel-danger': message.suppression}">
+            <div class="panel-heading">{$ message.expediteur $} -> {$ message.recipiendaire $}
+                <span ng-if="message.suppression">| Message supprimé: {$ message.suppression $}</span>
+                <div class="btn-group pull-right">
+                    <a ng-hide="message.edit || message.suppression" class="btn btn-primary btn-sm" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-pencil"></span>Editter</a>
+                    <a ng-hide="message.edit" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-time"></span>Historique</a>
+                    <a ng-hide="message.edit || message.suppression" ng-click="deleteMessage(message)" class="btn btn-danger btn-sm" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span>Supprimer</a>
+                    <a ng-show="message.edit" class="btn btn-success btn-sm"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>Valider</a>
+                    <a ng-show="message.edit" class="btn btn-warning btn-sm"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>Annuler</a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div ng-hide="message.edit">{$ message.corps $}</div>
+                <div ng-show="message.edit">
+                    <input type="text" class="form-control" placeholder="message.corps" ng-model="message.newMessage">
+                 </div>
+            </div>
         </div>
-        <div class="panel-body">{$ message.corps $}</div>
     </div>
 </div>
 
@@ -52,9 +65,24 @@
         var csrf = '{{ csrf_token|escapejs }}';
 
     </script>
+    <script type="text/ng-template" id="myModalContent.html">
+            <div class="modal-header">
+            <h3 class="modal-title">Suppression de message ?</h3>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer ce message ? Si oui veuillez donner une raison.
+                <input type="text" class="form-control" placeholder="Raison" ng-model="suppressionMessage">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" ng-click="ok()">Oui</button>
+                <button class="btn btn-warning" type="button" ng-click="cancel()">Non</button>
+            </div>
+    </script>
     <script src="{% static "/static/scripts/bower_components/angular/angular.js" %}" ></script>
     <script src="{% static "/static/scripts/bower_components/angular-route/angular-route.js" %}" ></script>
     <script src="{% static "/static/scripts/bower_components/angular-resource/angular-resource.js" %}" ></script>
+    <script src="{% static "/static/scripts/bower_components/angular-bootstrap/ui-bootstrap.js" %}" ></script>
+    <script src="{% static "/static/scripts/bower_components/angular-bootstrap/ui-bootstrap-tpls.js" %}" ></script>
     <script src="{% static "/static/scripts/maincourante/entities/message.js" %}" ></script>
     <script src="{% static "/static/scripts/maincourante/controllers/message_controller.js" %}" ></script>
     <script src="{% static "/static/scripts/maincourante/app.js" %}" ></script>

@@ -36,23 +36,21 @@ function MessageFactory() {
 function MessageManagerFactory(Message, $q, $http) {
     var entry_point = '/api/v1/message/';
     var messageManager = {
-
         ready: false,
-
-        add: function (message) {
+        add: function (message, oldMessage) {
             var deferred = $q.defer();
             $http.post(entry_point, message)
              .success(function (data) {
-                deferred.resolve(message);
+                deferred.resolve({message: message, oldMessage: oldMessage});
              })
              .error(function () {
                 deferred.reject();
              });
             return deferred.promise;
         },
-        delete: function (index, message) {
+        delete: function (message, suppressionMessage) {
             var deferred = $q.defer();
-            message.suppression = "DELETED AUTOMESSAGE";
+            message.suppression = suppressionMessage;
             $http.put(entry_point+"/"+message.id, message)
                 .success(function (data) {
                     deferred.resolve(message);
