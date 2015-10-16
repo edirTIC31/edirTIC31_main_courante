@@ -34,9 +34,11 @@
 
 
     <hr>
+
     <div ng-repeat="message in messages | orderBy: '-cree' ">
         <div class="panel panel-default">
         <div class="panel-heading">{$ message.expediteur $} -> {$ message.recipiendaire $}
+            <span ng-if="message.suppression">DELETED {$ message.suppression $}</span>
             <a ng-click="deleteMessage($index,message)" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
         </div>
         <div class="panel-body">{$ message.corps $}</div>
@@ -45,7 +47,11 @@
 
 </div>
  <br/>
+    <script>
 
+        var csrf = '{{ csrf_token|escapejs }}';
+
+    </script>
     <script src="{% static "/static/scripts/bower_components/angular/angular.js" %}" ></script>
     <script src="{% static "/static/scripts/bower_components/angular-route/angular-route.js" %}" ></script>
     <script src="{% static "/static/scripts/bower_components/angular-resource/angular-resource.js" %}" ></script>
