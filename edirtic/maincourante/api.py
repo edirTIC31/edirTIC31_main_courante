@@ -17,7 +17,7 @@ class BaseAuthentication(Authentication):
 class MessageResource(ModelResource):
     class Meta:
         queryset = Message.objects.all()
-        allowed_methods = ['get', 'post']
+        allowed_methods = ['get', 'post', 'put']
         authentication = BaseAuthentication()
         authorization = DjangoAuthorization()
 

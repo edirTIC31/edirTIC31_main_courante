@@ -20,7 +20,7 @@ function prepareMainController($scope, Message, MessageManager){
                 $scope.messages.push(message);
             },
             function(errorPayload) {
-                alert(errorPayloads);
+                alert(errorPayload);
             });
 	}
 
@@ -31,7 +31,7 @@ function prepareMainController($scope, Message, MessageManager){
                 $scope.messages.splice(index, 1);
             },
             function(errorPayload) {
-                alert(errorPayloads);
+                alert(errorPayload);
             });
 	}
 
@@ -44,7 +44,7 @@ function prepareMainController($scope, Message, MessageManager){
 
         },
         function(errorPayload) {
-            alert(errorPayloads);
+            alert(errorPayload);
         }
     );
 

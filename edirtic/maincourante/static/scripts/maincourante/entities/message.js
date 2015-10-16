@@ -34,40 +34,38 @@ function MessageFactory() {
 }
 
 function MessageManagerFactory(Message, $q, $http) {
+    var entry_point = '/api/v1/message/';
     var messageManager = {
 
         ready: false,
 
         add: function (message) {
             var deferred = $q.defer();
-            //TODO PUT
-            /*$http.post("/api/v1/message/?format=json")
+            $http.post(entry_point, message)
              .success(function (data) {
-             deferred.resolve(message);
+                deferred.resolve(message);
              })
              .error(function () {
-             deferred.reject();
-             });*/
-            deferred.resolve(message); //TODO Remove this line when update function is implemented
+                deferred.reject();
+             });
             return deferred.promise;
         },
         delete: function (index, message) {
             var deferred = $q.defer();
-            //TODO PUT
-            /*$http.post("/api/v1/message/?format=json")
-             .success(function (data) {
-             deferred.resolve(message);
-             })
-             .error(function () {
-             deferred.reject();
-             });*/
-            deferred.resolve(message); //TODO Remove this line when update function is implemented
+            message.suppression = "DELETED AUTOMESSAGE";
+            $http.put(entry_point+"/"+message.id, message)
+                .success(function (data) {
+                    deferred.resolve(message);
+                })
+                .error(function () {
+                    deferred.reject();
+                });
             return deferred.promise;
 
         },
         load: function () {
             var deferred = $q.defer();
-            $http.get("/api/v1/message/?format=json")
+            $http.get(entry_point+"?format=json")
                 .success(function (data) {
                     deferred.resolve(data.objects);
                 })
