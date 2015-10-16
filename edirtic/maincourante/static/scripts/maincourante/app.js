@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('maincouranteApp', [
+    'ui.bootstrap',
   	'ngRoute',
     'ngResource',
   	'edir.maincourante.controllers',
