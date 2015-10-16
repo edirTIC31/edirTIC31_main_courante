@@ -7,6 +7,6 @@ class MessageResource(ModelResource):
         queryset = Message.objects.all()
         allowed_methods = ['get', 'post']
 
-    def dehydrate(self, bundle):
-        bundle.data['operateur'] = bundle.request.user
+    def hydrate(self, bundle):
+        bundle.obj.operateur = bundle.request.user
         return bundle
