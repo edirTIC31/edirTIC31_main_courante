@@ -1,5 +1,6 @@
 from tastypie.resources import ModelResource
 from tastypie.authentication import Authentication
+from tastypie.authorization import DjangoAuthorization
 from .models import Message
 
 
@@ -18,6 +19,7 @@ class MessageResource(ModelResource):
         queryset = Message.objects.all()
         allowed_methods = ['get', 'post']
         authentication = BaseAuthentication()
+        authorization = DjangoAuthorization()
 
     def hydrate(self, bundle):
         bundle.obj.operateur = bundle.request.user
