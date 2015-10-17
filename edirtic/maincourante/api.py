@@ -1,6 +1,7 @@
 from tastypie.resources import ModelResource
 from tastypie.authentication import Authentication
 from tastypie.authorization import DjangoAuthorization
+from tastypie import fields
 from .models import Message, Evenement
 
 
@@ -15,11 +16,18 @@ class BaseAuthentication(Authentication):
 
 
 class MessageResource(ModelResource):
+
     class Meta:
         queryset = Message.objects.all()
         allowed_methods = ['get', 'post', 'put']
         authentication = BaseAuthentication()
         authorization = DjangoAuthorization()
+
+    def dehydrate(self, bundle):
+        # Include the request IP in the bundle.
+        if bundle.obj.parent:
+            bundle.data['parent'] = int(bundle.obj.parent.id)
+        return bundle
 
     def hydrate(self, bundle):
         bundle.obj.operateur = bundle.request.user

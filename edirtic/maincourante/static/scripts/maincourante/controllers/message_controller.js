@@ -7,7 +7,9 @@ angular.module('edir.maincourante.controllers')
 
 function prepareMainController($scope, Message, MessageManager, $modal){
 	
-	$scope.messages = []
+	$scope.messages = [];
+    $scope.childrenMessages = [];
+    $scope.onMessageDelete = false;
 
     $scope.addMessage = function(){
         var message = new Message();
@@ -29,22 +31,15 @@ function prepareMainController($scope, Message, MessageManager, $modal){
 
     $scope.enableMessageEdition = function(message){
         message.edit = true;
-        message.newMessage = message.corps;
+        message.oldMessage = message.corps;
     }
 
-    $scope.validateMessageEdition = function(oldMessage){
-        if(oldMessage.newMessage == oldMessage.corps){
-            $scope.cancelMessageEdition(oldMessage);
+    $scope.validateMessageEdition = function(message){
+        if(message.oldMessage == message.corps){
+            $scope.cancelMessageEdition(message);
             return;
         }
-        var newMessage = new Message();
-        newMessage.expediteur = oldMessage.expediteur;
-        newMessage.recipiendaire = oldMessage.recipiendaire;
-        newMessage.corps = oldMessage.newMessage;
-        newMessage.cree = new Date();
-        newMessage.parent = oldMessage.id;
-        newMessage.parent_id = oldMessage.id;
-        MessageManager.add(newMessage, oldMessage).then(
+        MessageManager.modify(message).then(
             function(message) {
                 message.oldMessage.edit = false;
                 loadMessages();
@@ -55,18 +50,37 @@ function prepareMainController($scope, Message, MessageManager, $modal){
     }
 
     $scope.cancelMessageEdition = function(message){
-        message.newMessage = null;
+        message.corps = message.oldMessage;
+        message.oldMessage = null;
         message.edit = false;
+    }
+
+    $scope.toggleMessageHistory = function(message){
+        if(message.history){
+            message.history = null;
+        }else{
+            message.history = $scope.childrenMessages[message.id]
+        }
     }
 
     function loadMessages() {
         MessageManager.load().then(
             function (messages) {
                 $scope.messages = [];
-                angular.forEach(messages, function (value, key) {
-                    value.cree = new Date(value.cree);
-                    value.edit = false;
-                    $scope.messages.push(value)
+                $scope.childrenMessages = [];
+                angular.forEach(messages, function (message, key) {
+                    message.cree = new Date(message.cree);
+                    message.edit = false;
+                    if(message.parent) {
+                        var parentArray = $scope.childrenMessages[message.parent];
+                        if(!parentArray){
+                            parentArray = new Array();
+                        }
+                        parentArray.push(message);
+                        $scope.childrenMessages[message.parent] = parentArray;
+                    }else{
+                        $scope.messages.push(message)
+                    }
                 });
 
             },
@@ -77,7 +91,6 @@ function prepareMainController($scope, Message, MessageManager, $modal){
     }
 
     $scope.deleteMessage = function(message) {
-
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'myModalContent.html',
@@ -106,6 +119,7 @@ function prepareMainController($scope, Message, MessageManager, $modal){
 // It is not the same as the $uibModal service used above.
 
 angular.module('edir.maincourante.controllers').controller('ModalInstanceCtrl', function ($scope, $modalInstance, MessageManager, message) {
+
     $scope.ok = function () {
         MessageManager.delete(message, $scope.suppressionMessage).then(
          function(message) {

@@ -39,6 +39,9 @@ function MessageManagerFactory(Message, $q, $http) {
         ready: false,
         add: function (message, oldMessage) {
             var deferred = $q.defer();
+            if(oldMessage != undefined){
+                message.parent = oldMessage.id;
+            }
             $http.post(entry_point, message)
              .success(function (data) {
                 deferred.resolve({message: message, oldMessage: oldMessage});
@@ -46,6 +49,31 @@ function MessageManagerFactory(Message, $q, $http) {
              .error(function () {
                 deferred.reject();
              });
+            return deferred.promise;
+        },
+        modify: function (message) {
+            var deferred = $q.defer();
+            var _this = this;
+            $http.put(entry_point+"/"+message.id, message)
+                .success(function (data) {
+                    var newMessage = new Message();
+                    newMessage.expediteur = message.expediteur;
+                    newMessage.recipiendaire = message.recipiendaire;
+                    newMessage.corps = message.oldMessage;
+                    newMessage.cree = new Date();
+                    newMessage.parent = message.id;
+                    _this.add(newMessage, message).then(
+                        function(message) {
+                            message.oldMessage.edit = false;
+                            deferred.resolve(message);
+                        },
+                        function(errorPayload) {
+                            alert(errorPayload);
+                    });
+                })
+                .error(function () {
+                    deferred.reject();
+                });
             return deferred.promise;
         },
         delete: function (message, suppressionMessage) {
