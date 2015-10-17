@@ -47,7 +47,7 @@
                     <a ng-show="message.edit" class="btn btn-warning btn-sm"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>Annuler</a>
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" ng-class="{ 'panel-body': true, 'panel-body-danger': message.suppression}">
                 <div ng-hide="message.edit">{$ message.corps $}</div>
                 <div ng-show="message.edit">
                     <input type="text" class="form-control" value="message.corps" ng-model="message.corps">
@@ -57,7 +57,7 @@
                     <div>
                         <div ng-class="{ 'panel': true, 'panel-warning': !message.suppression ,'panel-danger': message.suppression}">
                             <div class="panel-heading">{$ history.expediteur $} -> {$ history.recipiendaire $}</div>
-                            <div class="panel-body"">
+                            <div class="panel-body panel-body-warning"">
                                 <div ng-hide="message.edit">{$ history.corps $}</div>
                             </div>
                         </div>
@@ -95,5 +95,7 @@
     <script src="{% static "/static/scripts/maincourante/entities/message.js" %}" ></script>
     <script src="{% static "/static/scripts/maincourante/controllers/message_controller.js" %}" ></script>
     <script src="{% static "/static/scripts/maincourante/app.js" %}" ></script>
+
+    <link rel="stylesheet" href="{% static "/static/css/maincourante.css" %}">
 </div>
 {% endblock %}
