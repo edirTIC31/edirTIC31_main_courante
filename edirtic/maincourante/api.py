@@ -24,4 +24,6 @@ class MessageResource(ModelResource):
     def hydrate(self, bundle):
         bundle.obj.operateur = bundle.request.user
         bundle.obj.evenement = Evenement.objects.get(clos=False)
+        if 'parent' in bundle.data:
+            bundle.obj.parent = Message.objects.get(id=int(bundle.data['parent']))
         return bundle
