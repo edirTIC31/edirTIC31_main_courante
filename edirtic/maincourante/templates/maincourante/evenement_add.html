@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3>Créer un évènement</h3>
+	</div>
+    <div class="panel-body">
+        <form action="" method="post" class="form-horizontal">
+            {% csrf_token %}
+            {% bootstrap_form form layout="horizontal" %}
+            {% buttons layout="horizontal" %}
+            <button type="submit" class="btn btn-primary">Créer</button>
+            <a href="{% url 'list-evenements' %}" class="btn btn-default">Annuler</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}
