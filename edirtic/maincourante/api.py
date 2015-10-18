@@ -2,7 +2,11 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import Authentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
-from .models import Message, Evenement
+
+from .models import *
+
+
+__all__ = ['MessageResource', 'IndicatifResource']
 
 
 class BaseAuthentication(Authentication):
@@ -13,6 +17,15 @@ class BaseAuthentication(Authentication):
 
     def is_authenticated(self, request, **kwargs):
         return request.user.is_authenticated()
+
+
+class IndicatifResource(ModelResource):
+
+    class Meta:
+        queryset = Indicatif.objects.all()
+        allowed_methods = ['get']
+        authentication = BaseAuthentication()
+        authorization = DjangoAuthorization()
 
 
 class MessageResource(ModelResource):
