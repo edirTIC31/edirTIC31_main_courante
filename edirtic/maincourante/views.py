@@ -2,6 +2,7 @@ from django.views.generic import CreateView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 
 from braces.views import LoginRequiredMixin
 
@@ -34,8 +35,7 @@ def evenement_list(request):
     open_evenements = Evenement.objects.filter(clos=False)
 
     if open_evenements.count() == 1:
-        #return redirect(reverse('add-message', args=[open_evenements.first().slug]))
-        pass
+        return redirect(reverse('add-message', args=[open_evenements.first().slug]))
 
     closed_evenements = Evenement.objects.filter(clos=True)
 
@@ -47,12 +47,27 @@ def evenement_list(request):
 @login_required
 def evenement_manage(request, evenement):
 
+    if evenement.clos:
+        raise PermissionDenied
+
     return redirect(reverse('cloture-evenement', args=[evenement.slug]))
 
 @login_required
 def evenement_cloture(request, evenement):
 
-    return render(request, 'maincourante/evenement_cloture.html')
+    if evenement.clos:
+        raise PermissionDenied
+
+    form = ClotureForm(evenement, request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        evenement.clos = True
+        evenement.save()
+        return redirect(reverse('list-messages', args=[evenement.slug]))
+
+    return render(request, 'maincourante/evenement_cloture.html', {
+        'form': form,
+    })
 
 ############
 # Messages #
@@ -71,6 +86,9 @@ def message_list(request, evenement):
 
 @login_required
 def indicatif_list(request, evenement):
+
+    if evenement.clos:
+        raise PermissionDenied
 
     form = IndicatifForm(request.POST or None)
 

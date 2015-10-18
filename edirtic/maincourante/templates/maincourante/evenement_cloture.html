@@ -1,8 +1,31 @@
 {% extends 'maincourante/evenement_manage.html' %}
 
+{% load bootstrap3 %}
+
 {% block cloturetab %}primary{% endblock %}
 
 {% block content %}
+
 {{ block.super }}
-TODO
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3>Cloturer l’évènement</h3>
+	</div>
+    <div class="panel-body">
+        <p>
+            Êtes vous vraiment SÛR de vouloir cloturer l’évènement « {{ evenement.nom }} » ?
+            Il ne sera alors plus possible d’effecuter une quelconque modification.
+        </p>
+        <p>Pour valider la cloture de cet évènement, veuillez rentrer son nom puis valider avec le bouton « Cloturer l’évènement ».</p>
+        <form action="" method="post" class="form-horizontal">
+            {% csrf_token %}
+            {% bootstrap_form form layout="horizontal" %}
+            {% buttons layout="horizontal" %}
+            <button type="submit" class="btn btn-danger">Cloturer l’évènement</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+
 {% endblock %}
