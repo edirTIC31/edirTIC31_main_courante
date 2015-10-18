@@ -1,9 +1,23 @@
 {% extends 'base.html' %}
 
 {% block navbar-left %}
-    <li role="presentation"{% block saisitab %}{% endblock %}><a role="munitem" tabindex="-1" href="{% url 'add-message' evenement.slug %}">Saisi</a></li>
-    <li role="presentation"{% block reporttab %}{% endblock %}><a role="munitem" tabindex="-1" href="{% url 'list-messages' evenement.slug %}">Compte rendu</a></li>
+    <li role="presentation" class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ evenement.nom }}&#160;<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            <li role="presentation">
+                <a role="menuitem" tabindex="-1" href="{% url 'list-evenements' %}"><span class="glyphicon glyphicon-list"></span> Liste des évènements</a>
+            </li>
+            <li class="divider"></li>
+            <li role="presentation">
+                <a role="menuitem" tabindex="-1" href="#"><span class="glyphicon glyphicon-plus"></span> Créer un évènement</a>
+            </li>
+        </ul>
+    </li>
     {% if not evenement.clos %}
-    <li role="presentation"{% block managetab %}{% endblock %}><a role="munitem" tabindex="-1" href="{% url 'manage-evenement' evenement.slug %}">Gestion</a></li>
+    <li role="presentation"{% block saisitab %}{% endblock %}><a tabindex="-1" href="{% url 'add-message' evenement.slug %}">Saisi</a></li>
+    {% endif %}
+    <li role="presentation"{% block reporttab %}{% endblock %}><a tabindex="-1" href="{% url 'list-messages' evenement.slug %}">Compte rendu</a></li>
+    {% if not evenement.clos %}
+    <li role="presentation"{% block managetab %}{% endblock %}><a tabindex="-1" href="{% url 'manage-evenement' evenement.slug %}">Gestion</a></li>
     {% endif %}
 {% endblock %}

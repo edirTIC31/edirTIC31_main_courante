@@ -5,7 +5,9 @@
 <ul class="list-group">
     {% if open_evenements %}
     {% for evenement in open_evenements %}
-    <a class="list-group-item" href="{% url 'add-message' evenement.slug %}">{{ evenement }}</a>
+    <a class="list-group-item" href="{% url 'add-message' evenement.slug %}">
+        <h4>{{ evenement }}</h4>
+    </a>
     {% endfor %}
     {% else %}
     <li class="list-group-item"><em>Aucun évènement en cours.</em></li>
@@ -18,7 +20,9 @@
 <ul class="list-group">
     {% if closed_evenements %}
     {% for evenement in closed_evenements %}
-    <a class="list-group-item" href="{% url 'list-messages' evenement.slug %}">{{ evenement }}</a>
+    <a class="list-group-item" href="{% url 'list-messages' evenement.slug %}">
+        <h4>{{ evenement }}</h4>
+    </a>
     {% endfor %}
     {% else %}
     <li class="list-group-item"><em>Aucun évènement passé.</em></li>

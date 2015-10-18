@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^api/', include(v1_api.urls)),
     # Evenement
     url(r'^$', 'maincourante.views.evenement_list', name='list-evenements'),
+    url(r'^add/$', 'maincourante.views.evenement_add', name='add-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/indicatifs/$', 'maincourante.views.indicatif_list', name='list-indicatifs'),

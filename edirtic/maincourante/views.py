@@ -34,14 +34,27 @@ def evenement_list(request):
 
     open_evenements = Evenement.objects.filter(clos=False)
 
-    if open_evenements.count() == 1:
-        return redirect(reverse('add-message', args=[open_evenements.first().slug]))
+    #if open_evenements.count() == 1:
+    #    return redirect(reverse('add-message', args=[open_evenements.first().slug]))
 
     closed_evenements = Evenement.objects.filter(clos=True)
 
     return render(request, 'maincourante/evenement_list.html', {
         'open_evenements': open_evenements,
         'closed_evenements': closed_evenements,
+    })
+
+@login_required
+def evenement_add(request):
+
+    form = EvenementForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        evenement = form.save()
+        return redirect(reverse('add-message', args=[evenement.slug]))
+
+    return render(request, 'maincourante/evenement_add.html', {
+        'form': form,
     })
 
 @login_required
