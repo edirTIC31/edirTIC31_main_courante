@@ -2,17 +2,16 @@
 Django settings for edirtic project.
 """
 
-from os.path import dirname, abspath, join, isfile
+from os.path import dirname, abspath, join
 
 PROJECT = "edirtic"
 PROJECT_VERBOSE = "Main Courante edirTIC31"
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 SECRET_KEY = '11+)$2+ulb9nn)x4(g4wedajo4=!olbn%_d8ebqo!xw(j!r8&1'
-DEBUG = not isfile('/etc/django/%s/prod' % PROJECT)
+DEBUG = True
 
 ALLOWED_HOSTS = []
-EMAIL_SUBJECT_PREFIX = ("[%s Dev] " if DEBUG else "[%s] ") % PROJECT_VERBOSE
 
 INSTALLED_APPS = [
     PROJECT,
@@ -72,7 +71,6 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = join(BASE_DIR, 'static_dest') if DEBUG else '/var/www/%s/static_dest' % PROJECT
 LOGIN_REDIRECT_URL = '/'
 
 BOOTSTRAP3 = {

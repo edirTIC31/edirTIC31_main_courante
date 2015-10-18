@@ -16,6 +16,12 @@ def get_conf(path):
 if not CONF_DIR.is_dir():
     CONF_DIR.mkdir(parents=True)
 
+EMAIL_SUBJECT_PREFIX = ("[%s Dev] " if DEBUG else "[%s] ") % PROJECT_VERBOSE
+
+DEBUG = not isfile('/etc/django/%s/prod' % PROJECT)
+
+STATIC_ROOT = join(BASE_DIR, 'static_dest') if DEBUG else '/var/www/%s/static_dest' % PROJECT
+
 SECRET_KEY = get_conf("secret_key")
 
 ADMINS = (
