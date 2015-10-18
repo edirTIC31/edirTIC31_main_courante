@@ -1,0 +1,15 @@
+{% extends 'maincourante/base.html' %}
+
+{% block reporttab %} class="active"{% endblock %}
+
+{% block content %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<em>Aucun message.</em>
+{% endif %}
+{% endblock %}

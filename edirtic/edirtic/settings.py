@@ -35,6 +35,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'maincourante.middleware.EvenementMiddleware',
 ]
 
 ROOT_URLCONF = '%s.urls' % PROJECT
@@ -50,6 +51,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'maincourante.context_processors.evenement',
             ],
         },
     },

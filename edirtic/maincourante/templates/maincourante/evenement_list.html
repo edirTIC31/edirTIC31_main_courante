@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Évènements en cours</h2>
+<ul class="list-group">
+    {% if open_evenements %}
+    {% for evenement in open_evenements %}
+    <a class="list-group-item" href="{% url 'add-message' evenement.slug %}">{{ evenement }}</a>
+    {% endfor %}
+    {% else %}
+    <li class="list-group-item"><em>Aucun évènement en cours.</em></li>
+    {% endif %}
+</ul>
+
+<hr />
+
+<h2>Évènements passés</h2>
+<ul class="list-group">
+    {% if closed_evenements %}
+    {% for evenement in closed_evenements %}
+    <a class="list-group-item" href="{% url 'list-messages' evenement.slug %}">{{ evenement }}</a>
+    {% endfor %}
+    {% else %}
+    <li class="list-group-item"><em>Aucun évènement passé.</em></li>
+    {% endif %}
+</ul>
+{% endblock %}
