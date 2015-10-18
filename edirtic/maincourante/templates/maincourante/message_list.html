@@ -3,9 +3,23 @@
 {% block reporttab %} class="active"{% endblock %}
 
 {% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1>{{ evenement.nom }}</h1>
+    </div>
+    <div class="panel-body">
+        <p><b>Évènement créé le :</b> {{ evenement.cree }}</p>
+        {% if evenement.clos %}
+        <p><b>Évènement clos le :</b> {{ evenement.modifie }}</p>
+        {% else %}
+        <p><b>Évènement en cours !</b></p>
+        {% endif %}
+        <p><a href="javascript:window.print()"><span class="glyphicon glyphicon-print"></span>&#160;Imprimer</a>
+    </div>
+</div>
 {% if messages %}
 {% for message in messages %}
-<div class="panel panel-default">
+<div class="panel panel-info">
     <div class="panel-heading">
         {{ message.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
         {% if message.enfants.count %}
