@@ -77,7 +77,7 @@ def evenement_cloture(request, evenement):
 def message_list(request, evenement):
 
     return render(request, 'maincourante/message_list.html', {
-        'messages': Message.objects.filter(evenement=evenement),
+        'messages': Message.objects.filter(evenement=evenement, parent__isnull=True),
     })
 
 ##############

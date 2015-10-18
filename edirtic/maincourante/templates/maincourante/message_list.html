@@ -4,11 +4,32 @@
 
 {% block content %}
 {% if messages %}
-<ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-</ul>
+{% for message in messages %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ message.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
+        {% if message.enfants.count %}
+        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</p>
+        {% endif %}
+    </div>
+    <div class="panel-body">
+        {% if message.enfants.count %}
+        <p class="pull-right text-danger"><em>version du {{ message.cree }}</em></p>
+        {% endif %}
+        {{ message.corps }}
+    </div>
+    {% if message.enfants.count %}
+    <ul class="list-group">
+        {% for enfant in message.enfants.all %}
+        <li class="list-group-item">
+            <p class="pull-right text-danger"><em>version du {{ enfant.cree }}</em></p>
+            <p class="text-muted">{{ enfant.corps }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endfor %}
 {% else %}
 <em>Aucun message.</em>
 {% endif %}
