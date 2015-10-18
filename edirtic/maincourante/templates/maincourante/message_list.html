@@ -19,18 +19,26 @@
 </div>
 {% if messages %}
 {% for message in messages %}
-<div class="panel panel-info">
+<div class="panel panel-{% if message.deleted %}default{% else %}info{% endif %}">
     <div class="panel-heading">
         {{ message.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
-        {% if message.enfants.count %}
+        {% if message.enfants.count and message.deleted %}
+        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié puis supprimé</p>
+        {% elif message.enfants.count %}
         <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</p>
+        {% elif message.deleted %}
+        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message supprimé</p>
         {% endif %}
     </div>
     <div class="panel-body">
         {% if message.enfants.count %}
         <p class="pull-right text-danger"><em>version du {{ message.cree }}</em></p>
         {% endif %}
+        {% if message.deleted %}
+        <p class="text-muted">{{ message.corps }}</p>
+        {% else %}
         {{ message.corps }}
+        {% endif %}
     </div>
     {% if message.enfants.count %}
     <ul class="list-group">

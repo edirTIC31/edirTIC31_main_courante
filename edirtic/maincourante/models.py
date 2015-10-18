@@ -54,5 +54,9 @@ class Message(TimeStampedModel):
     corps = TextField(null=True)
     suppression = CharField('raison de la suppression', max_length=MAX_LENGTH, null=True)
 
+    @property
+    def deleted(self):
+        return bool(self.suppression)
+
     def __str__(self):
         return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.corps)
