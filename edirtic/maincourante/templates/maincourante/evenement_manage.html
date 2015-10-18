@@ -3,5 +3,12 @@
 {% block managetab %} class="active"{% endblock %}
 
 {% block content %}
-<h1>TODO</h1>
+<div class="navbar">
+  <div class="navbar-left">
+    <div class="btn-group" role="group">
+      <a href="{% url 'cloture-evenement' evenement.slug %}" class="btn btn-{% block cloturetab %}default{% endblock %}">Cloture</a>
+      <a href="{% url 'list-indicatifs' evenement.slug %}" class="btn btn-{% block indicatiftab %}default{% endblock %}">Indicatifs</a>
+    </div>
+  </div>
+</div>
 {% endblock %}

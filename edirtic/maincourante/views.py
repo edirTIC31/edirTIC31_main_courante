@@ -5,7 +5,8 @@ from django.core.urlresolvers import reverse
 
 from braces.views import LoginRequiredMixin
 
-from .models import Message, Evenement
+from .models import *
+from .forms import *
 
 
 class MainView(LoginRequiredMixin, CreateView):
@@ -46,7 +47,12 @@ def evenement_list(request):
 @login_required
 def evenement_manage(request, evenement):
 
-    return render(request, 'maincourante/evenement_manage.html')
+    return redirect(reverse('cloture-evenement', args=[evenement.slug]))
+
+@login_required
+def evenement_cloture(request, evenement):
+
+    return render(request, 'maincourante/evenement_cloture.html')
 
 ############
 # Messages #
@@ -57,4 +63,24 @@ def message_list(request, evenement):
 
     return render(request, 'maincourante/message_list.html', {
         'messages': Message.objects.filter(evenement=evenement),
+    })
+
+##############
+# Indicatifs #
+##############
+
+@login_required
+def indicatif_list(request, evenement):
+
+    form = IndicatifForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        indicatif = form.save(commit=False)
+        indicatif.evenement = evenement
+        indicatif.save()
+        return redirect(reverse('list-indicatifs', args=[evenement.slug]))
+
+    return render(request, 'maincourante/indicatif_list.html', {
+        'indicatifs': Indicatif.objects.filter(evenement=evenement),
+        'form': form,
     })

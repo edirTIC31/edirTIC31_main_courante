@@ -13,6 +13,8 @@ urlpatterns = [
     # Evenement
     url(r'^$', 'maincourante.views.evenement_list', name='list-evenements'),
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
+    url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),
+    url(r'^(?P<evenement>[-\w]+)/manage/indicatifs/$', 'maincourante.views.indicatif_list', name='list-indicatifs'),
     # Message
     url(r'^(?P<evenement>[-\w]+)/$', MainView.as_view(), name='add-message'),
     url(r'^(?P<evenement>[-\w]+)/report/$', 'maincourante.views.message_list', name='list-messages'),

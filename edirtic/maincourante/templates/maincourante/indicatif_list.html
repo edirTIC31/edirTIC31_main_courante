@@ -1,0 +1,34 @@
+{% extends 'maincourante/evenement_manage.html' %}
+
+{% load bootstrap3 %}
+
+{% block indicatiftab %}primary{% endblock %}
+
+{% block content %}
+
+{{ block.super }}
+
+<h3>Ajouter un indicatif</h3>
+
+<form action="" method="post" class="form-inline">
+    {% csrf_token %}
+    {% bootstrap_form form layout="inline" %}
+    {% buttons layout="inline" %}
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+    {% endbuttons %}
+</form>
+
+<hr />
+
+<h3>Liste des indicatifs</h3>
+
+<ul class="list-group">
+    {% if indicatifs %}
+    {% for indicatif in indicatifs %}
+    <li class="list-group-item">{{ indicatif }}</li>
+    {% endfor %}
+    {% else %}
+    <li class="list-group-item"><em>Aucun indicatif.</em></li>
+    {% endif %}
+</ul>
+{% endblock %}
