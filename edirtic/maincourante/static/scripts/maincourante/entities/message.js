@@ -91,7 +91,7 @@ function MessageManagerFactory(Message, $q, $http) {
         },
         load: function () {
             var deferred = $q.defer();
-            $http.get(entry_point+"?format=json")
+            $http.get(entry_point+"?format=json&limit=1000")
                 .success(function (data) {
                     deferred.resolve(data.objects);
                 })

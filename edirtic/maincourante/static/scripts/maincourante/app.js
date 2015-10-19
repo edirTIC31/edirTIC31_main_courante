@@ -4,6 +4,7 @@ angular.module('maincouranteApp', [
     'ui.bootstrap',
     'ngRoute',
     'ngResource',
+    'focusOn',
     'edir.maincourante.controllers',
     'edir.maincourante.entities'
 ])
