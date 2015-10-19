@@ -3,9 +3,9 @@
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
-  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', '$modal', prepareMainController]);
+  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', '$modal', 'focus', prepareMainController]);
 
-function prepareMainController($scope, Message, MessageManager, $modal){
+function prepareMainController($scope, Message, MessageManager, $modal, focus){
 	
 	$scope.messages = [];
     $scope.childrenMessages = [];
@@ -23,6 +23,7 @@ function prepareMainController($scope, Message, MessageManager, $modal){
                 $scope.to = null;
                 $scope.body = null;
                 loadMessages();
+                focus('onNewMessage');
             },
             function(errorPayload) {
                 alert(errorPayload);
@@ -32,6 +33,11 @@ function prepareMainController($scope, Message, MessageManager, $modal){
     $scope.enableMessageEdition = function(message){
         message.edit = true;
         message.oldMessage = message.corps;
+        focus("onEdit");
+    }
+
+    $scope.test = function(message){
+        alert("ddsds")
     }
 
     $scope.validateMessageEdition = function(message){
@@ -113,6 +119,7 @@ function prepareMainController($scope, Message, MessageManager, $modal){
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
     loadMessages();
+    focus('onNewMessage');
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
