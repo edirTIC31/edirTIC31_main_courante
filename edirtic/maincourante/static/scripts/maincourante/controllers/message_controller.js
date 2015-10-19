@@ -23,7 +23,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
                 $scope.to = null;
                 $scope.body = null;
                 loadMessages();
-                focus('onNewMessage');
             },
             function(errorPayload) {
                 alert(errorPayload);
@@ -36,8 +35,12 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
         focus("onEdit");
     }
 
-    $scope.test = function(message){
-        alert("ddsds")
+    $scope.validateMessageEditionListener = function(event, message){
+        if(event.keyCode == 13){ //ENTER KEY
+            $scope.validateMessageEdition(message);
+        }else if(event.keyCode == 27){
+            $scope.cancelMessageEdition(message);
+        }
     }
 
     $scope.validateMessageEdition = function(message){
@@ -59,6 +62,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
         message.corps = message.oldMessage;
         message.oldMessage = null;
         message.edit = false;
+        focus('onNewMessage');
     }
 
     $scope.toggleMessageHistory = function(message){
@@ -88,7 +92,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
                         $scope.messages.push(message)
                     }
                 });
-
+                focus('onNewMessage');
             },
             function (errorPayload) {
                 alert(errorPayload);
@@ -119,7 +123,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
     loadMessages();
-    focus('onNewMessage');
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.

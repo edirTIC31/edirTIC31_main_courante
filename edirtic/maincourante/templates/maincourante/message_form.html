@@ -52,7 +52,7 @@
             <div class="panel-body" ng-class="{ 'panel-body': true, 'panel-body-danger': message.suppression}">
                 <div ng-hide="message.edit">{$ message.corps $}</div>
                 <div ng-show="message.edit">
-                    <input type="text" class="form-control" value="message.corps" ng-model="message.corps" focus-on="onEdit" ng-keydown="test">
+                    <input type="text" class="form-control" value="message.corps" ng-model="message.corps" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
                  </div>
                 <div ng-repeat="history in message.history | orderBy: '-cree' ">
                     <hr>
