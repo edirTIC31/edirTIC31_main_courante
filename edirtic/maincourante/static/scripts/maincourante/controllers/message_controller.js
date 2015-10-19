@@ -17,6 +17,9 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
         message.recipiendaire = $scope.to;
 		message.corps = $scope.body;
 		message.cree = new Date();
+        if(!message.isValid()){
+            return;
+        }
 		MessageManager.add(message).then(
             function(message) {
                 $scope.from = null;
@@ -30,8 +33,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
 	}
 
     $scope.enableMessageEdition = function(message){
-        message.edit = true;
-        message.oldMessage = message.corps;
+        message.enableEdition();
         focus("onEdit");
     }
 
@@ -59,9 +61,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
     }
 
     $scope.cancelMessageEdition = function(message){
-        message.corps = message.oldMessage;
-        message.oldMessage = null;
-        message.edit = false;
+        message.cancelEdition();
         focus('onNewMessage');
     }
 
@@ -79,8 +79,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
                 $scope.messages = [];
                 $scope.childrenMessages = [];
                 angular.forEach(messages, function (message, key) {
-                    message.cree = new Date(message.cree);
-                    message.edit = false;
                     if(message.parent) {
                         var parentArray = $scope.childrenMessages[message.parent];
                         if(!parentArray){
@@ -111,7 +109,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
                 }
             }
         });
-
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
         }, function () {

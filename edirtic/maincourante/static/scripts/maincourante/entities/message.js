@@ -18,16 +18,35 @@ function MessageFactory() {
         corps: null,
         expediteur: null,
         recipiendaire: null,
+        oldMessage: null,
+        edit: false,
         cree: null,
-
+        parent: null,
         setMessage: function (data) {
-
+            this.id = data.id;
+            this.corps = data.corps;
+            this.expediteur = data.expediteur;
+            this.recipiendaire = data.recipiendaire;
+            this.cree = new Date(data.cree);
+            this.parent = data.parent;
         },
         equals: function () {
             throw new Error("Not implemented");
         },
         toString: function () {
             return ""
+        },
+        isValid: function (){
+            return (this.corps != null && this.corps != "" && this.expediteur != null && this.expediteur != "" && this.recipiendaire != null && this.recipiendaire != "")
+        },
+        enableEdition: function(){
+            this.edit = true;
+            this.oldMessage = this.corps;
+        },
+        cancelEdition: function(){
+            this.corps = this.oldMessage;
+            this.oldMessage = null;
+            this.edit = false;
         }
     };
     return Message;
@@ -93,7 +112,13 @@ function MessageManagerFactory(Message, $q, $http) {
             var deferred = $q.defer();
             $http.get(entry_point+"?format=json&limit=1000")
                 .success(function (data) {
-                    deferred.resolve(data.objects);
+                    var messages = new Array();
+                    if(data.objects != null){
+                        angular.forEach(data.objects, function (messageData, key) {
+                            messages.push(new Message(messageData));
+                        });
+                    }
+                    deferred.resolve(messages);
                 })
                 .error(function () {
                     deferred.reject();
