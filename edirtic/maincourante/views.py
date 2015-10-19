@@ -82,14 +82,10 @@ def evenement_cloture(request, evenement):
         'form': form,
     })
 
-############
-# Messages #
-############
-
 @login_required
-def message_list(request, evenement):
+def evenement_report(request, evenement):
 
-    return render(request, 'maincourante/message_list.html', {
+    return render(request, 'maincourante/evenement_report.html', {
         'messages': Message.objects.filter(evenement=evenement, parent__isnull=True),
     })
 

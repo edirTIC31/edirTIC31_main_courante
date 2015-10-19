@@ -20,7 +20,7 @@
 <ul class="list-group">
     {% if closed_evenements %}
     {% for evenement in closed_evenements %}
-    <a class="list-group-item" href="{% url 'list-messages' evenement.slug %}">
+    <a class="list-group-item" href="{% url 'report' evenement.slug %}">
         <h4>{{ evenement }}</h4>
     </a>
     {% endfor %}

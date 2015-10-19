@@ -16,7 +16,7 @@
     {% if not evenement.clos %}
     <li role="presentation"{% block saisitab %}{% endblock %}><a tabindex="-1" href="{% url 'add-message' evenement.slug %}">Saisie</a></li>
     {% endif %}
-    <li role="presentation"{% block reporttab %}{% endblock %}><a tabindex="-1" href="{% url 'list-messages' evenement.slug %}">Compte rendu</a></li>
+    <li role="presentation"{% block reporttab %}{% endblock %}><a tabindex="-1" href="{% url 'report' evenement.slug %}">Compte rendu</a></li>
     {% if not evenement.clos %}
     <li role="presentation"{% block managetab %}{% endblock %}><a tabindex="-1" href="{% url 'manage-evenement' evenement.slug %}">Gestion</a></li>
     {% endif %}
