@@ -36,6 +36,7 @@
         {% endif %}
         {% if message.deleted %}
         <p class="text-muted">{{ message.corps }}</p>
+        <p class="text-danger">Motif de la suppression : {{ message.suppression }}</p>
         {% else %}
         {{ message.corps }}
         {% endif %}
