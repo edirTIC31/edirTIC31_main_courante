@@ -20,6 +20,7 @@ function MessageFactory() {
         recipiendaire: null,
         oldMessage: null,
         edit: false,
+        showHistory: false,
         cree: null,
         parent: null,
         setMessage: function (data) {
@@ -114,8 +115,22 @@ function MessageManagerFactory(Message, $q, $http) {
                 .success(function (data) {
                     var messages = new Array();
                     if(data.objects != null){
+                        var childrenMessages = new Array();
                         angular.forEach(data.objects, function (messageData, key) {
-                            messages.push(new Message(messageData));
+                            var message = new Message(messageData)
+                            if(message.parent) {
+                                var parentArray = childrenMessages[message.parent];
+                                if(!parentArray){
+                                    parentArray = new Array();
+                                }
+                                parentArray.push(message);
+                                childrenMessages[message.parent] = parentArray;
+                            }else{
+                                messages.push(message);
+                            }
+                        });
+                        angular.forEach(messages, function (message, key) {
+                           message.history = childrenMessages[message.id];
                         });
                     }
                     deferred.resolve(messages);

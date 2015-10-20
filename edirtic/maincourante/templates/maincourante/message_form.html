@@ -45,11 +45,11 @@
     <div ng-repeat="message in messages | orderBy: '-cree' ">
         <div ng-hide="message.parentId">
             <div ng-class="{ 'panel': true, 'panel-default': !message.suppression ,'panel-danger': message.suppression}">
-                <div class="panel-heading">de <b>{$ message.expediteur $}</b> à <b>{$ message.recipiendaire $}</b>
+                <div class="panel-heading">de <b>{$ message.expediteur $}</b> à <b>{$ message.recipiendaire $} </b>créé le {$ message.cree | date:"dd/MM/yyyy 'at' h:mm" $}
                     <span ng-if="message.suppression">| Message supprimé: {$ message.suppression $}</span>
                     <div class="btn-group pull-right">
                         <a ng-hide="message.edit || message.suppression" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-pencil"></span>&#160;Editter</a>
-                        <a ng-hide="message.edit" class="btn btn-warning btn-xs"  ng-click="toggleMessageHistory(message)" ><span class="glyphicon glyphicon-time"></span>&#160;Historique</a>
+                        <a ng-hide="message.edit || !message.history" class="btn btn-warning btn-xs"  ng-click="toggleMessageHistory(message)" ><span class="glyphicon glyphicon-time"></span>&#160;Historique</a>
                         <a ng-hide="message.edit || message.suppression" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span>&#160;Supprimer</a>
                         <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>&#160;Valider</a>
                         <a ng-show="message.edit" class="btn btn-warning btn-xs"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>&#160;Annuler</a>
@@ -60,13 +60,15 @@
                         <div ng-show="message.edit">
                             <input type="text" class="form-control" value="message.corps" ng-model="message.corps" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
                         </div>
-                        <div ng-repeat="history in message.history | orderBy: '-cree' ">
-                            <hr>
-                            <div>
-                                <div ng-class="{ 'panel': true, 'panel-warning': !message.suppression ,'panel-danger': message.suppression}">
-                                    <div class="panel-heading">{$ history.expediteur $} -> {$ history.recipiendaire $}</div>
-                                    <div class="panel-body panel-body-warning">
-                                        <div ng-hide="message.edit">{$ history.corps $}</div>
+                        <div ng-if="message.showHistory">
+                            <div ng-repeat="history in message.history | orderBy: '-cree' ">
+                                <hr>
+                                <div>
+                                    <div ng-class="{ 'panel': true, 'panel-warning': !message.suppression ,'panel-danger': message.suppression}">
+                                        <div class="panel-heading">{$ history.expediteur $} -> {$ history.recipiendaire $} édité le {$ history.cree |  date:"dd/MM/yyyy 'at' h:mm" $} </div>
+                                        <div class="panel-body panel-body-warning">
+                                            <div ng-hide="message.edit">{$ history.corps $}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

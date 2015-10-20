@@ -10,6 +10,8 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
 	$scope.messages = [];
     $scope.childrenMessages = [];
     $scope.onMessageDelete = false;
+    $scope.editionMode = false;
+    $scope.openHistory = new Array();
 
     $scope.addMessage = function(){
         var message = new Message();
@@ -34,6 +36,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
 	}
 
     $scope.enableMessageEdition = function(message){
+        $scope.editionMode = true;
         message.enableEdition();
         focus("onEdit");
     }
@@ -54,6 +57,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         MessageManager.modify(message).then(
             function(message) {
                 message.oldMessage.edit = false;
+                $scope.editionMode = false;
                 loadMessages();
                 focus('onNewMessage');
             },
@@ -65,33 +69,24 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     $scope.cancelMessageEdition = function(message){
         message.cancelEdition();
         focus('onNewMessage');
+        $scope.editionMode = false;
     }
 
     $scope.toggleMessageHistory = function(message){
-        if(message.history){
-            message.history = null;
+        if(message.showHistory){
+            message.showHistory = false;
         }else{
-            message.history = $scope.childrenMessages[message.id]
+            message.showHistory = true;
         }
     }
 
     function loadMessages() {
+        if($scope.editionMode){
+            return;
+        }
         MessageManager.load().then(
             function (messages) {
-                $scope.messages = [];
-                $scope.childrenMessages = [];
-                angular.forEach(messages, function (message, key) {
-                    if(message.parent) {
-                        var parentArray = $scope.childrenMessages[message.parent];
-                        if(!parentArray){
-                            parentArray = new Array();
-                        }
-                        parentArray.push(message);
-                        $scope.childrenMessages[message.parent] = parentArray;
-                    }else{
-                        $scope.messages.push(message)
-                    }
-                });
+                $scope.messages = messages;
             },
             function (errorPayload) {
                 alert(errorPayload);
