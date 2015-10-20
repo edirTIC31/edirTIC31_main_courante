@@ -3,9 +3,9 @@
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
-  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', '$modal', 'focus', prepareMainController]);
+  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', '$modal', '$interval','focus', prepareMainController]);
 
-function prepareMainController($scope, Message, MessageManager, $modal, focus){
+function prepareMainController($scope, Message, MessageManager, $modal, $interval, focus){
 	
 	$scope.messages = [];
     $scope.childrenMessages = [];
@@ -26,6 +26,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
                 $scope.to = null;
                 $scope.body = null;
                 loadMessages();
+                focus('onNewMessage');
             },
             function(errorPayload) {
                 alert(errorPayload);
@@ -54,6 +55,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
             function(message) {
                 message.oldMessage.edit = false;
                 loadMessages();
+                focus('onNewMessage');
             },
             function(errorPayload) {
                 alert(errorPayload);
@@ -90,7 +92,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
                         $scope.messages.push(message)
                     }
                 });
-                focus('onNewMessage');
             },
             function (errorPayload) {
                 alert(errorPayload);
@@ -120,6 +121,9 @@ function prepareMainController($scope, Message, MessageManager, $modal, focus){
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
     loadMessages();
+    focus('onNewMessage');
+
+    $interval(loadMessages, 10000);
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
