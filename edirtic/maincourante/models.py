@@ -15,8 +15,8 @@ def enum_to_choices(enum):
 
 
 class TimeStampedModel(Model):
-    cree = DateTimeField('créé', auto_now_add=True)
-    modifie = DateTimeField('modifié', auto_now=True)
+    cree = DateTimeField('créé', auto_now_add=True, editable=False)
+    modifie = DateTimeField('modifié', auto_now=True, editable=False)
 
 
 class Evenement(TimeStampedModel):
