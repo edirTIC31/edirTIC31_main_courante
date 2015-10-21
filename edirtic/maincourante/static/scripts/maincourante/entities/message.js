@@ -74,7 +74,7 @@ function MessageManagerFactory(Message, $q, $http) {
         modify: function (message) {
             var deferred = $q.defer();
             var _this = this;
-            $http.put(entry_point+"/"+message.id, message)
+            $http.put(entry_point+message.id, message)
                 .success(function (data) {
                     var newMessage = new Message();
                     newMessage.expediteur = message.expediteur;
