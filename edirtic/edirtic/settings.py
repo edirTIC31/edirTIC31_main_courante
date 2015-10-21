@@ -72,7 +72,7 @@ USE_I18N = True
 USE_TZ = True
 
 USE_L10N = False
-DATETIME_FORMAT="d b Y à H:m:s"
+DATETIME_FORMAT="d b Y à H:i:s"
 
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
