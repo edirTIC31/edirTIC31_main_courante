@@ -80,7 +80,6 @@ function MessageManagerFactory(Message, $q, $http) {
                     newMessage.expediteur = message.expediteur;
                     newMessage.recipiendaire = message.recipiendaire;
                     newMessage.corps = message.oldMessage;
-                    newMessage.cree = new Date();
                     newMessage.parent = message.id;
                     _this.add(newMessage, message).then(
                         function(message) {
