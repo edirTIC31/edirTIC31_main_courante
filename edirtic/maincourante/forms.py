@@ -4,12 +4,29 @@ from django.forms.models import modelform_factory
 from .models import MAX_LENGTH, Evenement, Indicatif
 
 
-__all__ = ['EvenementForm', 'IndicatifForm', 'ClotureForm']
+__all__ = ['EvenementForm', 'IndicatifForm', 'ClotureForm', \
+        'MessageForm', 'EditMessageForm', 'DeleteMessageForm']
 
 
 EvenementForm = modelform_factory(Evenement, fields=['nom', 'slug'])
 IndicatifForm = modelform_factory(Indicatif, fields=['nom'])
 
+
+class MessageForm(forms.Form):
+    
+    expediteur = forms.CharField(max_length=MAX_LENGTH)
+    recipiendaire = forms.CharField(max_length=MAX_LENGTH)
+    corps = forms.CharField(max_length=256)
+
+class EditMessageForm(forms.Form):
+
+    corps = forms.CharField(max_length=256,
+            label="Message")
+
+class DeleteMessageForm(forms.Form):
+
+    raison = forms.CharField(max_length=256,
+            label="Veuillez indiquer la raison de cette suppression")
 
 class ClotureForm(forms.Form):
 

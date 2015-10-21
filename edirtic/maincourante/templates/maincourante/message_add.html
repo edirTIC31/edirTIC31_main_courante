@@ -1,0 +1,155 @@
+{% extends 'maincourante/base.html' %}
+
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block saisitab %} class="active"{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h4>Saisie des messages</h4>
+    </div>
+    <div class="panel-body">
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+			<div class="form-group">
+			    <label class="col-md-3 control-label" for="id_expediteur">Expéditeur</label>
+                <div class="col-md-6">
+                    <input class="form-control" id="id_expediteur" maxlength="100" name="expediteur" placeholder="Expéditeur" required="required" title="" type="text" autofocus />
+                </div>
+            </div>
+			<div class="form-group">
+			    <label class="col-md-3 control-label" for="id_recipiendaire">Récipiendaire</label>
+                <div class="col-md-6">
+                    <input class="form-control" id="id_recipiendaire" maxlength="100" name="recipiendaire" placeholder="Récipiendaire" required="required" title="" type="text" />
+                </div>
+            </div>
+            {% bootstrap_field add_form.corps layout="horizontal" %}
+            {% buttons layout="horizontal" %}
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+
+{% for message in messages %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        {{ message.events.last.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
+        <div class="pull-right">
+            {% if message.modified %}
+            <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</span>
+            {% endif %}
+            <a href="#" class="btn btn-primary btn-xs" data-thread="{{ message.id }}" data-action="{% url 'edit-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-edit"><span class="glyphicon glyphicon-edit"></span></a>
+            <a href="#" class="btn btn-danger btn-xs" data-action="{% url 'delete-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-delete"><span class="glyphicon glyphicon-trash"></span></a>
+        </div>
+    </div>
+    <ul class="list-group">
+        {% for event in message.events.all %}
+        <li class="list-group-item">
+            {% if message.modified %}
+                <p class="pull-right text-danger"><em>version du {{ event.cree }}</em></p>
+                {% if forloop.first %}
+                <p id="thread-{{ message.id }}">{{ event.corps }}</p>
+                {% else %}
+                <p class="text-muted">{{ event.corps }}</p>
+                {% endif %}
+            {% else %}
+            <p id="thread-{{ message.id }}">{{ event.corps }}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endfor %}
+
+<div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="panel panel-danger">
+            <div class="panel-heading" id="confirm-delete-title">
+                Supprimer un message
+            </div>
+            <div class="panel-body">
+                <form action="#" method="post" role="form" id="confirm-delete-form">
+                    {% csrf_token %}
+                    {% bootstrap_form delete_form %}
+                    {% buttons %}
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-danger">Confirmer</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                        </div>
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="confirm-edit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="panel panel-primary">
+            <div class="panel-heading" id="confirm-edit-title">
+                Modifier un message
+            </div>
+            <div class="panel-body">
+                <form action="#" method="post" role="form" id="confirm-edit-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="control-label" for="id_corps">Message</label>
+                        <input class="form-control" id="id_corps" maxlength="256" name="corps" placeholder="Message" required="required" title="" type="text" onclick="this.select()" />
+                    </div>
+                    {% buttons %}
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Modifier</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                        </div>
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_end %}
+{{ block.super }}
+<script src="{% static 'js/jquery.autocomplete.min.js' %}"></script>
+<script type="text/javascript">
+$('input[name="expediteur"]').autocomplete({
+  serviceUrl: "{% url 'search-indicatif' evenement.slug %}",
+  onSelect: function (data) {
+    $('input[name="expediteur"]').val(data.data);
+  }
+});
+$('input[name="recipiendaire"]').autocomplete({
+  serviceUrl: "{% url 'search-indicatif' evenement.slug %}",
+  onSelect: function (data) {
+    $('input[name="recipiendaire"]').val(data.data);
+  }
+});
+</script>
+<script type="text/javascript">
+/* This script set the action url of the deletion form */
+$('#confirm-delete').on('show.bs.modal', function(e) {
+    $('#confirm-delete-form').attr('action', $(e.relatedTarget).data('action'));
+});
+/* This script set the action url of the edit form */
+$('#confirm-edit').on('show.bs.modal', function(e) {
+    $('#confirm-edit-form').attr('action', $(e.relatedTarget).data('action'));
+    var thread = $(e.relatedTarget).data('thread');
+    var value = $('#thread-' + thread).html();
+    var input = $('input[name="corps"]');
+    input.val(value);
+    /* Not working :'-( */
+    //input.focus();
+    //input.select();
+});
+</script>
+{% endblock %}

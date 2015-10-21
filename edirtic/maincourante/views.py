@@ -1,8 +1,10 @@
 from django.views.generic import CreateView
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse, Http404
 
 from braces.views import LoginRequiredMixin
 
@@ -11,7 +13,7 @@ from .forms import *
 
 
 class MainView(LoginRequiredMixin, CreateView):
-    model = Message
+    model = MessageThread
     fields = ('expediteur', 'recipiendaire', 'corps')
     success_url = '/'
 
@@ -86,8 +88,93 @@ def evenement_cloture(request, evenement):
 def evenement_report(request, evenement):
 
     return render(request, 'maincourante/evenement_report.html', {
-        'messages': Message.objects.filter(evenement=evenement, parent__isnull=True),
+        'messages': MessageThread.objects.filter(evenement=evenement),
     })
+
+
+############
+# Messages #
+############
+
+@login_required
+def message_add(request, evenement, message=None):
+
+    form = MessageForm(request.POST or None)
+    edit_form = EditMessageForm()
+    delete_form = DeleteMessageForm()
+
+    if request.method == 'POST' and form.is_valid():
+
+        expediteur = form.cleaned_data['expediteur']
+        try:
+            expediteur = Indicatif.objects.get(nom=expediteur)
+        except Indicatif.DoesNotExist:
+            expediteur = Indicatif(evenement=evenement, nom=expediteur)
+            expediteur.save()
+        recipiendaire = form.cleaned_data['recipiendaire']
+        try:
+            recipiendaire = Indicatif.objects.get(nom=recipiendaire)
+        except Indicatif.DoesNotExist:
+            recipiendaire = Indicatif(evenement=evenement, nom=recipiendaire)
+            recipiendaire.save()
+
+        thread = MessageThread(evenement=evenement,
+                expediteur=expediteur,
+                recipiendaire=recipiendaire)
+        thread.save()
+        event = MessageEvent(thread=thread, operateur=request.user,
+                corps=form.cleaned_data['corps']).save()
+
+        return redirect(reverse('add-message', args=[evenement.slug]))
+
+    return render(request, 'maincourante/message_add.html', {
+        'messages': MessageThread.objects.filter(evenement=evenement)\
+                .exclude(events__type=MessageEvent.TYPE.suppression.value)\
+                .all()[:10],
+        'add_form': form,
+        'edit_form': edit_form,
+        'delete_form': delete_form,
+    })
+
+@login_required
+def message_edit(request, evenement, message):
+
+    thread = get_object_or_404(MessageThread, evenement=evenement, id=message)
+
+    if thread.events.first().type == MessageEvent.TYPE.suppression.value:
+        raise Http404
+
+    form = EditMessageForm(request.POST)
+
+    if form.is_valid():
+
+        event = MessageEvent(thread=thread, operateur=request.user,
+                type=MessageEvent.TYPE.modification.value,
+                corps=form.cleaned_data['corps'])
+        event.save()
+
+    return redirect(reverse('add-message', args=[evenement.slug]))
+
+@login_required
+@require_http_methods(["POST"])
+def message_delete(request, evenement, message):
+
+    thread = get_object_or_404(MessageThread, evenement=evenement, id=message)
+
+    if thread.events.first().type == MessageEvent.TYPE.suppression.value:
+        raise Http404
+
+    form = DeleteMessageForm(request.POST)
+
+    if form.is_valid():
+
+        event = MessageEvent(thread=thread, operateur=request.user,
+                type=MessageEvent.TYPE.suppression.value,
+                corps=form.cleaned_data['raison'])
+        event.save()
+
+    return redirect(reverse('add-message', args=[evenement.slug]))
+
 
 ##############
 # Indicatifs #
@@ -111,3 +198,25 @@ def indicatif_list(request, evenement):
         'indicatifs': Indicatif.objects.filter(evenement=evenement),
         'form': form,
     })
+
+@login_required
+def indicatif_search(request, evenement):
+
+    term = request.GET.get('query')
+    if not term:
+        raise Http404
+
+    indicatifs = Indicatif.objects.filter(nom__icontains=term)[:10]
+
+    response = []
+    for indicatif in indicatifs:
+        response += [{
+            'value': indicatif.nom,
+            'data': indicatif.nom,
+        }]
+
+    c = {
+        'suggestions': response,
+    }
+
+    return JsonResponse(c, safe=False)

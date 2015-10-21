@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 from django.conf import settings
 
 
@@ -13,35 +13,74 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Indicatif',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
+                ('nom', models.CharField(max_length=32)),
+            ],
+            options={
+                'ordering': ['nom'],
+            },
+        ),
+        migrations.CreateModel(
+            name='MessageThread',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
+                ('expediteur', models.ForeignKey(to='maincourante.Indicatif', related_name='+')),
+                ('recipiendaire', models.ForeignKey(to='maincourante.Indicatif', related_name='+')),
+            ],
+            options={
+                'ordering': ['-pk'],
+            },
+        ),
+        migrations.CreateModel(
             name='TimeStampedModel',
             fields=[
-                ('id', models.AutoField(auto_created=True, serialize=False, verbose_name='ID', primary_key=True)),
-                ('cree', models.DateTimeField(auto_now_add=True, verbose_name='créé')),
-                ('modifie', models.DateTimeField(auto_now=True, verbose_name='modifié')),
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
+                ('cree', models.DateTimeField(verbose_name='créé', auto_now_add=True)),
+                ('modifie', models.DateTimeField(verbose_name='modifié', auto_now=True)),
             ],
         ),
         migrations.CreateModel(
             name='Evenement',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(parent_link=True, primary_key=True, auto_created=True, to='maincourante.TimeStampedModel', serialize=False)),
                 ('nom', models.CharField(max_length=100)),
+                ('slug', models.SlugField(max_length=32, unique=True)),
                 ('clos', models.BooleanField(default=False)),
             ],
             bases=('maincourante.timestampedmodel',),
         ),
         migrations.CreateModel(
-            name='Message',
+            name='MessageEvent',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', parent_link=True, serialize=False, auto_created=True, primary_key=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(parent_link=True, primary_key=True, auto_created=True, to='maincourante.TimeStampedModel', serialize=False)),
                 ('type', models.IntegerField(choices=[(1, 'creation'), (2, 'suppression'), (3, 'modification')], default=1)),
-                ('expediteur', models.CharField(max_length=100, null=True)),
-                ('recipiendaire', models.CharField(max_length=100, null=True)),
-                ('corps', models.TextField(null=True)),
-                ('suppression', models.CharField(max_length=100, null=True, verbose_name='raison de la suppression')),
+                ('corps', models.TextField()),
                 ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('evenement', models.ForeignKey(to='maincourante.Evenement')),
-                ('parent', models.ForeignKey(to='maincourante.Message', null=True)),
             ],
+            options={
+                'ordering': ['-pk'],
+            },
             bases=('maincourante.timestampedmodel',),
+        ),
+        migrations.AddField(
+            model_name='messagethread',
+            name='evenement',
+            field=models.ForeignKey(to='maincourante.Evenement'),
+        ),
+        migrations.AddField(
+            model_name='messageevent',
+            name='thread',
+            field=models.ForeignKey(to='maincourante.MessageThread', related_name='events'),
+        ),
+        migrations.AddField(
+            model_name='indicatif',
+            name='evenement',
+            field=models.ForeignKey(to='maincourante.Evenement'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='indicatif',
+            unique_together=set([('evenement', 'nom')]),
         ),
     ]

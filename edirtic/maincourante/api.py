@@ -6,7 +6,7 @@ from tastypie import fields
 from .models import *
 
 
-__all__ = ['MessageResource', 'IndicatifResource']
+__all__ = ['MessageThreadResource', 'IndicatifResource']
 
 
 class BaseAuthentication(Authentication):
@@ -28,10 +28,10 @@ class IndicatifResource(ModelResource):
         authorization = DjangoAuthorization()
 
 
-class MessageResource(ModelResource):
+class MessageThreadResource(ModelResource):
 
     class Meta:
-        queryset = Message.objects.all()
+        queryset = MessageThread.objects.all()
         allowed_methods = ['get', 'post', 'put']
         authentication = BaseAuthentication()
         authorization = DjangoAuthorization()
@@ -46,5 +46,5 @@ class MessageResource(ModelResource):
         bundle.obj.operateur = bundle.request.user
         bundle.obj.evenement = Evenement.objects.get(clos=False)
         if 'parent' in bundle.data:
-            bundle.obj.parent = Message.objects.get(id=int(bundle.data['parent']))
+            bundle.obj.parent = MessageThread.objects.get(id=int(bundle.data['parent']))
         return bundle
