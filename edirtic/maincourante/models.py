@@ -50,7 +50,7 @@ class Message(TimeStampedModel):
     parent = ForeignKey('self', null=True, related_name='enfants')
     operateur = ForeignKey(User)
     expediteur = CharField(max_length=MAX_LENGTH, null=True)
-    recipiendaire = CharField(max_length=MAX_LENGTH, null=True)
+    recipiendaire = CharField('destinataire', max_length=MAX_LENGTH, null=True)
     corps = TextField(null=True)
     suppression = CharField('raison de la suppression', max_length=MAX_LENGTH, null=True)
 
