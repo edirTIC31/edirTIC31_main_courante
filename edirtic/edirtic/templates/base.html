@@ -45,7 +45,7 @@
                         {% block navbar-right %}{% endblock %}
                         {% if request.user.is_authenticated %}
                         {% if request.user.is_staff %}
-                        <li><a href="/admin/"><span class="glyphicon glyphicon-cog"></span>&nbsp;Administration</a></li>
+                        <li><a href="{% url 'admin:index' %}"><span class="glyphicon glyphicon-cog"></span>&nbsp;Administration</a></li>
                         {% endif %}
                         <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout</a></li>
                         {% else %}
