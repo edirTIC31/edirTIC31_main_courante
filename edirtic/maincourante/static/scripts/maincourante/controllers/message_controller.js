@@ -74,8 +74,13 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
 
     $scope.toggleMessageHistory = function(message){
         if(message.showHistory){
+            var idx = $scope.openHistory.indexOf(message.id);
+            if(idx != -1) {
+                $scope.openHistory.splice(idx, 1);
+            }
             message.showHistory = false;
         }else{
+            $scope.openHistory.push(message.id);
             message.showHistory = true;
         }
     }
@@ -87,11 +92,22 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         MessageManager.load().then(
             function (messages) {
                 $scope.messages = messages;
+                manageOpenHistoryMessage();
             },
             function (errorPayload) {
                 alert("Erreur lors du chargement des messages");
             }
         );
+    }
+
+    function manageOpenHistoryMessage(){
+        angular.forEach($scope.openHistory, function (messageID, key) {
+            angular.forEach($scope.messages, function (message, key) {
+                if(messageID == message.id){
+                    message.showHistory = true;
+                }
+            });
+        });
     }
 
     $scope.deleteMessage = function(message) {
