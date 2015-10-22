@@ -23,6 +23,7 @@ function MessageFactory() {
         showHistory: false,
         cree: null,
         parent: null,
+        suppression: null,
         setMessage: function (data) {
             this.id = data.id;
             this.corps = data.corps;
@@ -30,6 +31,7 @@ function MessageFactory() {
             this.recipiendaire = data.recipiendaire;
             this.cree = new Date(data.cree);
             this.parent = data.parent;
+            this.suppression = data.suppression;
         },
         equals: function () {
             throw new Error("Not implemented");
