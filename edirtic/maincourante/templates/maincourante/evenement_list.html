@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 
+{% load staticfiles %}
+
 {% block content %}
+<div class="text-right">
+    <img src="{% static 'img/logo-crf.png' %}" />
+</div>
+
 <h2>Évènements en cours</h2>
 <ul class="list-group">
     {% if open_evenements %}
