@@ -93,7 +93,7 @@ function MessageManagerFactory(Message, $q, $http) {
                             deferred.resolve(message);
                         },
                         function(errorPayload) {
-                            alert(errorPayload);
+                            alert("Erreur lors de la sauvegarde de l'ancien message");
                     });
                 })
                 .error(function () {

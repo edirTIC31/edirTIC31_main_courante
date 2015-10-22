@@ -31,7 +31,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 focus('onNewMessage');
             },
             function(errorPayload) {
-                alert(errorPayload);
+                alert("Erreur lors de l'ajout du nouveau message");
             });
 	}
 
@@ -62,7 +62,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 focus('onNewMessage');
             },
             function(errorPayload) {
-                alert(errorPayload);
+                alert("Erreur lors de l'edition du message");
             });
     }
 
@@ -89,7 +89,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 $scope.messages = messages;
             },
             function (errorPayload) {
-                alert(errorPayload);
+                alert("Erreur lors du chargement des messages");
             }
         );
     }
@@ -132,7 +132,7 @@ angular.module('edir.maincourante.controllers').controller('ModalInstanceCtrl', 
              $modalInstance.close();
          },
          function(errorPayload) {
-            alert("error");
+            alert("Erreur lors de la suppression du message");
         });
     };
 
