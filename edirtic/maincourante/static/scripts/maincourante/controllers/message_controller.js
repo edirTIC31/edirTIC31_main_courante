@@ -13,6 +13,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     $scope.editionMode = false;
     $scope.openHistory = new Array();
     $scope.indicatifs = new Array();
+    $scope.errorMessage = null;
 
     $scope.addMessage = function(){
         var message = new Message();
@@ -101,9 +102,10 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 $scope.messages = messages;
                 manageOpenHistoryMessage();
                 manageIndicatifs();
+                $scope.errorMessage = null;
             },
             function (errorPayload) {
-                alert("Erreur lors du chargement des messages");
+                $scope.errorMessage = "Erreur lors du chargement des messages";
             }
         );
     }

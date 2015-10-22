@@ -61,7 +61,10 @@
             </form>
         </div>
     </div>
-
+    <div ng-if="errorMessage" class="alert alert-danger">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Erreur </strong> {$errorMessage$}
+    </div>
     <div ng-repeat="message in messages | orderBy: '-cree' ">
         <div ng-hide="message.parentId">
             <div ng-class="{ 'panel': true, 'panel-default': !message.suppression ,'panel-danger': message.suppression}">
