@@ -76,6 +76,8 @@ function MessageManagerFactory(Message, $q, $http) {
         modify: function (message) {
             var deferred = $q.defer();
             var _this = this;
+            var olCreationDate = message.cree;
+            message.cree = null;
             $http.put(entry_point+message.id, message)
                 .success(function (data) {
                     var newMessage = new Message();
@@ -86,6 +88,7 @@ function MessageManagerFactory(Message, $q, $http) {
                     newMessage.parent = message.id;
                     _this.add(newMessage, message).then(
                         function(message) {
+                            message.oldMessage.cree = olCreationDate;
                             message.oldMessage.edit = false;
                             deferred.resolve(message);
                         },
