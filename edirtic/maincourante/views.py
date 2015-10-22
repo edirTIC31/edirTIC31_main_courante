@@ -76,7 +76,7 @@ def evenement_cloture(request, evenement):
     if request.method == 'POST' and form.is_valid():
         evenement.clos = True
         evenement.save()
-        return redirect(reverse('list-messages', args=[evenement.slug]))
+        return redirect(reverse('report', args=[evenement.slug]))
 
     return render(request, 'maincourante/evenement_cloture.html', {
         'form': form,
