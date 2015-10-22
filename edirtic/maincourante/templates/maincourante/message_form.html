@@ -45,7 +45,7 @@
     <div ng-repeat="message in messages | orderBy: '-cree' ">
         <div ng-hide="message.parentId">
             <div ng-class="{ 'panel': true, 'panel-default': !message.suppression ,'panel-danger': message.suppression}">
-                <div class="panel-heading">de <b>{$ message.expediteur $}</b> à <b>{$ message.recipiendaire $} </b>créé le {$ message.cree | date:"dd/MM/yyyy 'at' h:mm" $}
+                <div class="panel-heading">de <b>{$ message.expediteur $}</b> à <b>{$ message.recipiendaire $} </b>créé le {$ message.cree | date:"dd/MM/yyyy 'à' HH:mm" $}
                     <span ng-if="message.suppression">| Message supprimé: {$ message.suppression $}</span>
                     <div class="btn-group pull-right">
                         <a ng-hide="message.edit || message.suppression" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-pencil"></span>&#160;Editter</a>
@@ -65,7 +65,7 @@
                                 <hr>
                                 <div>
                                     <div ng-class="{ 'panel': true, 'panel-warning': !message.suppression ,'panel-danger': message.suppression}">
-                                        <div class="panel-heading">{$ history.expediteur $} -> {$ history.recipiendaire $} édité le {$ history.cree |  date:"dd/MM/yyyy 'at' h:mm" $} </div>
+                                        <div class="panel-heading">{$ history.expediteur $} -> {$ history.recipiendaire $} édité le {$ history.cree |  date:"dd/MM/yyyy 'à' HH:mm" $} </div>
                                         <div class="panel-body panel-body-warning">
                                             <div ng-hide="message.edit">{$ history.corps $}</div>
                                         </div>
