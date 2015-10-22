@@ -5,6 +5,7 @@ angular.module('maincouranteApp', [
     'ngRoute',
     'ngResource',
     'focusOn',
+    'angucomplete-alt',
     'edir.maincourante.controllers',
     'edir.maincourante.entities'
 ])

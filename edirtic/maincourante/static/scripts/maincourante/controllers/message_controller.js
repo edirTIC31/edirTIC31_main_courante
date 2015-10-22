@@ -12,11 +12,15 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     $scope.onMessageDelete = false;
     $scope.editionMode = false;
     $scope.openHistory = new Array();
+    $scope.indicatifs = new Array();
 
     $scope.addMessage = function(){
         var message = new Message();
-        message.expediteur = $scope.from;
-        message.recipiendaire = $scope.to;
+        if(!$scope.from || !$scope.to){
+            return;
+        }
+        message.expediteur = $scope.from.title ? $scope.from.title: $scope.from.originalObject;
+        message.recipiendaire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
 		message.corps = $scope.body;
 		message.cree = new Date();
         if(!message.isValid()){
@@ -27,8 +31,11 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 $scope.from = null;
                 $scope.to = null;
                 $scope.body = null;
+                $scope.$broadcast('angucomplete-alt:clearInput', 'from');
+                $scope.$broadcast('angucomplete-alt:clearInput', 'to');
                 loadMessages();
                 focus('onNewMessage');
+                $scope.$broadcast('angucomplete-alt:changeInput', 'ex1');
             },
             function(errorPayload) {
                 alert("Erreur lors de l'ajout du nouveau message");
@@ -93,6 +100,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
             function (messages) {
                 $scope.messages = messages;
                 manageOpenHistoryMessage();
+                manageIndicatifs();
             },
             function (errorPayload) {
                 alert("Erreur lors du chargement des messages");
@@ -108,6 +116,26 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 }
             });
         });
+    }
+
+    function manageIndicatifs(){
+        $scope.indicatifs = [];
+        angular.forEach($scope.messages, function (message, key) {
+            addIndicatifs(message.expediteur);
+            addIndicatifs(message.recipiendaire);
+        });
+    }
+
+    function addIndicatifs(indicatif){
+       var found = false;
+        angular.forEach($scope.indicatifs, function (indic, key) {
+            if(indic.name == indicatif){
+                found = true;
+            }
+        });
+        if(!found) {
+            $scope.indicatifs.push({"name": indicatif});
+        }
     }
 
     $scope.deleteMessage = function(message) {
@@ -133,7 +161,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     };
     loadMessages();
     focus('onNewMessage');
-
     $interval(loadMessages, 10000);
 }
 
