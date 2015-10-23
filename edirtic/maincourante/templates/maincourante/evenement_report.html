@@ -19,13 +19,5 @@
         <p><a href="javascript:window.print()"><span class="glyphicon glyphicon-print"></span>&#160;Imprimer</a>
     </div>
 </div>
-{% for message in messages %}
-{% render_message message %}
-{% empty %}
-<div class="panel panel-info">
-    <div class="panel-body">
-        <em>Aucun message.</em>
-    </div>
-</div>
-{% endfor %}
+{% render_messages messages %}
 {% endblock %}

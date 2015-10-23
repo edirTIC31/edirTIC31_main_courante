@@ -1,15 +1,16 @@
 from django.views.generic import CreateView
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponse
 
 from braces.views import LoginRequiredMixin
 
 from .models import *
 from .forms import *
+from .templatetags.message_tags import render_messages
 
 
 class MainView(LoginRequiredMixin, CreateView):
@@ -97,6 +98,12 @@ def evenement_live(request, evenement):
     return render(request, 'maincourante/evenement_live.html', {
         'messages': MessageThread.objects.filter(evenement=evenement).all()[:10],
     })
+
+@login_required
+def evenement_live_update(request, evenement):
+
+    messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
+    return render_to_response('maincourante/tags/messages.html', context=render_messages(messages))
 
 
 ############

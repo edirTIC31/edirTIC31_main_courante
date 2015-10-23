@@ -4,37 +4,25 @@
 
 {% block livetab %} class="active"{% endblock %}
 
-{% block headers %}
-{{ block.super }}
-<meta http-equiv="refresh" content="5">
-{% endblock %}
-
 {% block content %}
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h1>{{ evenement.nom }}</h1>
     </div>
 </div>
-{% for message in messages %}
-{% render_message message %}
-{% empty %}
-<div class="panel panel-info">
-    <div class="panel-body">
-        <em>Aucun message.</em>
-    </div>
+
+<div id="messages-content">
+{% render_messages messages %}
 </div>
-{% endfor %}
 {% endblock %}
 
 {% block js_end %}
 {{ block.super }}
-{% comment %}
 <script type="text/javascript">
 window.setInterval(function() {
-    $.get('/test', function(data, status) {
-        alert(data);
+    $.get("{% url 'live-update' evenement.slug %}", function(data, status) {
+        $("#messages-content").html(data);
     });
 }, 2000);
 </script>
-{% endcomment %}
 {% endblock %}
