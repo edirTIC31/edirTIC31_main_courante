@@ -24,12 +24,14 @@ function MessageFactory() {
         cree: null,
         parent: null,
         suppression: null,
+        displayCreationDate: null,
         setMessage: function (data) {
             this.id = data.id;
             this.corps = data.corps;
             this.expediteur = data.expediteur;
             this.recipiendaire = data.recipiendaire;
             this.cree = new Date(data.cree);
+            this.displayCreationDate = new Date(data.cree);
             this.parent = data.parent;
             this.suppression = data.suppression;
         },
@@ -84,7 +86,6 @@ function MessageManagerFactory(Message, $q, $http) {
                     newMessage.expediteur = message.expediteur;
                     newMessage.recipiendaire = message.recipiendaire;
                     newMessage.corps = message.oldMessage;
-                    newMessage.cree = new Date();
                     newMessage.parent = message.id;
                     _this.add(newMessage, message).then(
                         function(message) {

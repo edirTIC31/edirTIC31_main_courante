@@ -23,8 +23,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         message.expediteur = $scope.from.title ? $scope.from.title: $scope.from.originalObject;
         message.recipiendaire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
 		message.corps = $scope.body;
-		message.cree = new Date();
-        if(!message.isValid()){
+		if(!message.isValid()){
             return;
         }
 		MessageManager.add(message).then(
