@@ -19,15 +19,15 @@
         <form method="post" class="form-horizontal">
             {% csrf_token %}
 			<div class="form-group">
-			    <label class="col-md-3 control-label" for="id_expediteur">Expéditeur</label>
-                <div class="col-md-6">
-                    <input class="form-control" id="id_expediteur" maxlength="100" name="expediteur" placeholder="Expéditeur" required="required" title="" type="text" autofocus />
-                </div>
-            </div>
-			<div class="form-group">
 			    <label class="col-md-3 control-label" for="id_recipiendaire">Destinataire</label>
                 <div class="col-md-6">
                     <input class="form-control" id="id_recipiendaire" maxlength="100" name="recipiendaire" placeholder="Récipiendaire" required="required" title="" type="text" />
+                </div>
+            </div>
+			<div class="form-group">
+			    <label class="col-md-3 control-label" for="id_expediteur">Expéditeur</label>
+                <div class="col-md-6">
+                    <input class="form-control" id="id_expediteur" maxlength="100" name="expediteur" placeholder="Expéditeur" required="required" title="" type="text" autofocus />
                 </div>
             </div>
 			<div class="form-group">
