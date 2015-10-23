@@ -1,0 +1,54 @@
+{% extends 'maincourante/base.html' %}
+
+{% block livetab %} class="active"{% endblock %}
+
+{% block headers %}
+{{ block.super }}
+<meta http-equiv="refresh" content="5">
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1>{{ evenement.nom }}</h1>
+    </div>
+</div>
+{% for message in messages %}
+<div class="panel panel-{% if message.deleted %}default{% else %}info{% endif %}">
+    <div class="panel-heading">
+        {{ message.events.last.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
+        {% if message.modified %}
+        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</p>
+        {% endif %}
+    </div>
+    <ul class="list-group">
+        {% for event in message.events.all %}
+        <li class="list-group-item">
+            {% if event.get_type_display == 'suppression' %}
+                <p class="pull-right text-danger"><em>supprimé le {{ event.cree }}</em></p>
+                <p class="text-danger">Message supprimé : {{ event.corps }}</p>
+            {% elif message.deleted %}
+                <p class="pull-right text-danger"><em>version du {{ event.cree }}</em></p>
+                <p class="text-muted">{{ event.corps }}</p>
+            {% elif message.modified %}
+                <p class="pull-right text-danger"><em>version du {{ event.cree }}</em></p>
+                {% if forloop.first %}
+                    <p>{{ event.corps }}</p>
+                {% else %}
+                    <p class="text-muted">{{ event.corps }}</p>
+                {% endif %}
+            {% else %}
+                <p>{{ event.corps }}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% empty %}
+<div class="panel panel-info">
+    <div class="panel-body">
+        <em>Aucun message.</em>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

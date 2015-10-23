@@ -91,6 +91,13 @@ def evenement_report(request, evenement):
         'messages': MessageThread.objects.filter(evenement=evenement),
     })
 
+@login_required
+def evenement_live(request, evenement):
+
+    return render(request, 'maincourante/evenement_live.html', {
+        'messages': MessageThread.objects.filter(evenement=evenement).all()[:10],
+    })
+
 
 ############
 # Messages #

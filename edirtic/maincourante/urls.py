@@ -14,6 +14,7 @@ urlpatterns = [
     # Evenement
     url(r'^$', 'maincourante.views.evenement_list', name='list-evenements'),
     url(r'^add/$', 'maincourante.views.evenement_add', name='add-evenement'),
+    url(r'^(?P<evenement>[-\w]+)/live/$', 'maincourante.views.evenement_live', name='live'),
     url(r'^(?P<evenement>[-\w]+)/report/$', 'maincourante.views.evenement_report', name='report'),
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),
