@@ -95,15 +95,11 @@ def evenement_report(request, evenement):
 @login_required
 def evenement_live(request, evenement):
 
+    messages = MessageThread.objects.filter(evenement=evenement)\
+            .exclude(events__type=MessageEvent.TYPE.suppression.value).all()[:10]
     return render(request, 'maincourante/evenement_live.html', {
-        'messages': MessageThread.objects.filter(evenement=evenement).all()[:10],
+        'messages': messages,
     })
-
-@login_required
-def evenement_live_update(request, evenement):
-
-    messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
-    return render_to_response('maincourante/tags/messages.html', context=render_messages(messages))
 
 
 ############
@@ -188,6 +184,35 @@ def message_delete(request, evenement, message):
         event.save()
 
     return redirect(reverse('add-message', args=[evenement.slug]))
+
+@login_required
+def message_last(request, evenement):
+
+    deleted = request.GET.get('deleted')
+    if deleted:
+        deleted = deleted == '1'
+    else:
+        deleted = True
+
+    tools = request.GET.get('tools')
+    if tools:
+        tools = tools == '1'
+    else:
+        tools = False
+
+    messages = MessageThread.objects.filter(evenement=evenement)
+    if not deleted:
+        messages = messages.exclude(events__type=MessageEvent.TYPE.suppression.value)
+    messages = messages.all()[:10]
+
+    c = {
+        'evenement': evenement,
+        'messages': messages,
+        'deleted': deleted,
+        'tools': tools,
+    }
+
+    return render_to_response('maincourante/tags/messages.html', context=c)
 
 
 ##############

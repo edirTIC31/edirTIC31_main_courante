@@ -15,7 +15,6 @@ urlpatterns = [
     url(r'^$', 'maincourante.views.evenement_list', name='list-evenements'),
     url(r'^add/$', 'maincourante.views.evenement_add', name='add-evenement'),
     url(r'^(?P<evenement>[-\w]+)/live/$', 'maincourante.views.evenement_live', name='live'),
-    url(r'^(?P<evenement>[-\w]+)/live/update/$', 'maincourante.views.evenement_live_update', name='live-update'),
     url(r'^(?P<evenement>[-\w]+)/report/$', 'maincourante.views.evenement_report', name='report'),
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),
@@ -26,6 +25,7 @@ urlpatterns = [
     url(r'^(?P<evenement>[-\w]+)/$', 'maincourante.views.message_add', name='add-message'),
     url(r'^(?P<evenement>[-\w]+)/message/(?P<message>[0-9]+)/edit/$', 'maincourante.views.message_edit', name='edit-message'),
     url(r'^(?P<evenement>[-\w]+)/message/(?P<message>[0-9]+)/delete/$', 'maincourante.views.message_delete', name='delete-message'),
+    url(r'^(?P<evenement>[-\w]+)/message/last/$', 'maincourante.views.message_last', name='last-messages'),
     url(r'^(?P<evenement>[-\w]+)/angular/$', MainView.as_view(), name='add-message-js'),
     url(r'^(?P<evenement>[-\w]+)/$', 'maincourante.views.message_edit', name='add-message'),
 ]

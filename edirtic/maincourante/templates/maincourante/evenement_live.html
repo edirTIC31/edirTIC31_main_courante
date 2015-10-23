@@ -20,7 +20,7 @@
 {{ block.super }}
 <script type="text/javascript">
 window.setInterval(function() {
-    $.get("{% url 'live-update' evenement.slug %}", function(data, status) {
+    $.get("{% url 'last-messages' evenement.slug %}?deleted=0", function(data, status) {
         $("#messages-content").html(data);
     });
 }, 2000);

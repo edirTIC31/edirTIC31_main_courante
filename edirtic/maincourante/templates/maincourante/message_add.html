@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load bootstrap3 %}
+{% load message_tags %}
 
 {% block saisitab %} class="active"{% endblock %}
 
@@ -43,36 +44,9 @@
     </div>
 </div>
 
-{% for message in messages %}
-<div class="panel panel-info">
-    <div class="panel-heading">
-        {{ message.events.last.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
-        <div class="pull-right">
-            {% if message.modified %}
-            <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</span>
-            {% endif %}
-            <a href="#" class="btn btn-primary btn-xs" data-thread="{{ message.id }}" data-action="{% url 'edit-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-edit"><span class="glyphicon glyphicon-edit"></span></a>
-            <a href="#" class="btn btn-danger btn-xs" data-action="{% url 'delete-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-delete"><span class="glyphicon glyphicon-trash"></span></a>
-        </div>
-    </div>
-    <ul class="list-group">
-        {% for event in message.events.all %}
-        <li class="list-group-item">
-            {% if message.modified %}
-                <p class="pull-right text-danger"><em>version du {{ event.cree }}</em></p>
-                {% if forloop.first %}
-                <p id="thread-{{ message.id }}">{{ event.corps }}</p>
-                {% else %}
-                <p class="text-muted">{{ event.corps }}</p>
-                {% endif %}
-            {% else %}
-            <p id="thread-{{ message.id }}">{{ event.corps }}</p>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+<div id="messages-content">
+{% render_messages messages tools=True %}
 </div>
-{% endfor %}
 
 <div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-md">
@@ -156,5 +130,12 @@ $('#confirm-edit').on('show.bs.modal', function(e) {
     //input.focus();
     //input.select();
 });
+</script>
+<script type="text/javascript">
+window.setInterval(function() {
+    $.get("{% url 'last-messages' evenement.slug %}?deleted=0&tools=1", function(data, status) {
+        $("#messages-content").html(data);
+    });
+}, 5000);
 </script>
 {% endblock %}

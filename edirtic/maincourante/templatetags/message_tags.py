@@ -4,16 +4,18 @@ from django import template
 register = template.Library()
 
 
-@register.inclusion_tag('maincourante/tags/message.html')
-def render_message(message):
+@register.inclusion_tag('maincourante/tags/message.html', takes_context=True)
+def render_message(context, message, tools=False):
     return {
+        'evenement': context['evenement'],
         'message': message,
+        'tools': tools,
     }
 
-@register.inclusion_tag('maincourante/tags/messages.html')
-def render_messages(messages, deleted=True, notify_empty=True):
+@register.inclusion_tag('maincourante/tags/messages.html', takes_context=True)
+def render_messages(context, messages, tools=False):
     return {
+        'evenement': context['evenement'],
         'messages': messages,
-        'deleted': deleted,
-        'notify_empty': notify_empty,
+        'tools': tools,
     }

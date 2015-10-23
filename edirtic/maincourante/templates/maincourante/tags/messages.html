@@ -1,14 +1,10 @@
 {% load message_tags %}
 {% for message in messages %}
-{% if deleted or not message.deleted %}
-{% render_message message %}
-{% endif %}
+{% render_message message tools=tools %}
 {% empty %}
-{% if notify_empty %}
 <div class="panel panel-info">
     <div class="panel-body">
         <em>Aucun message.</em>
     </div>
 </div>
-{% endif %}
 {% endfor %}
