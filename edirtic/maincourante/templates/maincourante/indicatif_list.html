@@ -33,7 +33,12 @@
     {% if indicatifs %}
     <ul class="list-group">
         {% for indicatif in indicatifs %}
-        <li class="list-group-item">{{ indicatif }}</li>
+        <li class="list-group-item">
+            {{ indicatif }}
+            {% if not indicatif.deleted %}
+            <a href="{% url 'delete-indicatif' evenement.slug indicatif.pk %}" class="pull-right btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></a>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
     {% else %}

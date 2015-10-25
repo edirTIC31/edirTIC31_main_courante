@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/indicatifs/$', 'maincourante.views.indicatif_list', name='list-indicatifs'),
+    url(r'^(?P<evenement>[-\w]+)/manage/indicatifs/(?P<indicatif>[0-9]+)/delete/$', 'maincourante.views.indicatif_delete', name='delete-indicatif'),
     # Indicatifs
     url(r'^(?P<evenement>[-\w]+)/indicatifs/$', 'maincourante.views.indicatif_search', name='search-indicatif'),
     # Message

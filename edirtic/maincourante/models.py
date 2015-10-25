@@ -35,6 +35,7 @@ class Indicatif(Model):
 
     evenement = ForeignKey(Evenement)
     nom = CharField(max_length=32)
+    deleted = BooleanField(default=False)
 
     def __str__(self):
         return self.nom

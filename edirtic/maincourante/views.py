@@ -239,13 +239,26 @@ def indicatif_list(request, evenement):
     })
 
 @login_required
+def indicatif_delete(request, evenement, indicatif):
+
+    if evenement.clos:
+        raise PermissionDenied
+
+    indicatif = get_object_or_404(Indicatif, pk=indicatif, deleted=False)
+
+    indicatif.deleted = True
+    indicatif.save()
+
+    return redirect(reverse('list-indicatifs', args=[evenement.slug]))
+
+@login_required
 def indicatif_search(request, evenement):
 
     term = request.GET.get('query')
     if not term:
         raise Http404
 
-    indicatifs = Indicatif.objects.filter(evenement=evenement, nom__icontains=term)[:10]
+    indicatifs = Indicatif.objects.filter(evenement=evenement, deleted=False, nom__icontains=term)[:10]
 
     response = []
     for indicatif in indicatifs:
