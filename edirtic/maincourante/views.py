@@ -245,7 +245,7 @@ def indicatif_search(request, evenement):
     if not term:
         raise Http404
 
-    indicatifs = Indicatif.objects.filter(nom__icontains=term)[:10]
+    indicatifs = Indicatif.objects.filter(evenement=evenement, nom__icontains=term)[:10]
 
     response = []
     for indicatif in indicatifs:
