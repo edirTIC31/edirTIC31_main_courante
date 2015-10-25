@@ -135,6 +135,15 @@ def message_add(request, evenement, message=None):
         event = MessageEvent(thread=thread, operateur=request.user,
                 corps=form.cleaned_data['corps']).save()
 
+        reponse = form.cleaned_data['reponse']
+        if reponse:
+            thread = MessageThread(evenement=evenement,
+                    expediteur=recipiendaire,
+                    recipiendaire=expediteur)
+            thread.save()
+            event = MessageEvent(thread=thread, operateur=request.user,
+                    corps=reponse).save()
+
         return redirect(reverse('add-message', args=[evenement.slug]))
 
     return render(request, 'maincourante/message_add.html', {
