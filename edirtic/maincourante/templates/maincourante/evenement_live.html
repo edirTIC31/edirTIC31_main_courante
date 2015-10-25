@@ -23,6 +23,6 @@ window.setInterval(function() {
     $.get("{% url 'last-messages' evenement.slug %}?deleted=0", function(data, status) {
         $("#messages-content").html(data);
     });
-}, 2000);
+}, 5000);
 </script>
 {% endblock %}
