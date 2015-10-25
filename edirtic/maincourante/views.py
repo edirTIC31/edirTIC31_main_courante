@@ -117,13 +117,13 @@ def message_add(request, evenement, message=None):
 
         expediteur = form.cleaned_data['expediteur']
         try:
-            expediteur = Indicatif.objects.get(nom=expediteur)
+            expediteur = Indicatif.objects.get(evenement=evenement,nom=expediteur)
         except Indicatif.DoesNotExist:
             expediteur = Indicatif(evenement=evenement, nom=expediteur)
             expediteur.save()
         recipiendaire = form.cleaned_data['recipiendaire']
         try:
-            recipiendaire = Indicatif.objects.get(nom=recipiendaire)
+            recipiendaire = Indicatif.objects.get(evenement=evenement,nom=recipiendaire)
         except Indicatif.DoesNotExist:
             recipiendaire = Indicatif(evenement=evenement, nom=recipiendaire)
             recipiendaire.save()
