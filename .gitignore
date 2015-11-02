@@ -2,6 +2,7 @@
 *.swp
 *.swo
 *.sqlite3
+*.orig
 edirtic/conf
 edirtic/static_dest
 edirtic/edirtic/local_settings.py
