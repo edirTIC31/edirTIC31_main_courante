@@ -1,0 +1,40 @@
+<div class="panel panel-{% if message.deleted %}default{% else %}info{% endif %}">
+    <div class="panel-heading">
+        {{ message.events.last.cree }}
+        |
+        <b>{{ message.recipiendaire }}</b> de <b>{{ message.expediteur }}</b>
+        |
+        message saisi par <b>{{ message.events.last.operateur }}</b>
+        <div class="pull-right">
+            {% if message.modified %}
+            <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</span>
+            {% endif %}
+            {% if tools %}
+            <a href="#" class="btn btn-primary btn-xs" data-thread="{{ message.id }}" data-action="{% url 'edit-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-edit"><span class="glyphicon glyphicon-edit"></span></a>
+            <a href="#" class="btn btn-danger btn-xs" data-action="{% url 'delete-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-delete"><span class="glyphicon glyphicon-trash"></span></a>
+            {% endif %}
+        </div>
+    </div>
+    <ul class="list-group">
+        {% for event in message.events.all %}
+        <li class="list-group-item">
+            {% if event.get_type_display == 'suppression' %}
+                <p class="pull-right text-danger"><em>supprimé le {{ event.cree }} par {{ event.operateur }}</em></p>
+                <p class="text-danger">Message supprimé : {{ event.corps }}</p>
+            {% elif message.deleted %}
+                <p class="pull-right text-danger"><em>version du {{ event.cree }} par {{ event.operateur }}</em></p>
+                <p class="text-muted">{{ event.corps }}</p>
+            {% elif message.modified %}
+                <p class="pull-right text-danger"><em>version du {{ event.cree }} par {{ event.operateur }}</em></p>
+                {% if forloop.first %}
+                    <p id="thread-{{ message.id }}">{{ event.corps }}</p>
+                {% else %}
+                    <p class="text-muted">{{ event.corps }}</p>
+                {% endif %}
+            {% else %}
+                <p id="thread-{{ message.id }}">{{ event.corps }}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>

@@ -12,9 +12,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='evenement',
-            name='slug',
-            field=models.SlugField(default='marathon-2015', unique=True, max_length=32),
-            preserve_default=False,
+            model_name='indicatif',
+            name='deleted',
+            field=models.BooleanField(default=False),
         ),
     ]

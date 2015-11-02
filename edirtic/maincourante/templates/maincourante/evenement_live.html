@@ -1,0 +1,28 @@
+{% extends 'maincourante/base.html' %}
+
+{% load message_tags %}
+
+{% block livetab %} class="active"{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1>{{ evenement.nom }}</h1>
+    </div>
+</div>
+
+<div id="messages-content">
+{% render_messages messages %}
+</div>
+{% endblock %}
+
+{% block js_end %}
+{{ block.super }}
+<script type="text/javascript">
+window.setInterval(function() {
+    $.get("{% url 'last-messages' evenement.slug %}?deleted=0", function(data, status) {
+        $("#messages-content").html(data);
+    });
+}, 5000);
+</script>
+{% endblock %}

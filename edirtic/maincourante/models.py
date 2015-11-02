@@ -8,7 +8,7 @@ from django.db.models import Model, CharField, BooleanField, DateTimeField, \
 MAX_LENGTH = 100
 
 
-__all__ = ['Evenement', 'Indicatif', 'Message']
+__all__ = ['Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
 
 
 def enum_to_choices(enum):
@@ -16,8 +16,8 @@ def enum_to_choices(enum):
 
 
 class TimeStampedModel(Model):
-    cree = DateTimeField('créé', auto_now_add=True)
-    modifie = DateTimeField('modifié', auto_now=True)
+    cree = DateTimeField('créé', auto_now_add=True, editable=False)
+    modifie = DateTimeField('modifié', auto_now=True, editable=False)
 
 
 class Evenement(TimeStampedModel):
@@ -38,32 +38,47 @@ class Evenement(TimeStampedModel):
 class Indicatif(Model):
     class Meta:
         ordering = ['nom']
+        unique_together = ['evenement', 'nom']
 
     evenement = ForeignKey(Evenement)
-    nom = CharField(max_length=32, unique=True)
+    nom = CharField(max_length=32)
+    deleted = BooleanField(default=False)
 
     def __str__(self):
         return self.nom
 
 
-class Message(TimeStampedModel):
-    TYPE = IntEnum('type d’opération', 'creation suppression modification')
+class MessageThread(Model):
 
     class Meta:
         ordering = ['-pk']
 
     evenement = ForeignKey(Evenement)
-    type = IntegerField(choices=enum_to_choices(TYPE), default=TYPE.creation.value)
-    parent = ForeignKey('self', null=True, related_name='enfants')
-    operateur = ForeignKey(User)
-    expediteur = CharField(max_length=MAX_LENGTH, null=True)
-    recipiendaire = CharField('destinataire', max_length=MAX_LENGTH, null=True)
-    corps = TextField(null=True)
-    suppression = CharField('raison de la suppression', max_length=MAX_LENGTH, null=True)
+    expediteur = ForeignKey(Indicatif, related_name='+')
+    recipiendaire = ForeignKey(Indicatif, related_name='+')
+
+    @property
+    def modified(self):
+        return self.events.filter(type=MessageEvent.TYPE.modification.value).exists()
 
     @property
     def deleted(self):
-        return bool(self.suppression)
+        return self.events.first().type == MessageEvent.TYPE.suppression.value
 
     def __str__(self):
-        return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.corps)
+        return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.first().__str__())
+
+class MessageEvent(TimeStampedModel):
+
+    TYPE = IntEnum('type d’évènement', 'creation suppression modification')
+
+    class Meta:
+        ordering = ['-pk']
+
+    thread = ForeignKey(MessageThread, related_name='events')
+    type = IntegerField(choices=enum_to_choices(TYPE), default=TYPE.creation.value)
+    operateur = ForeignKey(User)
+    corps = TextField()
+
+    def __str__(self):
+        return "%s" % self.corps

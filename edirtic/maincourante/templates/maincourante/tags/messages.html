@@ -1,0 +1,10 @@
+{% load message_tags %}
+{% for message in messages %}
+{% render_message message tools=tools %}
+{% empty %}
+<div class="panel panel-info">
+    <div class="panel-body">
+        <em>Aucun message.</em>
+    </div>
+</div>
+{% endfor %}

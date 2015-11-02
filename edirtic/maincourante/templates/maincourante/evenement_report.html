@@ -1,5 +1,7 @@
 {% extends 'maincourante/base.html' %}
 
+{% load message_tags %}
+
 {% block reporttab %} class="active"{% endblock %}
 
 {% block content %}
@@ -17,47 +19,5 @@
         <p><a href="javascript:window.print()"><span class="glyphicon glyphicon-print"></span>&#160;Imprimer</a>
     </div>
 </div>
-{% if messages %}
-{% for message in messages %}
-<div class="panel panel-{% if message.deleted %}default{% else %}info{% endif %}">
-    <div class="panel-heading">
-        {{ message.cree }} | de <b>{{ message.expediteur }}</b> à <b>{{ message.recipiendaire }}</b>
-        {% if message.enfants.count and message.deleted %}
-        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié puis supprimé</p>
-        {% elif message.enfants.count %}
-        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</p>
-        {% elif message.deleted %}
-        <p class="pull-right text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message supprimé</p>
-        {% endif %}
-    </div>
-    <div class="panel-body">
-        {% if message.enfants.count %}
-        <p class="pull-right text-danger"><em>version du {{ message.cree }}</em></p>
-        {% endif %}
-        {% if message.deleted %}
-        <p class="text-muted">{{ message.corps }}</p>
-        <p class="text-danger">Motif de la suppression : {{ message.suppression }}</p>
-        {% else %}
-        {{ message.corps }}
-        {% endif %}
-    </div>
-    {% if message.enfants.count %}
-    <ul class="list-group">
-        {% for enfant in message.enfants.all %}
-        <li class="list-group-item">
-            <p class="pull-right text-danger"><em>version du {{ enfant.cree }}</em></p>
-            <p class="text-muted">{{ enfant.corps }}</p>
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-</div>
-{% endfor %}
-{% else %}
-<div class="panel panel-info">
-    <div class="panel-body">
-        <em>Aucun message.</em>
-    </div>
-</div>
-{% endif %}
+{% render_messages messages %}
 {% endblock %}
