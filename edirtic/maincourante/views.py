@@ -1,4 +1,4 @@
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
@@ -21,7 +21,8 @@ class MainView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
-        kwargs['object_list'] = Evenement.objects.get(clos=False).message_set.all()
+        kwargs['object_list'] = Evenement.objects.filter(clos=False).first().message_set.all()
+        # TODO: vraiment gérer le cas où plusieurs evenements ne sont pas clos…
         return super().get_context_data(**kwargs)
 
 
@@ -29,20 +30,9 @@ class MainView(LoginRequiredMixin, CreateView):
 # Evenements #
 ##############
 
-@login_required
-def evenement_list(request):
 
-    open_evenements = Evenement.objects.filter(clos=False)
-
-    #if open_evenements.count() == 1:
-    #    return redirect(reverse('add-message', args=[open_evenements.first().slug]))
-
-    closed_evenements = Evenement.objects.filter(clos=True)
-
-    return render(request, 'maincourante/evenement_list.html', {
-        'open_evenements': open_evenements,
-        'closed_evenements': closed_evenements,
-    })
+class EvenementListView(LoginRequiredMixin, ListView):
+    model = Evenement
 
 
 class EvenementCreateView(LoginRequiredMixin, CreateView):

@@ -7,31 +7,18 @@
     <img src="{% static 'img/logo-crf.png' %}" />
 </div>
 
-<h2>Évènements en cours</h2>
+{% regroup evenement_list by clos as evenement_grouper %}
+{% for evenement_group in evenement_grouper %}
+<h2>Évènements {% if evenement_group.grouper %}passés{% else %}en cours{% endif %}</h2>
 <ul class="list-group">
-    {% if open_evenements %}
-    {% for evenement in open_evenements %}
+    {% for evenement in evenement_group.list %}
     <a class="list-group-item" href="{% url 'add-message' evenement.slug %}">
         <h4>{{ evenement }}</h4>
     </a>
+    {% empty %}
+    <li class="list-group-item"><em>Aucun évènement {% if evenemnt_group.grouper %}passé{% else %}en cours{% endif %}.</em></li>
     {% endfor %}
-    {% else %}
-    <li class="list-group-item"><em>Aucun évènement en cours.</em></li>
-    {% endif %}
 </ul>
-
-<hr />
-
-<h2>Évènements passés</h2>
-<ul class="list-group">
-    {% if closed_evenements %}
-    {% for evenement in closed_evenements %}
-    <a class="list-group-item" href="{% url 'report' evenement.slug %}">
-        <h4>{{ evenement }}</h4>
-    </a>
-    {% endfor %}
-    {% else %}
-    <li class="list-group-item"><em>Aucun évènement passé.</em></li>
-    {% endif %}
-</ul>
+{% if not forloop.last %}<hr />{% endif %}
+{% endfor %}
 {% endblock %}

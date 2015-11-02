@@ -1,5 +1,6 @@
 from enum import IntEnum
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db.models import Model, CharField, BooleanField, DateTimeField, \
         ForeignKey, IntegerField, TextField, SlugField
 
@@ -20,6 +21,9 @@ class TimeStampedModel(Model):
 
 
 class Evenement(TimeStampedModel):
+    class Meta:
+        ordering = ['clos', 'cree']
+
     nom = CharField(max_length=MAX_LENGTH)
     slug = SlugField(max_length=32, unique=True)
     clos = BooleanField(default=False)
@@ -28,7 +32,8 @@ class Evenement(TimeStampedModel):
         return '%s%s' % (self.nom, ' (clos)' if self.clos else '')
 
     def get_absolute_url(self):
-        return reverse('add-message', args=[evenement.slug])
+        return reverse('add-message', args=[self.slug])
+
 
 class Indicatif(Model):
     class Meta:

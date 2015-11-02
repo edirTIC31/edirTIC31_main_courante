@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from tastypie.api import Api
 
 from .api import *
-from .views import MainView, EvenementCreateView
+from .views import MainView, EvenementCreateView, EvenementListView
 
 v1_api = Api(api_name='v1')
 v1_api.register(MessageResource())
@@ -12,7 +12,7 @@ v1_api.register(IndicatifResource())
 urlpatterns = [
     url(r'^api/', include(v1_api.urls)),
     # Evenement
-    url(r'^$', 'maincourante.views.evenement_list', name='list-evenements'),
+    url(r'^$', EvenementListView.as_view(), name='list-evenements'),
     url(r'^add/$', EvenementCreateView.as_view(), name='add-evenement'),
     url(r'^(?P<evenement>[-\w]+)/report/$', 'maincourante.views.evenement_report', name='report'),
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
