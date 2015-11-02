@@ -1,13 +1,12 @@
 from django import forms
 from django.forms.models import modelform_factory
 
-from .models import MAX_LENGTH, Evenement, Indicatif
+from .models import MAX_LENGTH, Indicatif
 
 
-__all__ = ['EvenementForm', 'IndicatifForm', 'ClotureForm']
+__all__ = ['IndicatifForm', 'ClotureForm']
 
 
-EvenementForm = modelform_factory(Evenement, fields=['nom', 'slug'])
 IndicatifForm = modelform_factory(Indicatif, fields=['nom'])
 
 

@@ -44,18 +44,11 @@ def evenement_list(request):
         'closed_evenements': closed_evenements,
     })
 
-@login_required
-def evenement_add(request):
 
-    form = EvenementForm(request.POST or None)
+class EvenementCreateView(LoginRequiredMixin, CreateView):
+    model = Evenement
+    fields = ['nom', 'slug']
 
-    if request.method == 'POST' and form.is_valid():
-        evenement = form.save()
-        return redirect(reverse('add-message', args=[evenement.slug]))
-
-    return render(request, 'maincourante/evenement_add.html', {
-        'form': form,
-    })
 
 @login_required
 def evenement_manage(request, evenement):

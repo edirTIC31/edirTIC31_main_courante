@@ -27,6 +27,8 @@ class Evenement(TimeStampedModel):
     def __str__(self):
         return '%s%s' % (self.nom, ' (clos)' if self.clos else '')
 
+    def get_absolute_url(self):
+        return reverse('add-message', args=[evenement.slug])
 
 class Indicatif(Model):
     class Meta:
