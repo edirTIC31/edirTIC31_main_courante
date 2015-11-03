@@ -8,7 +8,7 @@ from django.db.models import Model, CharField, BooleanField, DateTimeField, \
 MAX_LENGTH = 100
 
 
-__all__ = ['Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
+__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
 
 
 def enum_to_choices(enum):
@@ -64,6 +64,13 @@ class MessageThread(Model):
     @property
     def deleted(self):
         return self.events.first().type == MessageEvent.TYPE.suppression.value
+
+    def get_last_version(self):
+        events = self.events.filter(type=MessageEvent.TYPE.modification.value)
+        if events.exists():
+            return events.first()
+        else:
+            return self.events.get(type=MessageEvent.TYPE.creation.value)
 
     def __str__(self):
         return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.first().__str__())

@@ -13,22 +13,6 @@ from .forms import *
 from .templatetags.message_tags import render_messages
 
 
-class MainView(LoginRequiredMixin, CreateView):
-    model = MessageThread
-    fields = ('expediteur', 'recipiendaire', 'corps')
-    success_url = '/'
-
-    def form_valid(self, form):
-        form.instance.operateur = self.request.user
-        form.instance.evenement = Evenement.objects.get(clos=False)
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        kwargs['object_list'] = Evenement.objects.filter(clos=False).first().message_set.all()
-        # TODO: vraiment gérer le cas où plusieurs evenements ne sont pas clos…
-        return super().get_context_data(**kwargs)
-
-
 ##############
 # Evenements #
 ##############
@@ -264,3 +248,12 @@ def indicatif_search(request, evenement):
     }
 
     return JsonResponse(c, safe=False)
+
+###########
+# Angular #
+###########
+
+@login_required
+def message_angular(request, evenement):
+
+    return render(request, 'maincourante/message_angular.html')
