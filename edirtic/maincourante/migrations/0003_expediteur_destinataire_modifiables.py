@@ -34,13 +34,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='messageevent',
             name='destinataire',
-            field=models.ForeignKey(related_name='+', to='maincourante.Indicatif', default='TODO'),
+            field=models.ForeignKey(related_name='+', to='maincourante.Indicatif', default=0),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='messageevent',
             name='expediteur',
-            field=models.ForeignKey(related_name='+', to='maincourante.Indicatif', default='TODO'),
+            field=models.ForeignKey(related_name='+', to='maincourante.Indicatif', default=0),
             preserve_default=False,
         ),
         migrations.AddField(
