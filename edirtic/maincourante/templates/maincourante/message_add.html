@@ -20,9 +20,9 @@
         <form method="post" class="form-horizontal">
             {% csrf_token %}
 			<div class="form-group">
-			    <label class="col-md-3 control-label" for="id_recipiendaire">Destinataire</label>
+			    <label class="col-md-3 control-label" for="id_destinataire">Destinataire</label>
                 <div class="col-md-6">
-                    <input class="form-control" id="id_recipiendaire" maxlength="100" name="recipiendaire" placeholder="Destinataire" required="required" title="" type="text" autofocus />
+                    <input class="form-control" id="id_destinataire" maxlength="100" name="destinataire" placeholder="Destinataire" required="required" title="" type="text" autofocus />
                 </div>
             </div>
 			<div class="form-group">
@@ -113,10 +113,10 @@ $('input[name="expediteur"]').autocomplete({
     $('input[name="expediteur"]').val(data.data);
   }
 });
-$('input[name="recipiendaire"]').autocomplete({
+$('input[name="destinataire"]').autocomplete({
   serviceUrl: "{% url 'search-indicatif' evenement.slug %}",
   onSelect: function (data) {
-    $('input[name="recipiendaire"]').val(data.data);
+    $('input[name="destinataire"]').val(data.data);
   }
 });
 </script>

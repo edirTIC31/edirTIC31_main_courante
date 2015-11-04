@@ -17,7 +17,7 @@ function MessageFactory() {
         id: null,
         corps: null,
         expediteur: null,
-        recipiendaire: null,
+        destinataire: null,
         oldMessage: null,
         edit: false,
         showHistory: false,
@@ -29,7 +29,7 @@ function MessageFactory() {
             this.id = data.id;
             this.corps = data.corps;
             this.expediteur = data.expediteur;
-            this.recipiendaire = data.recipiendaire;
+            this.destinataire = data.destinataire;
             this.cree = new Date(data.cree);
             this.displayCreationDate = new Date(data.cree);
             this.parent = data.parent;
@@ -42,7 +42,7 @@ function MessageFactory() {
             return ""
         },
         isValid: function (){
-            return (this.corps != null && this.corps != "" && this.expediteur != null && this.expediteur != "" && this.recipiendaire != null && this.recipiendaire != "")
+            return (this.corps != null && this.corps != "" && this.expediteur != null && this.expediteur != "" && this.destinataire != null && this.destinataire != "")
         },
         enableEdition: function(){
             this.edit = true;
@@ -84,7 +84,7 @@ function MessageManagerFactory(Message, $q, $http) {
                 .success(function (data) {
                     var newMessage = new Message();
                     newMessage.expediteur = message.expediteur;
-                    newMessage.recipiendaire = message.recipiendaire;
+                    newMessage.destinataire = message.destinataire;
                     newMessage.corps = message.oldMessage;
                     newMessage.parent = message.id;
                     _this.add(newMessage, message).then(

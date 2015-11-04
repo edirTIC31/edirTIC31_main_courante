@@ -22,7 +22,7 @@ class EvenementListView(LoginRequiredMixin, ListView):
 
 class EvenementCreateView(LoginRequiredMixin, CreateView):
     model = Evenement
-    fields = ['nom', 'slug']
+    fields = ['nom']
 
 
 @login_required
@@ -63,8 +63,7 @@ def evenement_report(request, evenement):
 @login_required
 def evenement_live(request, evenement):
 
-    messages = MessageThread.objects.filter(evenement=evenement)\
-            .exclude(events__type=MessageEvent.TYPE.suppression.value).all()[:10]
+    messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
     return render(request, 'maincourante/evenement_live.html', {
         'messages': messages,
     })
@@ -84,41 +83,24 @@ def message_add(request, evenement, message=None):
 
     if request.method == 'POST' and form.is_valid():
 
-        expediteur = form.cleaned_data['expediteur']
-        try:
-            expediteur = Indicatif.objects.get(evenement=evenement, nom=expediteur)
-        except Indicatif.DoesNotExist:
-            expediteur = Indicatif(evenement=evenement, nom=expediteur)
-            expediteur.save()
-        recipiendaire = form.cleaned_data['recipiendaire']
-        try:
-            recipiendaire = Indicatif.objects.get(evenement=evenement, nom=recipiendaire)
-        except Indicatif.DoesNotExist:
-            recipiendaire = Indicatif(evenement=evenement, nom=recipiendaire)
-            recipiendaire.save()
-
-        thread = MessageThread(evenement=evenement,
-                expediteur=expediteur,
-                recipiendaire=recipiendaire)
+        expediteur, destinataire = (Indicatif.objects.get_or_create(evenement=evenement, nom=form.cleaned_data[nom])[0]
+                for nom in ['expediteur', 'destinataire'])
+        thread = MessageThread(evenement=evenement)
         thread.save()
-        MessageEvent(thread=thread, operateur=request.user,
+        MessageEvent(thread=thread, operateur=request.user, expediteur=expediteur, destinataire=destinataire,
                 corps=form.cleaned_data['corps']).save()
 
         reponse = form.cleaned_data['reponse']
         if reponse:
-            thread = MessageThread(evenement=evenement,
-                    expediteur=recipiendaire,
-                    recipiendaire=expediteur)
+            thread = MessageThread(evenement=evenement)
             thread.save()
-            MessageEvent(thread=thread, operateur=request.user,
+            MessageEvent(thread=thread, operateur=request.user, expediteur=destinataire, destinataire=expediteur,
                     corps=reponse).save()
 
         return redirect(reverse('add-message', args=[evenement.slug]))
 
     return render(request, 'maincourante/message_add.html', {
-        'messages': MessageThread.objects.filter(evenement=evenement)\
-                .exclude(events__type=MessageEvent.TYPE.suppression.value)\
-                .all()[:10],
+        'messages': MessageThread.objects.filter(evenement=evenement).all()[:10],
         'add_form': form,
         'edit_form': edit_form,
         'delete_form': delete_form,
@@ -130,7 +112,7 @@ def message_edit(request, evenement, message):
 
     thread = get_object_or_404(MessageThread, evenement=evenement, id=message)
 
-    if thread.events.first().type == MessageEvent.TYPE.suppression.value:
+    if thread.deleted:
         raise Http404
 
     form = EditMessageForm(request.POST)
@@ -138,7 +120,6 @@ def message_edit(request, evenement, message):
     if form.is_valid():
 
         event = MessageEvent(thread=thread, operateur=request.user,
-                type=MessageEvent.TYPE.modification.value,
                 corps=form.cleaned_data['corps'])
         event.save()
 
@@ -151,17 +132,15 @@ def message_delete(request, evenement, message):
 
     thread = get_object_or_404(MessageThread, evenement=evenement, id=message)
 
-    if thread.events.first().type == MessageEvent.TYPE.suppression.value:
+    if thread.deleted:
         raise Http404
 
     form = DeleteMessageForm(request.POST)
 
     if form.is_valid():
 
-        event = MessageEvent(thread=thread, operateur=request.user,
-                type=MessageEvent.TYPE.suppression.value,
-                corps=form.cleaned_data['raison'])
-        event.save()
+        thread.suppression = form.cleandel_data['raison']
+        thread.save()
 
     return redirect(reverse('add-message', args=[evenement.slug]))
 
@@ -181,10 +160,7 @@ def message_last(request, evenement):
     else:
         tools = False
 
-    messages = MessageThread.objects.filter(evenement=evenement)
-    if not deleted:
-        messages = messages.exclude(events__type=MessageEvent.TYPE.suppression.value)
-    messages = messages.all()[:10]
+    messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
 
     c = {
         'evenement': evenement,

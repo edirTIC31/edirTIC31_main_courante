@@ -21,7 +21,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
             return;
         }
         message.expediteur = $scope.from.title ? $scope.from.title: $scope.from.originalObject;
-        message.recipiendaire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
+        message.destinataire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
 		message.corps = $scope.body;
 		if(!message.isValid()){
             return;
@@ -123,7 +123,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         $scope.indicatifs = [];
         angular.forEach($scope.messages, function (message, key) {
             addIndicatifs(message.expediteur);
-            addIndicatifs(message.recipiendaire);
+            addIndicatifs(message.destinataire);
         });
     }
 

@@ -40,7 +40,7 @@ class Message:
         self.evenement = thread.evenement
         last_version = thread.events.last()
         self.sender = last_version.expediteur.nom
-        self.receiver = last_version.recipiendaire.nom
+        self.receiver = last_version.destinataire.nom
         self.body = last_version.corps
         self.timestamp = last_version.cree
 

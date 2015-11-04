@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import BooleanField, CharField, DateTimeField, ForeignKey, Model, SlugField, TextField
 
+from autoslug import AutoSlugField
+
 MAX_LENGTH = 100
 
 __all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
@@ -17,7 +19,7 @@ class Evenement(TimeStampedModel):
         ordering = ['clos', 'cree']
 
     nom = CharField(max_length=MAX_LENGTH)
-    slug = SlugField(max_length=32, unique=True)
+    slug = AutoSlugField(populate_from='nom', unique=True)
     clos = BooleanField(default=False)
 
     def __str__(self):
@@ -57,7 +59,7 @@ class MessageThread(Model):
         return self.suppression is not None
 
     def __str__(self):
-        return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.last())
+        return "%s" % self.events.last()
 
 
 class MessageEvent(TimeStampedModel):
@@ -72,4 +74,4 @@ class MessageEvent(TimeStampedModel):
     corps = TextField()
 
     def __str__(self):
-        return "%s" % self.corps
+        return "[%s -> %s] %s" % (self.expediteur, self.destinataire, self.corps)

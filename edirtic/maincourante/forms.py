@@ -11,7 +11,7 @@ IndicatifForm = modelform_factory(Indicatif, fields=['nom'])
 
 class MessageForm(forms.Form):
 
-    recipiendaire = forms.CharField(max_length=MAX_LENGTH)
+    destinataire = forms.CharField(max_length=MAX_LENGTH)
     expediteur = forms.CharField(max_length=MAX_LENGTH)
     corps = forms.CharField()
     reponse = forms.CharField(required=False)
