@@ -159,6 +159,12 @@ def message_last(request, evenement):
     else:
         deleted = True
 
+    history = request.GET.get('history')
+    if history:
+        history = history == '1'
+    else:
+        history = True
+
     tools = request.GET.get('tools')
     if tools:
         tools = tools == '1'
@@ -170,8 +176,9 @@ def message_last(request, evenement):
     c = {
         'evenement': evenement,
         'messages': messages,
-        'deleted': deleted,
-        'tools': tools,
+        'show_deleted': deleted,
+        'show_history': history,
+        'show_tools': tools,
     }
 
     return render_to_response('maincourante/tags/messages.html', context=c)

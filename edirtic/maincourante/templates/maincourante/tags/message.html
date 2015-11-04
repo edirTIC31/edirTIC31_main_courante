@@ -6,6 +6,7 @@
         |
         message saisi par <b>{{ message.operateur }}</b>
         <div class="pull-right">
+            {% if show_history %}
             {% if message.modified or message.deleted %}
             <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;
                 {% if message.modified and message.deleted %}
@@ -17,7 +18,8 @@
                 {% endif %}
             </span>
             {% endif %}
-            {% if tools %}
+            {% endif %}
+            {% if show_tools %}
             <a href="#" class="btn btn-primary btn-xs" data-thread="{{ message.id }}" data-action="{% url 'edit-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-edit"><span class="glyphicon glyphicon-edit"></span></a>
             <a href="#" class="btn btn-danger btn-xs" data-action="{% url 'delete-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-delete"><span class="glyphicon glyphicon-trash"></span></a>
             {% endif %}
@@ -30,6 +32,7 @@
             <p class="text-danger">Message supprimé : {{ message.suppression.raison }}</p>
         </li>
         {% endif %}
+        {% if show_history %}
         {% for version in message.versions.reverse.all %}
         <li class="list-group-item">
             {% if forloop.first %}
@@ -43,5 +46,10 @@
             {% endif %}
         </li>
         {% endfor %}
+        {% else %}
+        <li class="list-group-item">
+            <p id="thread-{{ message.id }}"{% if message.deleted %} class="text-muted"{% endif %}>{{ message.corps }}</p>
+        </li>
+        {% endif %}
     </ul>
 </div>
