@@ -16,28 +16,28 @@
         </div>
     </div>
     <ul class="list-group">
-        {% for version in message.versions.all %}
-        {% comment %}
-        Il faut corriger la suite …
-        {% endcomment %}
+        {% if message.deleted %}
         <li class="list-group-item">
-            {% if event.get_type_display == 'suppression' %}
-                <p class="pull-right text-danger"><em>supprimé le {{ event.cree }} par {{ event.operateur }}</em></p>
-                <p class="text-danger">Message supprimé : {{ event.corps }}</p>
-            {% elif message.deleted %}
-                <p class="pull-right text-danger"><em>version du {{ event.cree }} par {{ event.operateur }}</em></p>
-                <p class="text-muted">{{ event.corps }}</p>
-            {% elif message.modified %}
-                <p class="pull-right text-danger"><em>version du {{ event.cree }} par {{ event.operateur }}</em></p>
-                {% if forloop.first %}
-                    <p id="thread-{{ message.id }}">{{ event.corps }}</p>
-                {% else %}
-                    <p class="text-muted">{{ event.corps }}</p>
+            <p class="pull-right text-danger"><em>supprimé le FIXME par {{ event.operateur }}</em></p>
+            <p class="text-danger">Message supprimé : {{ message.suppression }}</p>
+        </li>
+        {% endif %}
+        {% for version in message.versions.reverse.all %}
+        <li class="list-group-item">
+            {% if forloop.first %}
+            <p id="thread-{{ message.id }}"{% if message.deleted %} class="text-muted"{% endif %}>
+                {% if message.deleted %}
+                <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
                 {% endif %}
+                {{ version.corps }}
+            </p>
             {% else %}
-                <p id="thread-{{ message.id }}">{{ event.corps }}</p>
+            <p class="text-muted">
+                <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
+                {{ version.corps }}
+            </p>
             {% endif %}
         </li>
-        {% endfor %}
+        {% endif %}
     </ul>
 </div>
