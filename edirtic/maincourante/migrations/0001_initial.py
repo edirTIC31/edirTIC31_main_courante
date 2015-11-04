@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
 from django.db import migrations, models
+from django.conf import settings
+import autoslug.fields
 
 
 class Migration(migrations.Migration):
@@ -15,8 +16,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Indicatif',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
                 ('nom', models.CharField(max_length=32)),
+                ('deleted', models.BooleanField(default=False)),
             ],
             options={
                 'ordering': ['nom'],
@@ -25,9 +27,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MessageThread',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('expediteur', models.ForeignKey(to='maincourante.Indicatif', related_name='+')),
-                ('recipiendaire', models.ForeignKey(to='maincourante.Indicatif', related_name='+')),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
+                ('suppression', models.CharField(max_length=250, default='')),
             ],
             options={
                 'ordering': ['-pk'],
@@ -36,31 +37,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TimeStampedModel',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('cree', models.DateTimeField(verbose_name='créé', auto_now_add=True)),
-                ('modifie', models.DateTimeField(verbose_name='modifié', auto_now=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
+                ('cree', models.DateTimeField(auto_now_add=True, verbose_name='créé')),
+                ('modifie', models.DateTimeField(auto_now=True, verbose_name='modifié')),
             ],
         ),
         migrations.CreateModel(
             name='Evenement',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(parent_link=True, primary_key=True, auto_created=True, to='maincourante.TimeStampedModel', serialize=False)),
+                ('timestampedmodel_ptr', models.OneToOneField(primary_key=True, to='maincourante.TimeStampedModel', auto_created=True, parent_link=True, serialize=False)),
                 ('nom', models.CharField(max_length=100)),
-                ('slug', models.SlugField(max_length=32, unique=True)),
+                ('slug', autoslug.fields.AutoSlugField(unique=True, populate_from='nom', editable=False)),
                 ('clos', models.BooleanField(default=False)),
             ],
+            options={
+                'ordering': ['clos', 'cree'],
+            },
             bases=('maincourante.timestampedmodel',),
         ),
         migrations.CreateModel(
-            name='MessageEvent',
+            name='MessageVersion',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(parent_link=True, primary_key=True, auto_created=True, to='maincourante.TimeStampedModel', serialize=False)),
-                ('type', models.IntegerField(choices=[(1, 'creation'), (2, 'suppression'), (3, 'modification')], default=1)),
+                ('timestampedmodel_ptr', models.OneToOneField(primary_key=True, to='maincourante.TimeStampedModel', auto_created=True, parent_link=True, serialize=False)),
                 ('corps', models.TextField()),
+                ('destinataire', models.ForeignKey(related_name='+', to='maincourante.Indicatif')),
+                ('expediteur', models.ForeignKey(related_name='+', to='maincourante.Indicatif')),
                 ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('thread', models.ForeignKey(related_name='versions', to='maincourante.MessageThread')),
             ],
             options={
-                'ordering': ['-pk'],
+                'ordering': ['pk'],
             },
             bases=('maincourante.timestampedmodel',),
         ),
@@ -68,11 +74,6 @@ class Migration(migrations.Migration):
             model_name='messagethread',
             name='evenement',
             field=models.ForeignKey(to='maincourante.Evenement'),
-        ),
-        migrations.AddField(
-            model_name='messageevent',
-            name='thread',
-            field=models.ForeignKey(to='maincourante.MessageThread', related_name='events'),
         ),
         migrations.AddField(
             model_name='indicatif',
