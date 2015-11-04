@@ -80,16 +80,16 @@ class MessageResource(Resource):
 
         return self.get_object_list(bundle.request)
 
-    def obj_get(self, bundle, **kwargs):
+    def get_thread(self, **kwargs):
 
         try:
-            pk = int(kwargs['pk'])
+            return get_object_or_404(MessageThread, pk=int(kwargs['pk']))
         except ValueError:
             raise Http404
-        thread = get_object_or_404(MessageThread, pk=pk)
-        message = Message(thread)
 
-        return message
+    def obj_get(self, bundle, **kwargs):
+
+        return Message(self.get_thread(**kwargs))
 
     def obj_create(self, bundle, **kwargs):
 
@@ -120,13 +120,7 @@ class MessageResource(Resource):
         return bundle
 
     def obj_update(self, bundle, **kwargs):
-
-        try:
-            pk = int(kwargs['pk'])
-        except ValueError:
-            raise Http404
-        thread = get_object_or_404(MessageThread, pk=pk)
-
+        thread = self.get_thread(**kwargs)
         last_version = thread.get_last_version()
 
         body = bundle.data.get('body')
@@ -146,11 +140,7 @@ class MessageResource(Resource):
 
     def obj_delete(self, bundle, **kwargs):
 
-        try:
-            pk = int(kwargs['pk'])
-        except ValueError:
-            raise Http404
-        thread = get_object_or_404(MessageThread, pk=pk)
+        thread = self.get_thread(**kwargs)
 
         try:
             reason = bundle.request.GET['reason']
