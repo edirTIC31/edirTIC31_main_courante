@@ -25,17 +25,13 @@
         {% for version in message.versions.reverse.all %}
         <li class="list-group-item">
             {% if forloop.first %}
-            <p id="thread-{{ message.id }}"{% if message.deleted %} class="text-muted"{% endif %}>
-                {% if message.deleted %}
-                <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
-                {% endif %}
-                {{ version.corps }}
-            </p>
+            {% if message.deleted %}
+            <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
+            {% endif %}
+            <p id="thread-{{ message.id }}"{% if message.deleted %} class="text-muted"{% endif %}>{{ version.corps }}</p>
             {% else %}
-            <p class="text-muted">
-                <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
-                {{ version.corps }}
-            </p>
+            <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
+            <p class="text-muted">{{ version.corps }}</p>
             {% endif %}
         </li>
         {% endfor %}
