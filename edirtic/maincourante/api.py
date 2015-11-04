@@ -7,7 +7,7 @@ from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.http import HttpBadRequest
 from tastypie.resources import ModelResource, Resource
 
-from .models import Evenement, Indicatif, MessageEvent, MessageThread
+from .models import Evenement, Indicatif, MessageThread, MessageVersion
 
 __all__ = ['IndicatifResource', 'MessageResource', 'EvenementResource']
 
@@ -104,7 +104,7 @@ class MessageResource(Resource):
         thread.save()
 
         user = bundle.request.user
-        event = MessageEvent(thread=thread, expediteur=sender, destinataire=receiver, operateur=user, corps=body)
+        event = MessageVersion(thread=thread, expediteur=sender, destinataire=receiver, operateur=user, corps=body)
         event.save()
 
         bundle.obj = Message(thread)
@@ -118,7 +118,7 @@ class MessageResource(Resource):
         body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receiver'])
         if body and body != last_version.corps and not thread.deleted:
             user = bundle.request.user
-            event = MessageEvent(thread=thread, operateur=user, corps=body, expediteur=sender, destinataire=receiver)
+            event = MessageVersion(thread=thread, operateur=user, corps=body, expediteur=sender, destinataire=receiver)
             event.save()
 
         bundle.obj = Message(thread)

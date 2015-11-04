@@ -6,7 +6,7 @@ from autoslug import AutoSlugField
 
 MAX_LENGTH = 100
 
-__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
+__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageVersion']
 
 
 class TimeStampedModel(Model):
@@ -52,26 +52,42 @@ class MessageThread(Model):
 
     @property
     def modified(self):
-        return self.events.count() > 1
+        return self.versions.count() > 1
 
     @property
     def deleted(self):
         return bool(self.suppression)
 
+    @property
+    def last_version(self):
+        return self.versions.last()
+
+    @property
+    def expediteur(self):
+        return self.last_version.expediteur
+
+    @property
+    def destinataire(self):
+        return self.last_version.destinataire
+
+    @property
+    def corps(self):
+        return self.last_version.corps
+
     def __str__(self):
-        return "%s" % self.events.last()
+        return str(self.last_version)
 
 
-class MessageEvent(TimeStampedModel):
+class MessageVersion(TimeStampedModel):
 
     class Meta:
         ordering = ['pk']
 
-    thread = ForeignKey(MessageThread, related_name='events')
+    thread = ForeignKey(MessageThread, related_name='versions')
     operateur = ForeignKey(User)
     expediteur = ForeignKey(Indicatif, related_name='+')
     destinataire = ForeignKey(Indicatif, related_name='+')
     corps = TextField()
 
     def __str__(self):
-        return "[%s -> %s] %s" % (self.expediteur, self.destinataire, self.corps)
+        return "[%s → %s] %s" % (self.expediteur, self.destinataire, self.corps)

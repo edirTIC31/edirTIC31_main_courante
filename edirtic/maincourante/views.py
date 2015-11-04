@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, ListView
 
 from .forms import ClotureForm, DeleteMessageForm, EditMessageForm, IndicatifForm, MessageForm
-from .models import Evenement, Indicatif, MessageEvent, MessageThread
+from .models import Evenement, Indicatif, MessageThread, MessageVersion
 
 
 ##############
@@ -87,14 +87,14 @@ def message_add(request, evenement, message=None):
                 for nom in ['expediteur', 'destinataire'])
         thread = MessageThread(evenement=evenement)
         thread.save()
-        MessageEvent(thread=thread, operateur=request.user, expediteur=expediteur, destinataire=destinataire,
+        MessageVersion(thread=thread, operateur=request.user, expediteur=expediteur, destinataire=destinataire,
                 corps=form.cleaned_data['corps']).save()
 
         reponse = form.cleaned_data['reponse']
         if reponse:
             thread = MessageThread(evenement=evenement)
             thread.save()
-            MessageEvent(thread=thread, operateur=request.user, expediteur=destinataire, destinataire=expediteur,
+            MessageVersion(thread=thread, operateur=request.user, expediteur=destinataire, destinataire=expediteur,
                     corps=reponse).save()
 
         return redirect(reverse('add-message', args=[evenement.slug]))
@@ -119,7 +119,8 @@ def message_edit(request, evenement, message):
 
     if form.is_valid():
 
-        event = MessageEvent(thread=thread, operateur=request.user,
+        # TODO: modifier aussi l’expéditeur et le destinataire
+        event = MessageVersion(thread=thread, operateur=request.user,
                 corps=form.cleaned_data['corps'])
         event.save()
 
