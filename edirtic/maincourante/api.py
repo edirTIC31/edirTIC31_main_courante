@@ -113,7 +113,7 @@ class MessageResource(Resource):
     def obj_update(self, bundle, **kwargs):
         thread = self.get_thread(**kwargs)
 
-        body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receivnr'])
+        body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receiver'])
         if body and body != thread.corps and not thread.deleted:
             user = bundle.request.user
             version = MessageVersion(thread=thread, operateur=user, corps=body, expediteur=sender, destinataire=receiver)
