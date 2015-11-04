@@ -121,6 +121,7 @@ def message_edit(request, evenement, message):
 
         # TODO: modifier aussi l’expéditeur et le destinataire
         event = MessageVersion(thread=thread, operateur=request.user,
+                expediteur=thread.expediteur, destinataire=thread.destinataire,
                 corps=form.cleaned_data['corps'])
         event.save()
 
