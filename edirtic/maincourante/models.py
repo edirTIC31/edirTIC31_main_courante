@@ -48,7 +48,7 @@ class MessageThread(Model):
         ordering = ['-pk']
 
     evenement = ForeignKey(Evenement)
-    suppression = CharField(max_length=250, null=True)
+    suppression = CharField(max_length=250, default='')
 
     @property
     def modified(self):
@@ -56,7 +56,7 @@ class MessageThread(Model):
 
     @property
     def deleted(self):
-        return self.suppression is not None
+        return bool(self.suppression)
 
     def __str__(self):
         return "%s" % self.events.last()
