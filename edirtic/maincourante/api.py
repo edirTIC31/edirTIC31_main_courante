@@ -103,16 +103,8 @@ class MessageResource(Resource):
 
         evenement = get_object_or_404(Evenement, slug=evenement)
 
-        try:
-            sender = Indicatif.objects.get(nom=sender)
-        except Indicatif.DoesNotExist:
-            sender = Indicatif(evenement=evenement, nom=sender)
-            sender.save()
-        try:
-            receiver = Indicatif.objects.get(nom=receiver)
-        except Indicatif.DoesNotExist:
-            receiver = Indicatif(evenement=evenement, nom=receiver)
-            receiver.save()
+        sender = Indicatif.objects.get_or_create(nom=sender, defaults={'evenement': evenement})[0]
+        receiver = Indicatif.objects.get_or_create(nom=receiver, defaults={'evenement': evenement})[0]
 
         thread = MessageThread(evenement=evenement,
                 expediteur=sender, recipiendaire=receiver)
