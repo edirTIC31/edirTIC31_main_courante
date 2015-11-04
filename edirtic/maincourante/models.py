@@ -66,7 +66,7 @@ class MessageThread(Model):
         return self.events.filter(type=MessageEvent.TYPE.suppression.value).exists()
 
     def get_last_version(self):
-        return self.events.filter(type__in=[MessageEvent.TYPE.modification.value, MessageEvent.TYPE.creation.value).first()
+        return self.events.filter(type__in=[MessageEvent.TYPE.modification.value, MessageEvent.TYPE.creation.value]).first()
 
     def __str__(self):
         return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.first().__str__())
