@@ -42,9 +42,9 @@ class Message:
     def __init__(self, thread):
         self.pk = thread.pk
         self.evenement = thread.evenement
-        self.sender = thread.expediteur.nom
-        self.receiver = thread.recipiendaire.nom
-        last_version = thread.get_last_version()
+        last_version = thread.events.last()
+        self.sender = last_version.expediteur.nom
+        self.receiver = last_version.recipiendaire.nom
         self.body = last_version.corps
         self.timestamp = last_version.cree
 
@@ -71,10 +71,7 @@ class MessageResource(Resource):
 
     def get_object_list(self, request):
 
-        threads = MessageThread.objects.all()
-        messages = [Message(thread) for thread in threads]
-
-        return messages
+        return [Message(thread) for thread in MessageThread.objects.all()]
 
     def obj_get_list(self, bundle, **kwargs):
 
@@ -103,16 +100,14 @@ class MessageResource(Resource):
 
         evenement = get_object_or_404(Evenement, slug=evenement)
 
-        sender = Indicatif.objects.get_or_create(nom=sender, defaults={'evenement': evenement})[0]
-        receiver = Indicatif.objects.get_or_create(nom=receiver, defaults={'evenement': evenement})[0]
+        sender = Indicatif.objects.get_or_create(nom=sender, evenement=evenement)[0]
+        receiver = Indicatif.objects.get_or_create(nom=receiver, evenement=evenement)[0]
 
-        thread = MessageThread(evenement=evenement,
-                expediteur=sender, recipiendaire=receiver)
+        thread = MessageThread(evenement=evenement)
         thread.save()
 
         user = bundle.request.user
-        event = MessageEvent(thread=thread,
-                operateur=user, corps=body)
+        event = MessageEvent(thread=thread, expediteur=sender, destinataire=receiver, operateur=user, corps=body)
         event.save()
 
         bundle.obj = Message(thread)
@@ -121,14 +116,12 @@ class MessageResource(Resource):
 
     def obj_update(self, bundle, **kwargs):
         thread = self.get_thread(**kwargs)
-        last_version = thread.get_last_version()
+        last_version = thread.events.last()
 
-        body = bundle.data.get('body')
+        body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receiver'])
         if body and body != last_version.corps and not thread.deleted:
             user = bundle.request.user
-            event = MessageEvent(thread=thread,
-                    operateur=user, corps=body,
-                    type=MessageEvent.TYPE.modification.value)
+            event = MessageEvent(thread=thread, operateur=user, corps=body, expediteur=sender, destinataire=receiver)
             event.save()
 
         bundle.obj = Message(thread)
@@ -148,11 +141,8 @@ class MessageResource(Resource):
             raise ImmediateHttpResponse(response=HttpBadRequest())
 
         if not thread.deleted:
-            user = bundle.request.user
-            event = MessageEvent(thread=thread,
-                    operateur=user, corps=reason,
-                    type=MessageEvent.TYPE.suppression.value)
-            event.save()
+            thread.suppression = reason
+            thread.save()
 
     def rollbacks(self, bundles):
         pass

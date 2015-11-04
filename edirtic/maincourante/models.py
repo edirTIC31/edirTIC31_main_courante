@@ -54,33 +54,28 @@ class MessageThread(Model):
         ordering = ['-pk']
 
     evenement = ForeignKey(Evenement)
-    expediteur = ForeignKey(Indicatif, related_name='+')
-    recipiendaire = ForeignKey(Indicatif, related_name='+')
+    suppression = CharField(max_length=250, null=True)
 
     @property
     def modified(self):
-        return self.events.filter(type=MessageEvent.TYPE.modification.value).exists()
+        return self.events.count() > 1
 
     @property
     def deleted(self):
-        return self.events.filter(type=MessageEvent.TYPE.suppression.value).exists()
-
-    def get_last_version(self):
-        return self.events.filter(type__in=[MessageEvent.TYPE.modification.value, MessageEvent.TYPE.creation.value]).first()
+        return self.suppression is not None
 
     def __str__(self):
-        return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.first().__str__())
+        return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.last())
 
 class MessageEvent(TimeStampedModel):
 
-    TYPE = IntEnum('type d’évènement', 'creation suppression modification')
-
     class Meta:
-        ordering = ['-pk']
+        ordering = ['pk']
 
     thread = ForeignKey(MessageThread, related_name='events')
-    type = IntegerField(choices=enum_to_choices(TYPE), default=TYPE.creation.value)
     operateur = ForeignKey(User)
+    expediteur = ForeignKey(Indicatif, related_name='+')
+    destinataire = ForeignKey(Indicatif, related_name='+')
     corps = TextField()
 
     def __str__(self):
