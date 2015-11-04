@@ -1,18 +1,13 @@
-from django.shortcuts import get_object_or_404
-from django.conf.urls import url
 from django.http import Http404
-
-from tastypie.resources import ModelResource, Resource
+from django.shortcuts import get_object_or_404
+from tastypie import fields
 from tastypie.authentication import Authentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.http import HttpBadRequest
-from tastypie import fields
+from tastypie.resources import ModelResource, Resource
 
-import json
-
-from .models import *
-
+from .models import Evenement, Indicatif, MessageEvent, MessageThread
 
 __all__ = ['IndicatifResource', 'MessageResource', 'EvenementResource']
 
@@ -37,6 +32,7 @@ class EvenementResource(ModelResource):
         authentication = BaseAuthentication()
         authorization = DjangoAuthorization()
 
+
 class Message:
 
     def __init__(self, thread):
@@ -47,6 +43,7 @@ class Message:
         self.receiver = last_version.recipiendaire.nom
         self.body = last_version.corps
         self.timestamp = last_version.cree
+
 
 class MessageResource(Resource):
 

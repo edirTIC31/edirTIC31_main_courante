@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 
 from tastypie.api import Api
 
-from .api import *
+from .api import EvenementResource, IndicatifResource, MessageResource
 from .views import EvenementCreateView, EvenementListView
 
 v1_api = Api(api_name='v1')

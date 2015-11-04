@@ -1,7 +1,6 @@
-from django.contrib.admin import ModelAdmin, site
+from django.contrib.admin import site
 
-from .models import *
-
+from .models import Evenement, Indicatif, MessageEvent, MessageThread
 
 site.register(Evenement)
 site.register(Indicatif)

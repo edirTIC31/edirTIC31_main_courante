@@ -1,13 +1,10 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db.models import Model, CharField, BooleanField, DateTimeField, \
-        ForeignKey, IntegerField, TextField, SlugField
-
+from django.db.models import BooleanField, CharField, DateTimeField, ForeignKey, Model, SlugField, TextField
 
 MAX_LENGTH = 100
 
 __all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
-
 
 
 class TimeStampedModel(Model):
@@ -61,6 +58,7 @@ class MessageThread(Model):
 
     def __str__(self):
         return "[%s -> %s] %s" % (self.expediteur, self.recipiendaire, self.events.last())
+
 
 class MessageEvent(TimeStampedModel):
 

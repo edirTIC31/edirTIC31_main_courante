@@ -1,16 +1,14 @@
-from django.views.generic import CreateView, ListView
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404, render_to_response
-from django.core.urlresolvers import reverse
-from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_http_methods
-from django.http import JsonResponse, Http404, HttpResponse
-
 from braces.views import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
+from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render, render_to_response
+from django.views.decorators.http import require_http_methods
+from django.views.generic import CreateView, ListView
 
-from .models import *
-from .forms import *
-from .templatetags.message_tags import render_messages
+from .forms import ClotureForm, DeleteMessageForm, EditMessageForm, IndicatifForm, MessageForm
+from .models import Evenement, Indicatif, MessageEvent, MessageThread
 
 
 ##############
@@ -35,6 +33,7 @@ def evenement_manage(request, evenement):
 
     return redirect(reverse('cloture-evenement', args=[evenement.slug]))
 
+
 @login_required
 def evenement_cloture(request, evenement):
 
@@ -52,12 +51,14 @@ def evenement_cloture(request, evenement):
         'form': form,
     })
 
+
 @login_required
 def evenement_report(request, evenement):
 
     return render(request, 'maincourante/evenement_report.html', {
         'messages': MessageThread.objects.filter(evenement=evenement),
     })
+
 
 @login_required
 def evenement_live(request, evenement):
@@ -73,6 +74,7 @@ def evenement_live(request, evenement):
 # Messages #
 ############
 
+
 @login_required
 def message_add(request, evenement, message=None):
 
@@ -84,13 +86,13 @@ def message_add(request, evenement, message=None):
 
         expediteur = form.cleaned_data['expediteur']
         try:
-            expediteur = Indicatif.objects.get(evenement=evenement,nom=expediteur)
+            expediteur = Indicatif.objects.get(evenement=evenement, nom=expediteur)
         except Indicatif.DoesNotExist:
             expediteur = Indicatif(evenement=evenement, nom=expediteur)
             expediteur.save()
         recipiendaire = form.cleaned_data['recipiendaire']
         try:
-            recipiendaire = Indicatif.objects.get(evenement=evenement,nom=recipiendaire)
+            recipiendaire = Indicatif.objects.get(evenement=evenement, nom=recipiendaire)
         except Indicatif.DoesNotExist:
             recipiendaire = Indicatif(evenement=evenement, nom=recipiendaire)
             recipiendaire.save()
@@ -99,7 +101,7 @@ def message_add(request, evenement, message=None):
                 expediteur=expediteur,
                 recipiendaire=recipiendaire)
         thread.save()
-        event = MessageEvent(thread=thread, operateur=request.user,
+        MessageEvent(thread=thread, operateur=request.user,
                 corps=form.cleaned_data['corps']).save()
 
         reponse = form.cleaned_data['reponse']
@@ -108,7 +110,7 @@ def message_add(request, evenement, message=None):
                     expediteur=recipiendaire,
                     recipiendaire=expediteur)
             thread.save()
-            event = MessageEvent(thread=thread, operateur=request.user,
+            MessageEvent(thread=thread, operateur=request.user,
                     corps=reponse).save()
 
         return redirect(reverse('add-message', args=[evenement.slug]))
@@ -121,6 +123,7 @@ def message_add(request, evenement, message=None):
         'edit_form': edit_form,
         'delete_form': delete_form,
     })
+
 
 @login_required
 def message_edit(request, evenement, message):
@@ -141,6 +144,7 @@ def message_edit(request, evenement, message):
 
     return redirect(reverse('add-message', args=[evenement.slug]))
 
+
 @login_required
 @require_http_methods(["POST"])
 def message_delete(request, evenement, message):
@@ -160,6 +164,7 @@ def message_delete(request, evenement, message):
         event.save()
 
     return redirect(reverse('add-message', args=[evenement.slug]))
+
 
 @login_required
 def message_last(request, evenement):
@@ -195,6 +200,7 @@ def message_last(request, evenement):
 # Indicatifs #
 ##############
 
+
 @login_required
 def indicatif_list(request, evenement):
 
@@ -214,6 +220,7 @@ def indicatif_list(request, evenement):
         'form': form,
     })
 
+
 @login_required
 def indicatif_delete(request, evenement, indicatif):
 
@@ -226,6 +233,7 @@ def indicatif_delete(request, evenement, indicatif):
     indicatif.save()
 
     return redirect(reverse('list-indicatifs', args=[evenement.slug]))
+
 
 @login_required
 def indicatif_search(request, evenement):
@@ -249,9 +257,11 @@ def indicatif_search(request, evenement):
 
     return JsonResponse(c, safe=False)
 
+
 ###########
 # Angular #
 ###########
+
 
 @login_required
 def message_angular(request, evenement):
