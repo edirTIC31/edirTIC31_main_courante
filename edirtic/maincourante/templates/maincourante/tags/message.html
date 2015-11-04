@@ -6,8 +6,16 @@
         |
         message saisi par <b>{{ message.operateur }}</b>
         <div class="pull-right">
-            {% if message.modified %}
-            <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</span>
+            {% if message.modified or message.deleted %}
+            <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;
+                {% if message.modified and message.deleted %}
+                Message modifié puis supprimé
+                {% elif message.modified %}
+                Message modifié
+                {% elif message.deleted %}
+                Message supprimé
+                {% endif %}
+            </span>
             {% endif %}
             {% if tools %}
             <a href="#" class="btn btn-primary btn-xs" data-thread="{{ message.id }}" data-action="{% url 'edit-message' evenement.slug message.id %}" data-toggle="modal" data-target="#confirm-edit"><span class="glyphicon glyphicon-edit"></span></a>
@@ -18,14 +26,14 @@
     <ul class="list-group">
         {% if message.deleted %}
         <li class="list-group-item">
-            <p class="pull-right text-danger"><em>supprimé le FIXME par {{ event.operateur }}</em></p>
-            <p class="text-danger">Message supprimé : {{ message.suppression }}</p>
+            <p class="pull-right text-danger"><em>supprimé le {{ message.suppression.cree }} par {{ message.suppression.operateur }}</em></p>
+            <p class="text-danger">Message supprimé : {{ message.suppression.raison }}</p>
         </li>
         {% endif %}
         {% for version in message.versions.reverse.all %}
         <li class="list-group-item">
             {% if forloop.first %}
-            {% if message.deleted %}
+            {% if message.deleted or message.versions.count > 1 %}
             <p class="pull-right text-danger"><em>version du {{ version.cree }} par {{ version.operateur }}</em></p>
             {% endif %}
             <p id="thread-{{ message.id }}"{% if message.deleted %} class="text-muted"{% endif %}>{{ version.corps }}</p>

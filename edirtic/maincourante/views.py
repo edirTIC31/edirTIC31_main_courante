@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, ListView
 
 from .forms import ClotureForm, DeleteMessageForm, EditMessageForm, IndicatifForm, MessageForm
-from .models import Evenement, Indicatif, MessageThread, MessageVersion
+from .models import Evenement, Indicatif, MessageThread, MessageVersion, MessageSuppression
 
 
 ##############
@@ -141,7 +141,10 @@ def message_delete(request, evenement, message):
 
     if form.is_valid():
 
-        thread.suppression = form.cleaned_data['raison']
+        suppression = MessageSuppression(operateur=request.user,
+                raison=form.cleaned_data['raison'])
+        suppression.save()
+        thread.suppression = suppression
         thread.save()
 
     return redirect(reverse('add-message', args=[evenement.slug]))

@@ -6,7 +6,8 @@ from autoslug import AutoSlugField
 
 MAX_LENGTH = 100
 
-__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageVersion']
+__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', \
+        'MessageVersion', 'MessageSuppression']
 
 
 class TimeStampedModel(Model):
@@ -42,13 +43,19 @@ class Indicatif(Model):
         return self.nom
 
 
+class MessageSuppression(TimeStampedModel):
+
+    operateur = ForeignKey(User)
+    raison = TextField()
+
+
 class MessageThread(Model):
 
     class Meta:
         ordering = ['-pk']
 
     evenement = ForeignKey(Evenement)
-    suppression = CharField(max_length=250, default='')
+    suppression = ForeignKey(MessageSuppression, null=True)
 
     @property
     def modified(self):
@@ -56,7 +63,7 @@ class MessageThread(Model):
 
     @property
     def deleted(self):
-        return bool(self.suppression)
+        return self.suppression is not None
 
     @property
     def last_version(self):
