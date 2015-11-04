@@ -38,10 +38,10 @@ class Message:
     def __init__(self, thread):
         self.pk = thread.pk
         self.evenement = thread.evenement
-        self.sender = thread.last_version.expediteur.nom
-        self.receiver = thread.last_version.destinataire.nom
-        self.body = thread.last_version.corps
-        self.timestamp = thread.last_version.cree
+        self.sender = thread.expediteur.nom
+        self.receiver = thread.destinataire.nom
+        self.body = thread.corps
+        self.timestamp = thread.cree
 
 
 class MessageResource(Resource):
@@ -113,8 +113,8 @@ class MessageResource(Resource):
     def obj_update(self, bundle, **kwargs):
         thread = self.get_thread(**kwargs)
 
-        body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receiver'])
-        if body and body != thread.last_version.corps and not thread.deleted:
+        body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receivnr'])
+        if body and body != thread.corps and not thread.deleted:
             user = bundle.request.user
             version = MessageVersion(thread=thread, operateur=user, corps=body, expediteur=sender, destinataire=receiver)
             version.save()

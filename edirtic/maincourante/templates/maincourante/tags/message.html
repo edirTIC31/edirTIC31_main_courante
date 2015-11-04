@@ -1,10 +1,10 @@
 <div class="panel panel-{% if message.deleted %}default{% else %}info{% endif %}">
     <div class="panel-heading">
-        {{ message.events.last.cree }}
+        {{ message.last_version.cree }}
         |
         <b>{{ message.destinataire }}</b> de <b>{{ message.expediteur }}</b>
         |
-        message saisi par <b>{{ message.events.last.operateur }}</b>
+        message saisi par <b>{{ message.operateur }}</b>
         <div class="pull-right">
             {% if message.modified %}
             <span class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>&#160;Message modifié</span>
@@ -16,7 +16,10 @@
         </div>
     </div>
     <ul class="list-group">
-        {% for event in message.events.all %}
+        {% for version in message.versions.all %}
+        {% comment %}
+        Il faut corriger la suite …
+        {% endcomment %}
         <li class="list-group-item">
             {% if event.get_type_display == 'suppression' %}
                 <p class="pull-right text-danger"><em>supprimé le {{ event.cree }} par {{ event.operateur }}</em></p>

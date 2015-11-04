@@ -63,6 +63,18 @@ class MessageThread(Model):
         return self.versions.last()
 
     @property
+    def cree(self):
+        return self.versions.first().cree
+
+    @property
+    def modifie(self):
+        return self.last_version.cree
+
+    @property
+    def operateur(self):
+        return self.last_version.operateur
+
+    @property
     def expediteur(self):
         return self.last_version.expediteur
 
