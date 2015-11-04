@@ -141,7 +141,7 @@ def message_delete(request, evenement, message):
 
     if form.is_valid():
 
-        thread.suppression = form.cleandel_data['raison']
+        thread.suppression = form.cleaned_data['raison']
         thread.save()
 
     return redirect(reverse('add-message', args=[evenement.slug]))
