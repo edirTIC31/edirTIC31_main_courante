@@ -1,4 +1,3 @@
-from enum import IntEnum
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Model, CharField, BooleanField, DateTimeField, \
@@ -7,12 +6,8 @@ from django.db.models import Model, CharField, BooleanField, DateTimeField, \
 
 MAX_LENGTH = 100
 
-
 __all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageEvent']
 
-
-def enum_to_choices(enum):
-    return ((item.value, item.name) for item in list(enum))
 
 
 class TimeStampedModel(Model):
