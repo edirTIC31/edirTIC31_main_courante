@@ -59,7 +59,10 @@ class Message:
         self.operateur = thread.operateur
         self.receiver = thread.destinataire.nom
         self.body = thread.corps
-        self.timestamp = thread.modifie
+        self.timestamp = thread.creeq
+        self.deleted = thread.deleted
+        self.modified = thread.modified
+
 
 
 class MessageResource(Resource):
@@ -71,8 +74,11 @@ class MessageResource(Resource):
     operateur = fields.CharField(attribute='operateur')
     body = fields.CharField(attribute='body')
     timestamp = fields.DateTimeField(attribute='timestamp')
+    deleted = fields.BooleanField(attribute='deleted')
+    modified = fields.BooleanField(attribute='modified')
 
     class Meta:
+        always_return_data = True
         resource_name = 'message'
         collection_name = 'messages'
         list_allowed_methods = ['get', 'post']

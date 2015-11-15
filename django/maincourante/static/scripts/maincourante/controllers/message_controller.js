@@ -22,6 +22,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         message.sender = $scope.sender.title ? $scope.sender.title: $scope.sender.originalObject;
         message.receiver = $scope.receiver.title ? $scope.receiver.title: $scope.receiver.originalObject;
         message.evenement = 'marathon-2015';
+
 		message.body = $scope.body;
 		if(!message.isValid()){
             return;
@@ -31,6 +32,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                 $scope.body = null;
 //                $scope.$broadcast('angucomplete-alt:clearInput', 'from');
 //                $scope.$broadcast('angucomplete-alt:clearInput', 'to');
+                $scope.messages.push(message);
                 $scope.$broadcast('angucomplete-alt:changeInput', 'ex1');
             },
             function(errorPayload) {
@@ -135,6 +137,7 @@ angular.module('edir.maincourante.controllers').controller('ModalInstanceCtrl', 
     $scope.ok = function () {
         MessageManager.delete(message, $scope.suppressionMessage).then(
          function(message) {
+             message.deleted = true;
              $modalInstance.close();
          },
          function(errorPayload) {

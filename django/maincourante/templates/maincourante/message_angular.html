@@ -79,8 +79,10 @@
         <div ng-hide="message.parentId">
             <div ng-class="{ 'panel': true, 'panel-info': !message.deleted ,'panel-default': message.deleted}">
                 <div class="panel-heading">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> | message saisi par <b>{$ message.operateur $} </b>
-                    <span ng-if="message.deleted">| Message supprimé: {$ message.deleted $}</span>
                     <div class="pull-right">
+                        <span ng-if="message.deleted and message.modified">Message modifié puis supprimé</span>
+                        <span ng-if="!(message.deleted and message.modified) and message.deleted">Message supprimé</span>
+                        <span ng-if="!(message.deleted and message.modified) and message.modified">Message modifié</span>
                         <a ng-hide="message.edit || message.deleted" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-edit"></span></a>
                         <a ng-hide="message.edit || message.deleted" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span></a>
                         <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>Valider</a>

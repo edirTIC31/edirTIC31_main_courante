@@ -10,6 +10,8 @@ function MessageFactory() {
     function Message(data) {
         if (data) {
             this.setMessage(data);
+        }else{
+            this.getAsObject();
         }
     }
 
@@ -24,6 +26,7 @@ function MessageFactory() {
         cree: null,
         operateur: null,
         deleted: null,
+        modified: null,
         displayCreationDate: null,
         timestamp: null,
         setMessage: function (data) {
@@ -38,6 +41,7 @@ function MessageFactory() {
             self.operateur = data.operateur;
             self.timestamp = data.timestamp;
             self.deleted = data.deleted;
+            self.modified = data.modified;
         },
         getAsObject: function () {
             var self = this;
@@ -51,6 +55,7 @@ function MessageFactory() {
                 operateur: self.operateur,
                 cree: self.timestamp,
                 deleted: self.deleted,
+                modified: self.modified,
                 displayCreationDate: null,
                 timestamp: self.timestamp
             };
@@ -85,7 +90,7 @@ function MessageManagerFactory(Message, $q, $http) {
             var deferred = $q.defer();
             $http.post(entry_point, message)
              .success(function (data) {
-                deferred.resolve({message: message});
+                deferred.resolve(new Message(data));
              })
              .error(function () {
                 deferred.reject();
