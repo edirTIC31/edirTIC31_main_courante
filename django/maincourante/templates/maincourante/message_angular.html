@@ -2,8 +2,13 @@
 
 {% load staticfiles %}
 {% load bootstrap3 %}
+{% load message_tags %}
 
 {% block saisitab %} class="active"{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+{% endblock %}
 
 {% block content %}
 <diV ng-app="maincouranteApp">
@@ -15,13 +20,14 @@
         </div>
         <div class="panel-body">
             <form class="form-horizontal">
+            {% csrf_token %}
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Destinataire</label>
-                    <div class="col-sm-10">
+			    <label class="col-md-3 control-label" for="id_destinataire">Destinataire</label>
+                <div class="col-md-6">
                         <angucomplete-alt id="to"
                                           placeholder="Destinataire"
                                           pause="100"
-                                          selected-object="to"
+                                          selected-object="receiver"
                                           local-data="indicatifs"
                                           search-fields="name"
                                           title-field="name"
@@ -32,12 +38,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Expéditeur</label>
-                    <div class="col-sm-10">
+                    <label class="col-md-3 control-label">Expéditeur</label>
+                    <div class="col-md-6">
                         <angucomplete-alt id="from"
                                           placeholder="Expéditeur"
                                           pause="100"
-                                          selected-object="from"
+                                          selected-object="sender"
                                           local-data="indicatifs"
                                           search-fields="name"
                                           title-field="name"
@@ -48,16 +54,20 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Message</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Message" ng-model="body">
+                    <label class="col-md-3 control-label">Message</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="body" ng-model="body" placeholder="Message">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" ng-click="addMessage()" class="btn btn-default">Envoyer</button>
+                    <label class="col-md-3 control-label" for="id_reponse">Réponse</label>
+                    <div class="col-md-6">
+                        <input class="form-control" id="id_reponse" name="reponse" placeholder="Message" title="" type="text" />
                     </div>
                 </div>
+                {% buttons layout="horizontal" %}
+                        <button type="submit" ng-click="addMessage()" class="btn btn-primary">Envoyer</button>
+                {% endbuttons %}
             </form>
         </div>
     </div>
@@ -67,27 +77,20 @@
     </div>
     <div ng-repeat="message in messages | orderBy: '-displayCreationDate' ">
         <div ng-hide="message.parentId">
-            <div ng-class="{ 'panel': true, 'panel-default': !message.suppression ,'panel-danger': message.suppression}">
-                <div class="panel-heading">de <b>{$ message.expediteur $}</b> à <b>{$ message.destinataire $} </b>créé le {$ message.displayCreationDate | date:"dd/MM/yyyy 'à' HH:mm" $}
+            <div ng-class="{ 'panel': true, 'panel-info': !message.suppression ,'panel-default': message.suppression}">
+                <div class="panel-heading">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> |
                     <span ng-if="message.suppression">| Message supprimé: {$ message.suppression $}</span>
-                    <div class="btn-group pull-right">
-                        <a ng-hide="message.edit || message.suppression" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-pencil"></span>&#160;Editter</a>
-                        <a ng-hide="message.edit || !message.history" class="btn btn-warning btn-xs"  ng-click="toggleMessageHistory(message)" ><span class="glyphicon glyphicon-time"></span>&#160;Historique</a>
-                        <a ng-hide="message.edit || message.suppression" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span>&#160;Supprimer</a>
-                        <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>&#160;Valider</a>
-                        <a ng-show="message.edit" class="btn btn-warning btn-xs"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>&#160;Annuler</a>
+                    <div class="pull-right">
+                        <a ng-hide="message.edit || message.suppression" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a ng-hide="message.edit || message.suppression" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span></a>
+                        <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>Valider</a>
+                        <a ng-show="message.edit" class="btn btn-warning btn-xs"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>Annuler</a>
                     </div>
                 </div>
-                <div class="panel-body" ng-class="{ 'panel-body': true, 'panel-body-danger': message.suppression}">
-                    <div ng-hide="message.edit">{$ message.corps $}</div>
+                <div class="panel-body">
+                    <div ng-hide="message.edit">{$ message.body $}</div>
                         <div ng-show="message.edit">
-                            <input type="text" class="form-control" value="message.corps" ng-model="message.corps" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
-                        </div>
-                        <div ng-if="message.showHistory">
-                            <div ng-repeat="history in message.history | orderBy: '-displayCreationDate' ">
-                                <hr>
-                                <div class="panel-body panel-body-warning"  ng-hide="message.edit">{$ history.corps $} <span class="pull-right"> version du {$ history.displayCreationDate |  date:"dd/MM/yyyy 'à' HH:mm" $}</span></div>
-                            </div>
+                            <input type="text" class="form-control" value="message.corps" ng-model="message.body" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
                         </div>
                     </div>
                 </div>
@@ -122,7 +125,7 @@
     <script src="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.js" %}" ></script>
     <script src="{% static "scripts/bower_components/ng-focus-on/ng-focus-on.js" %}" ></script>
     <script src="{% static "scripts/maincourante/entities/message.js" %}" ></script>
-    <script src="{% static "scripts/maincourante/controllers/message_controller.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/controllers/message.controller.js" %}" ></script>
     <script src="{% static "scripts/maincourante/app.js" %}" ></script>
 
     <link rel="stylesheet" href="{% static "css/maincourante.css" %}">

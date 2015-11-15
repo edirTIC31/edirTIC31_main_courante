@@ -11,7 +11,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     $scope.childrenMessages = [];
     $scope.onMessageDelete = false;
     $scope.editionMode = false;
-    $scope.openHistory = new Array();
     $scope.indicatifs = new Array();
     $scope.errorMessage = null;
 
@@ -22,7 +21,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         }
         message.expediteur = $scope.from.title ? $scope.from.title: $scope.from.originalObject;
         message.destinataire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
-		message.corps = $scope.body;
+		message.body = $scope.body;
 		if(!message.isValid()){
             return;
         }
@@ -57,7 +56,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     }
 
     $scope.validateMessageEdition = function(message){
-        if(message.oldMessage == message.corps){
+        if(message.oldMessage == message.body){
             $scope.cancelMessageEdition(message);
             return;
         }
@@ -79,19 +78,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         $scope.editionMode = false;
     }
 
-    $scope.toggleMessageHistory = function(message){
-        if(message.showHistory){
-            var idx = $scope.openHistory.indexOf(message.id);
-            if(idx != -1) {
-                $scope.openHistory.splice(idx, 1);
-            }
-            message.showHistory = false;
-        }else{
-            $scope.openHistory.push(message.id);
-            message.showHistory = true;
-        }
-    }
-
     function loadMessages() {
         if($scope.editionMode){
             return;
@@ -99,7 +85,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         MessageManager.load().then(
             function (messages) {
                 $scope.messages = messages;
-                manageOpenHistoryMessage();
                 manageIndicatifs();
                 $scope.errorMessage = null;
             },
@@ -107,16 +92,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
                 $scope.errorMessage = "Erreur lors du chargement des messages";
             }
         );
-    }
-
-    function manageOpenHistoryMessage(){
-        angular.forEach($scope.openHistory, function (messageID, key) {
-            angular.forEach($scope.messages, function (message, key) {
-                if(messageID == message.id){
-                    message.showHistory = true;
-                }
-            });
-        });
     }
 
     function manageIndicatifs(){
@@ -162,7 +137,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     };
     loadMessages();
     focus('onNewMessage');
-    $interval(loadMessages, 10000);
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.

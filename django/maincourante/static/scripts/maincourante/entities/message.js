@@ -15,25 +15,27 @@ function MessageFactory() {
 
     Message.prototype = {
         id: null,
-        corps: null,
-        expediteur: null,
-        destinataire: null,
-        oldMessage: null,
+        evenement: null,
+        sender: null,
+        body: null,
+        receiver: null,
         edit: false,
-        showHistory: false,
+        previousBody: null,
         cree: null,
         parent: null,
         suppression: null,
         displayCreationDate: null,
+        timestamp: null,
         setMessage: function (data) {
             this.id = data.id;
-            this.corps = data.corps;
-            this.expediteur = data.expediteur;
-            this.destinataire = data.destinataire;
-            this.cree = new Date(data.cree);
-            this.displayCreationDate = new Date(data.cree);
+            this.evenement = data.evenement;
+            this.sender = data.sender;
+            this.receiver = data.receiver;
+            this.body = data.body;
+            this.cree = new Date(data.timestamp);
+            this.displayCreationDate = new Date(data.timestamp);
             this.parent = data.parent;
-            this.suppression = data.suppression;
+            this.timestamp = data.timestamp;
         },
         equals: function () {
             throw new Error("Not implemented");
@@ -42,15 +44,15 @@ function MessageFactory() {
             return ""
         },
         isValid: function (){
-            return (this.corps != null && this.corps != "" && this.expediteur != null && this.expediteur != "" && this.destinataire != null && this.destinataire != "")
+            return (this.body != null && this.body != "" && this.sender != null && this.sender != "" && this.receiver != null && this.receiver != "")
         },
         enableEdition: function(){
             this.edit = true;
-            this.oldMessage = this.corps;
+            this.previousBody = this.body;
         },
         cancelEdition: function(){
-            this.corps = this.oldMessage;
-            this.oldMessage = null;
+            this.corps = this.previousBody;
+            this.previousBody = null;
             this.edit = false;
         }
     };
@@ -61,14 +63,14 @@ function MessageManagerFactory(Message, $q, $http) {
     var entry_point = '/api/v1/message/';
     var messageManager = {
         ready: false,
-        add: function (message, oldMessage) {
+        add: function (message, previousMessage) {
             var deferred = $q.defer();
-            if(oldMessage != undefined){
-                message.parent = oldMessage.id;
+            if(previousMessage != undefined){
+                message.parent = previousMessage.id;
             }
             $http.post(entry_point, message)
              .success(function (data) {
-                deferred.resolve({message: message, oldMessage: oldMessage});
+                deferred.resolve({message: message, previousMessage: previousMessage});
              })
              .error(function () {
                 deferred.reject();
@@ -78,19 +80,15 @@ function MessageManagerFactory(Message, $q, $http) {
         modify: function (message) {
             var deferred = $q.defer();
             var _this = this;
-            var olCreationDate = message.cree;
-            message.cree = null;
             $http.put(entry_point+message.id, message)
                 .success(function (data) {
                     var newMessage = new Message();
-                    newMessage.expediteur = message.expediteur;
-                    newMessage.destinataire = message.destinataire;
-                    newMessage.corps = message.oldMessage;
+                    newMessage.sender = message.sender;
+                    newMessage.receiver = message.receiver;
+                    newMessage.body = message.previousMessage;
                     newMessage.parent = message.id;
                     _this.add(newMessage, message).then(
                         function(message) {
-                            message.oldMessage.cree = olCreationDate;
-                            message.oldMessage.edit = false;
                             deferred.resolve(message);
                         },
                         function(errorPayload) {
@@ -120,23 +118,10 @@ function MessageManagerFactory(Message, $q, $http) {
             $http.get(entry_point+"?format=json&limit=1000")
                 .success(function (data) {
                     var messages = new Array();
-                    if(data.objects != null){
-                        var childrenMessages = new Array();
-                        angular.forEach(data.objects, function (messageData, key) {
+                    if(data.messages != null){
+                        angular.forEach(data.messages, function (messageData, key) {
                             var message = new Message(messageData)
-                            if(message.parent) {
-                                var parentArray = childrenMessages[message.parent];
-                                if(!parentArray){
-                                    parentArray = new Array();
-                                }
-                                parentArray.push(message);
-                                childrenMessages[message.parent] = parentArray;
-                            }else{
-                                messages.push(message);
-                            }
-                        });
-                        angular.forEach(messages, function (message, key) {
-                           message.history = childrenMessages[message.id];
+                            messages.push(message);
                         });
                     }
                     deferred.resolve(messages);
