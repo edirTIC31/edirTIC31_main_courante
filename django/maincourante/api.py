@@ -13,7 +13,7 @@ from tastypie.constants import ALL
 
 from .models import Evenement, Indicatif, MessageThread, MessageVersion
 
-__all__ = ['IndicatifResource', 'MessageResource', 'EvenementResource']
+__all__ = ['User', 'IndicatifResource', 'MessageResource', 'EvenementResource']
 
 
 class BaseAuthentication(Authentication):
@@ -56,6 +56,7 @@ class Message:
         self.pk = thread.pk
         self.evenement = thread.evenement
         self.sender = thread.expediteur.nom
+        self.operateur = thread.operateur
         self.receiver = thread.destinataire.nom
         self.body = thread.corps
         self.timestamp = thread.modifie
@@ -67,6 +68,7 @@ class MessageResource(Resource):
     evenement = fields.ToOneField(EvenementResource, 'evenement')
     sender = fields.CharField(attribute='sender')
     receiver = fields.CharField(attribute='receiver')
+    operateur = fields.CharField(attribute='operateur')
     body = fields.CharField(attribute='body')
     timestamp = fields.DateTimeField(attribute='timestamp')
 
@@ -176,3 +178,15 @@ class MessageResource(Resource):
 
     def rollbacks(self, bundles):
         pass
+
+    def dehydrate_evenement(self, bundle):
+        return bundle.data['evenement'].upper()
+
+
+class IndicatifResource(ModelResource):
+
+    class Meta:
+        queryset = Indicatif.objects.all()
+        allowed_methods = ['get']
+        authentication = BaseAuthentication()
+        authorization = DjangoAuthorization()

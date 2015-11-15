@@ -15,27 +15,45 @@ function MessageFactory() {
 
     Message.prototype = {
         id: null,
-        evenement: null,
+        evenement: 1,
         sender: null,
         body: null,
         receiver: null,
         edit: false,
         previousBody: null,
         cree: null,
-        parent: null,
-        suppression: null,
+        operateur: null,
+        deleted: null,
         displayCreationDate: null,
         timestamp: null,
         setMessage: function (data) {
-            this.id = data.id;
-            this.evenement = data.evenement;
-            this.sender = data.sender;
-            this.receiver = data.receiver;
-            this.body = data.body;
-            this.cree = new Date(data.timestamp);
-            this.displayCreationDate = new Date(data.timestamp);
-            this.parent = data.parent;
-            this.timestamp = data.timestamp;
+            var self = this;
+            self.id = data.id;
+            self.evenement = data.evenement;
+            self.sender = data.sender;
+            self.receiver = data.receiver;
+            self.body = data.body;
+            self.cree = new Date(data.timestamp);
+            self.displayCreationDate = new Date(data.timestamp);
+            self.operateur = data.operateur;
+            self.timestamp = data.timestamp;
+            self.deleted = data.deleted;
+        },
+        getAsObject: function () {
+            var self = this;
+            return {
+                id: self.id,
+                sender: self.sender,
+                body: self.body,
+                receiver: self.receiver,
+                edit: self.edit,
+                previousBody: self.previousBody,
+                operateur: self.operateur,
+                cree: self.timestamp,
+                deleted: self.deleted,
+                displayCreationDate: null,
+                timestamp: self.timestamp
+            };
         },
         equals: function () {
             throw new Error("Not implemented");

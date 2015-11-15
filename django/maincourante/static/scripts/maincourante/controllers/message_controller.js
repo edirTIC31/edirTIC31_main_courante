@@ -16,24 +16,21 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
 
     $scope.addMessage = function(){
         var message = new Message();
-        if(!$scope.from || !$scope.to){
+        if(!$scope.sender || !$scope.receiver){
             return;
         }
-        message.expediteur = $scope.from.title ? $scope.from.title: $scope.from.originalObject;
-        message.destinataire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
+        message.sender = $scope.sender.title ? $scope.sender.title: $scope.sender.originalObject;
+        message.receiver = $scope.receiver.title ? $scope.receiver.title: $scope.receiver.originalObject;
+        message.evenement = 'marathon-2015';
 		message.body = $scope.body;
 		if(!message.isValid()){
             return;
         }
 		MessageManager.add(message).then(
             function(message) {
-                $scope.from = null;
-                $scope.to = null;
                 $scope.body = null;
-                $scope.$broadcast('angucomplete-alt:clearInput', 'from');
-                $scope.$broadcast('angucomplete-alt:clearInput', 'to');
-                loadMessages();
-                focus('onNewMessage');
+//                $scope.$broadcast('angucomplete-alt:clearInput', 'from');
+//                $scope.$broadcast('angucomplete-alt:clearInput', 'to');
                 $scope.$broadcast('angucomplete-alt:changeInput', 'ex1');
             },
             function(errorPayload) {
