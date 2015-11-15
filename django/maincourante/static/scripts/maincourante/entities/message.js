@@ -106,8 +106,7 @@ function MessageManagerFactory(Message, $q, $http) {
         },
         delete: function (message, suppressionMessage) {
             var deferred = $q.defer();
-            message.suppression = suppressionMessage;
-            $http.put(entry_point+"/"+message.id, message)
+            $http.delete(entry_point+message.id+"?reason="+suppressionMessage, message)
                 .success(function (data) {
                     deferred.resolve(message);
                 })

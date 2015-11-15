@@ -11,9 +11,9 @@ from tastypie.resources import ModelResource, Resource
 from tastypie.constants import ALL
 
 
-from .models import Evenement, Indicatif, MessageThread, MessageVersion
+from .models import Evenement, Indicatif, MessageThread, MessageVersion, MessageSuppression
 
-__all__ = ['User', 'IndicatifResource', 'MessageResource', 'EvenementResource']
+__all__ = ['IndicatifResource', 'MessageResource', 'EvenementResource']
 
 
 class BaseAuthentication(Authentication):
@@ -175,14 +175,14 @@ class MessageResource(Resource):
             raise ImmediateHttpResponse(response=HttpBadRequest())
 
         if not thread.deleted:
+            user = bundle.request.user
+            reason = MessageSuppression(raison=reason, operateur=user)
+            reason.save()
             thread.suppression = reason
             thread.save()
 
     def rollbacks(self, bundles):
         pass
-
-    def dehydrate_evenement(self, bundle):
-        return bundle.data['evenement'].upper()
 
 
 class IndicatifResource(ModelResource):
