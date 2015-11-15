@@ -81,14 +81,11 @@ function MessageManagerFactory(Message, $q, $http) {
     var entry_point = '/api/v1/message/';
     var messageManager = {
         ready: false,
-        add: function (message, previousMessage) {
+        add: function (message) {
             var deferred = $q.defer();
-            if(previousMessage != undefined){
-                message.parent = previousMessage.id;
-            }
             $http.post(entry_point, message)
              .success(function (data) {
-                deferred.resolve({message: message, previousMessage: previousMessage});
+                deferred.resolve({message: message});
              })
              .error(function () {
                 deferred.reject();
@@ -100,18 +97,7 @@ function MessageManagerFactory(Message, $q, $http) {
             var _this = this;
             $http.put(entry_point+message.id, message)
                 .success(function (data) {
-                    var newMessage = new Message();
-                    newMessage.sender = message.sender;
-                    newMessage.receiver = message.receiver;
-                    newMessage.body = message.previousMessage;
-                    newMessage.parent = message.id;
-                    _this.add(newMessage, message).then(
-                        function(message) {
-                            deferred.resolve(message);
-                        },
-                        function(errorPayload) {
-                            alert("Erreur lors de la sauvegarde de l'ancien message");
-                    });
+                    deferred.resolve(message);
                 })
                 .error(function () {
                     deferred.reject();

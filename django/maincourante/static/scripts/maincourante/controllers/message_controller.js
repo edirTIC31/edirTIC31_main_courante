@@ -59,7 +59,6 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         }
         MessageManager.modify(message).then(
             function(message) {
-                message.oldMessage.edit = false;
                 $scope.editionMode = false;
                 loadMessages();
                 focus('onNewMessage');
