@@ -3,9 +3,9 @@
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
-  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', '$modal', '$interval','focus', prepareMainController]);
+  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', 'IndicatifManager', '$modal', '$interval','focus', prepareMainController]);
 
-function prepareMainController($scope, Message, MessageManager, $modal, $interval, focus){
+function prepareMainController($scope, Message, MessageManager, IndicatifManager,  $modal, $interval, focus){
 	
 	$scope.messages = [];
     $scope.childrenMessages = [];
@@ -85,7 +85,6 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         MessageManager.load().then(
             function (messages) {
                 $scope.messages = messages;
-                manageIndicatifs();
                 $scope.errorMessage = null;
             },
             function (errorPayload) {
@@ -94,24 +93,16 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         );
     }
 
-    function manageIndicatifs(){
-        $scope.indicatifs = [];
-        angular.forEach($scope.messages, function (message, key) {
-            addIndicatifs(message.expediteur);
-            addIndicatifs(message.destinataire);
-        });
-    }
-
-    function addIndicatifs(indicatif){
-       var found = false;
-        angular.forEach($scope.indicatifs, function (indic, key) {
-            if(indic.name == indicatif){
-                found = true;
+    function loadIndicaifs(){
+        IndicatifManager.load().then(
+            function (indicatifs) {
+                $scope.indicatifs = indicatifs;
+                $scope.errorMessage = null;
+            },
+            function (errorPayload) {
+                $scope.errorMessage = "Erreur lors du chargement des messages";
             }
-        });
-        if(!found) {
-            $scope.indicatifs.push({"name": indicatif});
-        }
+        );
     }
 
     $scope.deleteMessage = function(message) {
@@ -136,6 +127,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
     loadMessages();
+    loadIndicaifs();
     focus('onNewMessage');
 }
 
