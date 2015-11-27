@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
+
 from django.conf.urls import include, url
 
 from tastypie.api import Api

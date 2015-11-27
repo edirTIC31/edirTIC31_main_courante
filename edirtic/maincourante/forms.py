@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
+
 from django import forms
 from django.forms.models import modelform_factory
 
