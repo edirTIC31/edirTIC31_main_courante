@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import BooleanField, CharField, DateTimeField, ForeignKey, Model, SlugField, TextField
