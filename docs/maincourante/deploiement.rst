@@ -6,39 +6,40 @@ Ce petit guide indique comment déployer le projet Django ``edirtic`` sur une Ra
 Installation de Raspbian
 ------------------------
 
-* Télécharger Raspbian sur https://www.raspberrypi.org/downloads/raspbian/
+* Télécharger `Raspbian Jessie Lite <https://downloads.raspberrypi.org/raspbian_lite_latest>`_.
 * Dézipper le fichier :
 
 .. code::
 
-    # unzip 2015-09-24-raspbian-jessie.zip
+    $ unzip 2015-11-21-raspbian-jessie-lite.zip
 
 * Copier l’image sur la carte SD (ici, celle-ci s’appelle ``mmcblk0``) :
 
 .. code::
 
-    # dd bs=4M if=2015-09-24-raspbian-jessie.img of=/dev/mmcblk0
+    $ sudo dd bs=4M if=2015-11-21-raspbian-jessie-lite.img of=/dev/mmcblk0
 
 * S’assurer que toutes les données ont bien été écrite :
 
 .. code::
 
-    # sync
+    $ sync
 
 * Retirer la carte SD puis la remettre pour provoquer une relecture des partitions par le noyau.
 
 * Monter la deuxième partition :
-  
+
 .. code::
 
-    # sudo mount /dev/mmcblk0p2 /mnt
+    $ sudo mount /dev/mmcblk0p2 /mnt
 
 * Rajouter une clef ssh pour se connecter en tant que root :
 
 .. code::
 
-    $ mkdir /mnt/root/.ssh
-    $ cp /home/<user>/.ssh/id_rsa.pub /mnt/root/.ssh/authorized_keys
+    $ sudo mkdir /mnt/root/.ssh
+    $ sudo cp /home/<user>/.ssh/id_rsa.pub /mnt/root/.ssh/authorized_keys
+    $ sudo umount /mnt
 
 
 Configuration de Raspbian
@@ -47,14 +48,14 @@ Configuration de Raspbian
 * Se connecter à la raspberry pi en tant que root grâce à la clef ssh.
 
 * Installer quelques paquets :
-  
+
 .. code::
 
     $ apt-get install htop tmux vim python3-virtualenv \
                       uwsgi uwsgi-plugin-python3 apache2
 
 * Créer un compte système ``edirtic`` :
-  
+
 .. code::
 
     $ useradd -r edirtic -d /srv/www/edirtic
@@ -62,12 +63,12 @@ Configuration de Raspbian
 * Créer un home pour cette utilisateur :
 
 .. code::
-  
+
     $ mkdir -p /srv/www/edirtic
     $ chown edirtic:edirtic /srv/www/edirtic
 
 * Rajouter ``www-data`` au groupe ``edirtic`` :
-  
+
 .. code::
 
     $ usermod -aG edirtic www-data
