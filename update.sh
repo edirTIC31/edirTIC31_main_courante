@@ -1,26 +1,19 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <branche>" >&2
-    exit 1
-fi
-
-branch="$1"
+branch=${1:-master}
 
 git remote update origin > /dev/null
 
 LOCAL=$(git rev-parse @{0})
 REMOTE=$(git rev-parse origin/$branch)
 
-if [ "$LOCAL" == "$REMOTE" ]; then
-    exit 0
-fi
+[[ "$LOCAL" == "$REMOTE" ]] && exit 0
 
 git checkout origin/$branch
-source env/bin/activate
+source ~/env/bin/activate
 
-cd edirtic
-pip install -r requirements.local.txt --upgrade
+cd ~/edirtic
+[[ -f requirements.local.txt ]] && pip install -r requirements.local.txt --upgrade
 pip install -r requirements.txt --upgrade
 ./manage.py migrate
 echo yes | ./manage.py collectstatic
