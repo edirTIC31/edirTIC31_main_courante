@@ -10,9 +10,9 @@ REMOTE=$(git rev-parse origin/$branch)
 [[ "$LOCAL" == "$REMOTE" ]] && exit 0
 
 git checkout origin/$branch
-source ~/env/bin/activate
+source env/bin/activate
 
-cd ~/edirtic
+cd edirtic
 [[ -f requirements.local.txt ]] && pip install -r requirements.local.txt --upgrade
 pip install -r requirements.txt --upgrade
 ./manage.py migrate
