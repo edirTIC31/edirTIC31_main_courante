@@ -47,31 +47,30 @@ Configuration de Raspbian
 
 * Se connecter à la raspberry pi en tant que root grâce à la clef ssh.
 
+* La mettre à jour :
+
+.. code::
+
+    # apt-get update && apt-get dist-upgrade
+
 * Installer quelques paquets :
 
 .. code::
 
-    $ apt-get install htop tmux vim python3-virtualenv \
+    # apt-get install git htop tmux vim python3-virtualenv \
                       uwsgi uwsgi-plugin-python3 apache2
 
 * Créer un compte système ``edirtic`` :
 
 .. code::
 
-    $ useradd -r edirtic -d /srv/www/edirtic
-
-* Créer un home pour cette utilisateur :
-
-.. code::
-
-    $ mkdir -p /srv/www/edirtic
-    $ chown edirtic:edirtic /srv/www/edirtic
+    # useradd -r edirtic -d /srv/www/edirtic -m
 
 * Rajouter ``www-data`` au groupe ``edirtic`` :
 
 .. code::
 
-    $ usermod -aG edirtic www-data
+    # usermod -aG edirtic www-data
 
 ..
 
@@ -81,8 +80,8 @@ Configuration de Raspbian
 
 .. code::
 
-    $ su edirtic
-    # cat > ~/.bashrc << EOF
+    # su edirtic
+    $ cat > ~/.bashrc << EOF
 
     #
     # ~/.bashrc
@@ -105,9 +104,9 @@ Configuration de Raspbian
 
     umask 0027
 
-    export DJANGO_SETTINGS_MODULE=edirtic.local_settings
+    export DJANGO_SETTINGS_MODULE=edirtic.rpi_settings
 
-    . ~/env/bin/activate
+    . ~/venv/bin/activate
 
     EOF
 
@@ -115,14 +114,7 @@ Configuration de Raspbian
 
 .. code::
 
-    # git clone https://github.com/edirTIC31/edirTIC31_main_courante edirtic
-
-* Éventuellement, se déplacer sur la branche voulue, par exemple sur la branche ``prod`` :
-
-.. code::
-
-    # cd ~/edirtic/
-    # git checkout prod
+    $ git clone https://github.com/edirTIC31/edirTIC31_main_courante edirtic
 
 Virtualenv
 ``````````
@@ -131,13 +123,13 @@ Virtualenv
 
 .. code::
 
-    # python3 -m virtualenv -p /usr/bin/python3 ~/env
+    $ python3 -m virtualenv -p /usr/bin/python3 ~/venv
 
 * Charger le *virtualenv* :
 
 .. code::
 
-    # source ~/env/bin/activate
+    $ source ~/venv/bin/activate
 
 ..
 
@@ -148,7 +140,8 @@ Virtualenv
 
 .. code::
 
-    # pip3 install -r ~/edirtic/edirtic/requirements.dev.txt
+    $ pip3 install -U pip
+    $ pip3 install -U -r ~/edirtic/edirtic/requirements.txt
 
 Django
 ``````
@@ -157,35 +150,43 @@ Django
 
 .. code::
 
-    $ mkdir /etc/django/edirtic/
-    $ chown edirtic:edirtic /etc/django/edirtic
+    $ exit
+    # mkdir -p /etc/django/edirtic/
+    # chown edirtic:edirtic /etc/django/edirtic
     # chmod 755 /etc/django
     # chmod 750 /etc/django/edirtic
+    # su edirtic
 
 * Créer une secret key :
 
 .. code::
 
-    # openssl rand -hex 16 > /etc/django/edirtic/SECRET_KEY
+    $ openssl rand -hex 16 > /etc/django/edirtic/SECRET_KEY
+
+* Créer un dossier pour les logs Django et apache :
+
+.. code::
+
+    $ mkdir ~/log
 
 * Créer la base de données et sa structure :
 
 .. code::
 
-    # cd ~/edirtic/edirtic/
-    # ./manage.py migrate
+    $ cd ~/edirtic/edirtic/
+    $ ./manage.py migrate
 
 * Créer un super utilisateur :
 
 .. code::
 
-    # ./manage.py createsuperuser
+    $ ./manage.py createsuperuser
 
 * Collecter les fichiers statiques :
 
 .. code::
 
-    # ./manage.py collectstatic
+    $ ./manage.py collectstatic
 
 ..
 
@@ -193,12 +194,6 @@ Django
 
 uwsgi
 `````
-
-* Créer un dossier pour les logs Django et apache :
-
-.. code::
-
-    # mkdir ~/log
 
 * Copier la configuration *uwsgi* puis l’activer :
 
