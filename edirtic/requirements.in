@@ -1,4 +1,5 @@
-Django
+Django<1.9
 django-autoslug
+django-braces
 django-bootstrap3
 django-tastypie
