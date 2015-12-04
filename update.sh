@@ -1,15 +1,22 @@
 #!/bin/bash
 
-git remote update > /dev/null
-
-LOCAL=$(git rev-parse @{0})
-REMOTE=$(git rev-parse origin/$br)
-
-if [ "$LOCAL" == "$REMOTE" ]; then
-    continue
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <branche>" >&2
+    exit 1
 fi
 
-git checkout origin/$br
+branch="$1"
+
+git remote update origin > /dev/null
+
+LOCAL=$(git rev-parse @{0})
+REMOTE=$(git rev-parse origin/$branch)
+
+if [ "$LOCAL" == "$REMOTE" ]; then
+    exit 0
+fi
+
+git checkout origin/$branch
 source env/bin/activate
 
 cd edirtic
