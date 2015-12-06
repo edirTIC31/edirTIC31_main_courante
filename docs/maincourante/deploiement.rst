@@ -47,6 +47,14 @@ Configuration de Raspbian
 
 * Se connecter à la raspberry pi en tant que root grâce à la clef ssh.
 
+* La configurer :
+
+.. code::
+
+    # raspi-config
+
+  Étendre le système de fichier, mettre la locale fr_FR.UTF-8 et la timezone Europe/Paris, et éventuelle renseigner l’Hostname
+
 * La mettre à jour :
 
 .. code::
@@ -195,39 +203,38 @@ Django
 uwsgi
 `````
 
-* Copier la configuration *uwsgi* puis l’activer :
+* Activer la configuration *uwsgi* :
 
 .. code::
 
-    $ cd /etc/uwsgi/apps-available
-    $ cp /srv/www/edirtic/django/conf/uwsgi.ini edirtic.ini
-
-    $ cd /etc/uwsgi/apps-enabled
-    $ ln -s ../apps-available/edirtic.ini
+    $ touch ~/touch-to-reload
+    $ exit
+    # cd /etc/uwsgi/apps-enabled
+    # ln -s /srv/www/edirtic/edirtic/conf/uwsgi.ini edirtic.ini
 
 * Redémarrer *uwsgi* :
 
 .. code::
 
-    $ service uwsgi start
+    # systemctl restart uwsgi
 
 * Vérifier les logs *uwsgi* :
 
 .. code::
 
-    $ tail /var/log/uwsgi/app/edirtic.log
+    # tail /var/log/uwsgi/app/edirtic.log
 
 * Vérifier que *uwsgi* est bien lancé :
 
 .. code::
 
-    $ ps aux | grep uwsgi
+    # ps aux | grep uwsgi
 
 * Vérifier que çamarche™ :
 
 .. code::
 
-    $ nc -v 127.0.0.1 8010
+    # nc -v 127.0.0.1 8010
     Connection to 127.0.0.1 8010 port [tcp/*] succeeded!
     ^C
 
@@ -240,22 +247,19 @@ Apache
 
 .. code::
 
-    $ cd /etc/apache2/site-available
-    $ cp /var/www/edirtic/django/conf/apache.conf edirtic.conf
-
-    $ cd /etc/apache2/site-enabled
-    $ rm 000-default.conf
-    $ ln -s ../site-available/edirtic.conf 000-edirtic.conf
-
-* Activer les modules apache ``proxy`` et ``proxy_http`` :
-
-.. code::
-
-    $ a2enmod proxy
-    $ a2enmod proxy_http
+    # cd /etc/apache2/site-enabled
+    # rm 000-default.conf
+    # ln -s /srv/www/edirtic/edirtic/conf/apache.conf edirtic.conf
 
 * Créer le dossier ``/var/empty`` pour éviter un warning :
 
 .. code::
 
-    $ mkdir /var/empty
+    # mkdir /var/empty
+
+* Activer les modules apache ``proxy`` et ``proxy_http`` :
+
+.. code::
+
+    # a2enmod proxy proxy_http
+    # service apache2 restart

@@ -10,7 +10,7 @@ REMOTE=$(git rev-parse origin/$branch)
 [[ "$LOCAL" == "$REMOTE" ]] && exit 0
 
 git checkout origin/$branch
-source env/bin/activate
+source venv/bin/activate
 
 cd django
 [[ -f requirements.local.txt ]] && pip install -r requirements.local.txt --upgrade

@@ -28,7 +28,7 @@ UWSGI
   chdir=/srv/http/edirtic/edirtic.master/edirtic
   
   env=DJANGO_SETTINGS_MODULE=edirtic.local_settings
-  virtualenv=/srv/http/edirtic/edirtic.master/env
+  virtualenv=/srv/http/edirtic/edirtic.master/venv
   plugin=python
   
   module=edirtic.wsgi:application
