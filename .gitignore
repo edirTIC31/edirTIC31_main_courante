@@ -6,3 +6,6 @@
 django/conf
 django/static_dest
 django/edirtic/local_settings.py
+requirements.local.txt
+touch-to-reload
+venv
