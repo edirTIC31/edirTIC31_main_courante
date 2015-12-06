@@ -3,7 +3,7 @@ from .settings import *
 from pathlib import Path
 
 
-CONF_DIR = Path("/etc/django/" + PROJECT)
+CONF_DIR = Path("/etc/django/") / PROJECT
 
 def get_conf(path):
     try:
