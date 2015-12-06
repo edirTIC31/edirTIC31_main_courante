@@ -12,7 +12,7 @@ REMOTE=$(git rev-parse origin/$branch)
 git checkout origin/$branch
 source env/bin/activate
 
-cd edirtic
+cd django
 [[ -f requirements.local.txt ]] && pip install -r requirements.local.txt --upgrade
 pip install -r requirements.txt --upgrade
 ./manage.py migrate
