@@ -3,6 +3,8 @@ Déploiement de la main courante
 
 Ce petit guide indique comment déployer le projet Django ``edirtic`` sur une Raspberry-Pi.
 
+NB: Les lignes de code commençant par ``#`` sont à éxécuter en root et celles par ``$`` par un utilisateur normal.
+
 Installation de Raspbian
 ------------------------
 
@@ -47,13 +49,12 @@ Configuration de Raspbian
 
 * Se connecter à la raspberry pi en tant que root grâce à la clef ssh.
 
-* La configurer :
+* La configurer: Étendre le système de fichier, mettre la locale fr_FR.UTF-8 et la timezone Europe/Paris, et éventuelle renseigner l’Hostname, puis la rebooter, avec :
 
 .. code::
 
     # raspi-config
 
-  Étendre le système de fichier, mettre la locale fr_FR.UTF-8 et la timezone Europe/Paris, et éventuelle renseigner l’Hostname
 
 * La mettre à jour :
 
@@ -72,6 +73,7 @@ Configuration de Raspbian
 
 .. code::
 
+    # mkdir /srv/www
     # useradd -r edirtic -d /srv/www/edirtic -m
 
 * Rajouter ``www-data`` au groupe ``edirtic`` :
@@ -89,7 +91,8 @@ Configuration de Raspbian
 .. code::
 
     # su edirtic
-    $ cat > ~/.bashrc << EOF
+    $ cd
+    $ cat > .bashrc << EOF
 
     #
     # ~/.bashrc
@@ -122,7 +125,7 @@ Configuration de Raspbian
 
 .. code::
 
-    $ git clone https://github.com/edirTIC31/edirTIC31_main_courante edirtic
+    $ git clone --recursive https://github.com/edirTIC31/edirTIC31_main_courante ~/edirtic
 
 Virtualenv
 ``````````
@@ -198,7 +201,7 @@ Django
 
 ..
 
-  Ceux-ci sont placer dans le dossier ``~/static``.
+  Ceux-ci sont placés dans le dossier ``~/static``.
 
 uwsgi
 `````
@@ -247,7 +250,7 @@ Apache
 
 .. code::
 
-    # cd /etc/apache2/site-enabled
+    # cd /etc/apache2/sites-enabled
     # rm 000-default.conf
     # ln -s /srv/www/edirtic/edirtic/conf/apache.conf edirtic.conf
 
