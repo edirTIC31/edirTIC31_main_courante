@@ -141,7 +141,7 @@ Virtualenv
 .. code::
 
     $ pip3 install -U pip
-    $ pip3 install -U -r ~/edirtic/edirtic/requirements.txt
+    $ pip3 install -U -r ~/edirtic/django/requirements.txt
 
 Django
 ``````
@@ -173,7 +173,7 @@ Django
 
 .. code::
 
-    $ cd ~/edirtic/edirtic/
+    $ cd ~/edirtic/django/
     $ ./manage.py migrate
 
 * Créer un super utilisateur :
@@ -200,7 +200,7 @@ uwsgi
 .. code::
 
     $ cd /etc/uwsgi/apps-available
-    $ cp /srv/www/edirtic/edirtic/conf/uwsgi.ini edirtic.ini
+    $ cp /srv/www/edirtic/django/conf/uwsgi.ini edirtic.ini
 
     $ cd /etc/uwsgi/apps-enabled
     $ ln -s ../apps-available/edirtic.ini
@@ -241,7 +241,7 @@ Apache
 .. code::
 
     $ cd /etc/apache2/site-available
-    $ cp /var/www/edirtic/edirtic/conf/apache.conf edirtic.conf
+    $ cp /var/www/edirtic/django/conf/apache.conf edirtic.conf
 
     $ cd /etc/apache2/site-enabled
     $ rm 000-default.conf
