@@ -21,9 +21,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'maincourante',
+
     'tastypie',
     'bootstrap3',
+
+    'accounts',
+    'maincourante',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -75,7 +78,8 @@ USE_L10N = False
 DATETIME_FORMAT="d b Y à H:i:s"
 
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'list-evenements'
 
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',
