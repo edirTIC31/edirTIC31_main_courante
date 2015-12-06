@@ -3,6 +3,6 @@
 *.swo
 *.sqlite3
 *.orig
-edirtic/conf
-edirtic/static_dest
-edirtic/edirtic/local_settings.py
+django/conf
+django/static_dest
+django/edirtic/local_settings.py
