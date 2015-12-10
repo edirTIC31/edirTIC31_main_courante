@@ -60,9 +60,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="id_reponse">Réponse</label>
+                    <label class="col-md-3 control-label">Réponse</label>
                     <div class="col-md-6">
-                        <input class="form-control" id="id_reponse" name="reponse" placeholder="Message" title="" type="text" />
+                        <input  type="text" class="form-control" name="reponse" ng-model="response" placeholder="Réponse"/>
                     </div>
                 </div>
                 {% buttons layout="horizontal" %}
@@ -80,9 +80,11 @@
             <div ng-class="{ 'panel': true, 'panel-info': !message.deleted ,'panel-default': message.deleted}">
                 <div class="panel-heading">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> | message saisi par <b>{$ message.operateur $} </b>
                     <div class="pull-right">
-                        <span ng-if="message.deleted and message.modified">Message modifié puis supprimé</span>
-                        <span ng-if="!(message.deleted and message.modified) and message.deleted">Message supprimé</span>
-                        <span ng-if="!(message.deleted and message.modified) and message.modified">Message modifié</span>
+                        <span ng-if="message.deleted || message.modified" class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                            <span ng-if="message.deleted && message.modified">Message modifié puis supprimé</span>
+                            <span ng-if="!(message.deleted && message.modified) && message.deleted">Message supprimé</span>
+                            <span ng-if="!(message.deleted && message.modified) && message.modified">Message modifié</span>
+                        </span>
                         <a ng-hide="message.edit || message.deleted" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-edit"></span></a>
                         <a ng-hide="message.edit || message.deleted" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span></a>
                         <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>Valider</a>
@@ -103,7 +105,7 @@
     <script>
 
         var csrf = '{{ csrf_token|escapejs }}';
-
+        var EVENEMENT = '{{ evenement.nom }}';
     </script>
     <script type="text/ng-template" id="myModalContent.html">
             <div class="modal-header">
@@ -128,7 +130,7 @@
     <script src="{% static "scripts/bower_components/ng-focus-on/ng-focus-on.js" %}" ></script>
     <script src="{% static "scripts/maincourante/entities/message.js" %}" ></script>
     <script src="{% static "scripts/maincourante/entities/indicatif.js" %}" ></script>
-    <script src="{% static "scripts/maincourante/controllers/message.controller.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/controllers/message_controller.js" %}" ></script>
     <script src="{% static "scripts/maincourante/app.js" %}" ></script>
 
     <link rel="stylesheet" href="{% static "css/maincourante.css" %}">

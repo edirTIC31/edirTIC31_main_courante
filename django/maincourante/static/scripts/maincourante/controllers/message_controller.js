@@ -21,19 +21,35 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         }
         message.sender = $scope.sender.title ? $scope.sender.title: $scope.sender.originalObject;
         message.receiver = $scope.receiver.title ? $scope.receiver.title: $scope.receiver.originalObject;
-        message.evenement = 'marathon-2015';
-
+        message.evenement = EVENEMENT;
 		message.body = $scope.body;
 		if(!message.isValid()){
             return;
         }
 		MessageManager.add(message).then(
-            function(message) {
+            function(msg) {
+                if($scope.response){
+                    var response = new Message();
+                    response.receiver = msg.sender;
+                    response.sender = msg.receiver;
+                    response.evenement = EVENEMENT;
+                    response.body = $scope.response;
+                    MessageManager.add(response).then(
+                        function(resp) {
+                            $scope.body = null;
+                            $scope.response = null;
+                            $scope.messages.push(resp);
+                        },
+                        function(errorPayload) {
+                            alert("Erreur lors de l'ajout de la reponse");
+                        });
+                }
+                $scope.messages.push(msg);
+                $scope.sender = null;
+                $scope.receiver = null;
                 $scope.body = null;
-//                $scope.$broadcast('angucomplete-alt:clearInput', 'from');
-//                $scope.$broadcast('angucomplete-alt:clearInput', 'to');
-                $scope.messages.push(message);
-                $scope.$broadcast('angucomplete-alt:changeInput', 'ex1');
+                $scope.$broadcast('angucomplete-alt:clearInput', 'sender');
+                $scope.$broadcast('angucomplete-alt:clearInput', 'receiver');
             },
             function(errorPayload) {
                 alert("Erreur lors de l'ajout du nouveau message");
