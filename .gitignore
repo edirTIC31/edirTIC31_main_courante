@@ -3,6 +3,8 @@
 *.swo
 *.sqlite3
 *.orig
+*.iml
+*.idea
 django/conf
 django/static_dest
 django/edirtic/local_settings.py

@@ -69,6 +69,14 @@ def evenement_live(request, evenement):
         'msgs': messages,
     })
 
+@login_required
+def evenement_live_angular(request, evenement):
+
+    messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
+    return render(request, 'maincourante/evenement_live_angular.html', {
+        'messages': messages,
+        })
+
 
 ############
 # Messages #

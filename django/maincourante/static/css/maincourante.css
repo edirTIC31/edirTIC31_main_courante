@@ -5,3 +5,16 @@
 .panel-body-danger{
     background-color: #f2dede;
 }
+
+h4 {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.panel-body-sm{
+    padding-bottom: 0px;
+}
+
+.form-group-sm{
+    margin-bottom: 0px;
+}

@@ -1,7 +1,5 @@
 angular.module("edir.maincourante.entities", []);
 
-"use strict";
-
 angular.module("edir.maincourante.entities")
     .factory("Message", [MessageFactory])
     .factory("MessageManager", ["Message", "$q", "$http", MessageManagerFactory]);

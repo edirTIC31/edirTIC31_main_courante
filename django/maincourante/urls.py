@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^$', EvenementListView.as_view(), name='list-evenements'),
     url(r'^add/$', EvenementCreateView.as_view(), name='add-evenement'),
     url(r'^(?P<evenement>[-\w]+)/live/$', 'maincourante.views.evenement_live', name='live'),
+    url(r'^(?P<evenement>[-\w]+)/live/angular/$', 'maincourante.views.evenement_live_angular', name='live'),
     url(r'^(?P<evenement>[-\w]+)/report/$', 'maincourante.views.evenement_report', name='report'),
     url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
     url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),

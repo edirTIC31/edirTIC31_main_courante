@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
