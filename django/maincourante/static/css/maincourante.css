@@ -11,10 +11,21 @@ h4 {
     margin-bottom: 2px;
 }
 
-.panel-body-sm{
+.panel-body-md{
     padding-bottom: 0px;
 }
 
-.form-group-sm{
+.form-group-md{
     margin-bottom: 0px;
+}
+
+.panel-sm{
+    margin-bottom: 10px;
+}
+.panel-body-sm{
+    padding: 5px 5px 5px 15px;
+}
+
+.panel-heading-sm{
+    padding: 5px 5px 5px 15px;
 }

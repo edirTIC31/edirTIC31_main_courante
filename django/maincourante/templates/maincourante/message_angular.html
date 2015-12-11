@@ -18,7 +18,7 @@
         <div class="panel-heading">
             <h4>Saisie des messages</h4>
         </div>
-        <div class="panel-body panel-body-sm">
+        <div class="panel-body panel-body-md">
             <form class="form-horizontal">
             {% csrf_token %}
                 <div class="form-group">
@@ -78,7 +78,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="form-horizontal">
-                <div class="form-group form-group-sm">
+                <div class="form-group form-group-md">
                 <label class="col-md-1 control-label">Recherche</label><div class="col-md-6"><input type="text" class="form-control" name="searchText" ng-model="searchText" placeholder="Search"></div>
                 </div>
             </div>
@@ -86,8 +86,8 @@
         <div class="panel-body">
             <div ng-repeat="message in messages | filter:searchText | orderBy: '-displayCreationDate' ">
                 <div ng-hide="message.parentId">
-                    <div ng-class="{ 'panel': true, 'panel-info': !message.deleted ,'panel-default': message.deleted}">
-                        <div class="panel-heading">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> | message saisi par <b>{$ message.operateur $} </b>
+                    <div ng-class="{ 'panel': true, 'panel-sm': true, 'panel-info': !message.deleted ,'panel-default': message.deleted}">
+                        <div class="panel-heading panel-heading-sm">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> | message saisi par <b>{$ message.operateur $} </b>
                             <div class="pull-right">
                                 <span ng-if="message.deleted || message.modified" class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>
                                     <span ng-if="message.deleted && message.modified">Message modifié puis supprimé</span>
@@ -100,7 +100,7 @@
                                 <a ng-show="message.edit" class="btn btn-warning btn-xs"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>Annuler</a>
                             </div>
                         </div>
-                        <div class="panel-body">
+                        <div class="panel-body panel-body-sm">
                             <div ng-hide="message.edit">{$ message.body $}</div>
                                 <div ng-show="message.edit">
                                     <input type="text" class="form-control" value="message.corps" ng-model="message.body" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
