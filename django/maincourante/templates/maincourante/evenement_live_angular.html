@@ -1,0 +1,40 @@
+{% extends 'maincourante/base.html' %}
+
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load message_tags %}
+
+{% block livetab %} class="active"{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1>{{ evenement.nom }}</h1>
+    </div>
+</div>
+    <diV ng-app="maincouranteApp">
+    <div ng-controller="MainCtrl">
+
+        <messages/>
+
+    </div>
+    </diV>
+
+    <script src="{% static "scripts/bower_components/angular/angular.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angular-route/angular-route.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angular-animate/angular-animate.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angular-resource/angular-resource.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angular-bootstrap/ui-bootstrap.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angular-bootstrap/ui-bootstrap-tpls.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/ng-focus-on/ng-focus-on.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/entities/message.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/entities/indicatif.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/controllers/message_controller.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/directives/message_directive.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/app.js" %}" ></script>
+
+    <link rel="stylesheet" href="{% static "css/maincourante.css" %}">
+    <link rel="stylesheet" href="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.css" %}">
+
+{% endblock %}

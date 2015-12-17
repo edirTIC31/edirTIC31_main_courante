@@ -6,8 +6,7 @@ angular.module('edir.maincourante.controllers')
 function prepareMainController($scope, Message, MessageManager, IndicatifManager,  $modal, $interval, focus){
 	
 	$scope.messages = [];
-    $scope.childrenMessages = [];
-    $scope.onMessageDelete = false;
+    $scope.isLoading = true;
     $scope.editionMode = false;
     $scope.indicatifs = new Array();
     $scope.errorMessage = null;
@@ -56,7 +55,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
 	}
 
     $scope.enableMessageEdition = function(message){
-        $scope.editionMode = true;
+        message.editionMode = true;
         message.enableEdition();
         focus("onEdit");
     }
@@ -76,7 +75,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         }
         MessageManager.modify(message).then(
             function(message) {
-                $scope.editionMode = false;
+                message.editionMode = false;
                 loadMessages();
                 focus('onNewMessage');
             },
@@ -88,17 +87,15 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
     $scope.cancelMessageEdition = function(message){
         message.cancelEdition();
         focus('onNewMessage');
-        $scope.editionMode = false;
+        message.editionMode = false;
     }
 
     function loadMessages() {
-        if($scope.editionMode){
-            return;
-        }
         MessageManager.load().then(
             function (messages) {
                 $scope.messages = messages;
                 $scope.errorMessage = null;
+                $scope.isLoading = false;
             },
             function (errorPayload) {
                 $scope.errorMessage = "Erreur lors du chargement des messages";
