@@ -1,0 +1,42 @@
+{% extends 'accounts/login_base.html' %}
+
+{% load bootstrap3 %}
+
+{% block administratortab %} class="active"{% endblock %}
+
+{% block tabcontent %}
+<div class="list-group">
+	{% for user in administrators %}
+	<a class="list-group-item admin-link" href="#connexion" onClick="javascript:precomplete_form('{{ user.username }}');">
+		<h4><span class="glyphicon glyphicon-lock"></span> {{ user }}</h4>
+	</a>
+	{% endfor %}
+</div>
+<div class="panel panel-primary" id="connexion">
+	<div class="panel panel-heading">
+		<h4>Connexion</h4>
+	</div>
+	<div class="panel-body">
+		<form action="" method="post" class="form-horizontal">
+			{% csrf_token %}
+			{% bootstrap_form form layout="horizontal" %}
+			{% buttons layout="horizontal" %}
+			<button type="submit" class="btn btn-primary">Connexion</button>
+			{% endbuttons %}
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block js_end %}
+{{ block.super }}
+<script type="text/javascript">
+$('.admin-link').on('click', function(e) {
+    e.preventDefault();
+});
+function precomplete_form(username) {
+    $('#id_username').val(username);
+    $('#id_password').focus();
+};
+</script>
+{% endblock %}

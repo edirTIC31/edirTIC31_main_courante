@@ -1,0 +1,34 @@
+{% extends 'accounts/login_base.html' %}
+
+{% block operatortab %} class="active"{% endblock %}
+
+{% block tabcontent %}
+<div class="tab-pane active">
+    <div class="list-group">
+		{% for user in operators %}
+		{% if user.is_superuser %}
+		<a class="list-group-item" href="#">
+			<h4><span class="glyphicon glyphicon-lock"></span> {{ user }}</h4>
+		</a>
+		{% else %}
+		<a class="list-group-item" href="{% url 'login-ope' user.username %}{% if next %}?next={{ next }}{% endif %}">
+			<h4><span class="glyphicon glyphicon-arrow-right"></span> {{ user }}</h4>
+		</a>
+		{% endif %}
+		{% endfor %}
+		<div class="list-group-item">
+			<form action="{% url 'create-user' %}{% if next %}?next={{ next }}{% endif %}" method="post" class="form-inline">
+				{% csrf_token %}
+				<label>Ajouter un nouvel opérateur : </label>
+				<div class="form-group">
+					<label class="sr-only" for="id_new_username">Nom d'utilisateur</label>
+					<input class="form-control" id="id_new_username" maxlength="30" name="username" placeholder="Nom d'utilisateur" required="required" title="Requis. 30 caractères maximum. Uniquement des lettres, nombres et les caractères «&nbsp;@&nbsp;», «&nbsp;.&nbsp;», «&nbsp;+&nbsp;», «&nbsp;-&nbsp;» et «&nbsp;_&nbsp;»." type="text">
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary">Ajouter</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

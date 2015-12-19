@@ -48,6 +48,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% block navbar-right %}{% endblock %}
                         {% if request.user.is_authenticated %}
+                        <li><a href="#">Connecté en tant que <b>{{ user.username }}</b></a></li>
                         {% if request.user.is_staff %}
                         <li><a href="{% url 'admin:index' %}"><span class="glyphicon glyphicon-cog"></span>&nbsp;Administration</a></li>
                         {% endif %}
