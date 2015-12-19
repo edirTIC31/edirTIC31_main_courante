@@ -38,11 +38,9 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         {% block navbar-left %}
-                        {% if request.user.is_staff %}
                         <li role="presentation">
                             <a href="{% url 'add-evenement' %}"><span class="glyphicon glyphicon-plus"></span> Créer un évènement</a>
                         </li>
-                        {% endif %}
                         {% endblock %}
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
