@@ -1,5 +1,5 @@
 {% load message_tags %}
-{% for message in msgs %}
+{% for message in messages %}
 {% if show_deleted or not message.deleted %}
 {% render_message message show_tools=show_tools show_history=show_history %}
 {% endif %}
