@@ -57,7 +57,7 @@ def evenement_cloture(request, evenement):
 def evenement_report(request, evenement):
 
     return render(request, 'maincourante/evenement_report.html', {
-        'messages': MessageThread.objects.filter(evenement=evenement),
+        'msgs': MessageThread.objects.filter(evenement=evenement),
     })
 
 
@@ -66,7 +66,7 @@ def evenement_live(request, evenement):
 
     messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
     return render(request, 'maincourante/evenement_live.html', {
-        'messages': messages,
+        'msgs': messages,
     })
 
 
@@ -101,7 +101,7 @@ def message_add(request, evenement, message=None):
         return redirect(reverse('add-message', args=[evenement.slug]))
 
     return render(request, 'maincourante/message_add.html', {
-        'messages': MessageThread.objects.filter(evenement=evenement).all()[:10],
+        'msgs': MessageThread.objects.filter(evenement=evenement).all()[:10],
         'add_form': form,
         'edit_form': edit_form,
         'delete_form': delete_form,
@@ -176,7 +176,7 @@ def message_last(request, evenement):
 
     c = {
         'evenement': evenement,
-        'messages': messages,
+        'msgs': messages,
         'show_deleted': deleted,
         'show_history': history,
         'show_tools': tools,
