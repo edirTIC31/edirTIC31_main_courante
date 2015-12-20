@@ -176,7 +176,7 @@ def message_last(request, evenement):
 
     c = {
         'evenement': evenement,
-        'msgs': messages,
+        'messages': messages,
         'show_deleted': deleted,
         'show_history': history,
         'show_tools': tools,
