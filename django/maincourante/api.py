@@ -6,6 +6,8 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.http import HttpBadRequest
 from tastypie.resources import ModelResource, Resource
+from tastypie.constants import ALL
+
 
 from .models import Evenement, Indicatif, MessageThread, MessageVersion
 
@@ -59,6 +61,7 @@ class Message:
 
 class MessageResource(Resource):
 
+    id = fields.IntegerField(attribute='pk')
     evenement = fields.ToOneField(EvenementResource, 'evenement')
     sender = fields.CharField(attribute='sender')
     receiver = fields.CharField(attribute='receiver')
@@ -72,14 +75,9 @@ class MessageResource(Resource):
         detail_allowed_methods = ['get', 'put', 'delete']
         authentication = BaseAuthentication()
         authorization = DjangoAuthorization()
-        filtering = {
-            'evenement': ['exact'],
-        }
 
     def detail_uri_kwargs(self, bundle):
-        return {
-            'pk': bundle.obj.pk,
-        }
+        return bundle.data
 
     def get_object_list(self, request):
 
@@ -92,11 +90,20 @@ class MessageResource(Resource):
 
         threads = MessageThread.objects.filter(evenement=evenement)
 
+        newer_than = request.GET.get('newer-than')
+        if newer_than:
+            try:
+                newer_than = int(newer_than)
+            except ValueError:
+                pass
+            else:
+                threads = threads.filter(id__gt=newer_than)
+
         return [Message(thread) for thread in threads]
 
     def obj_get_list(self, bundle, **kwargs):
 
-        return self.get_object_list(bundle.request)
+        return self.get_object_list(bundle.request, **kwargs)
 
     def get_thread(self, **kwargs):
 

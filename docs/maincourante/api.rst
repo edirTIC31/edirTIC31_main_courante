@@ -20,7 +20,7 @@ Indicatifs
 
 * Base URL: ``/api/v1/indicatif/``
 * Allowed methods: GET
-* Filtering: ``evenement=<pk>``
+* Filtering: ``evenement=<id>``
 
 TODO: rajouter POST
 
@@ -35,7 +35,10 @@ Messages
 
 * Base URL: ``/api/v1/message``
 * Allowed methods: GET, POST (add)
-* Filtering: ``evenement=<pk>`` (mandatory)
+* Filtering:
+
+  * ``evenement=<id>`` (mandatory)
+  * ``newer-than=<id>``
 
 Messages (détails)
 ------------------
