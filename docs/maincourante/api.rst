@@ -38,7 +38,7 @@ Messages
 * Filtering:
 
   * ``evenement=<id>`` (mandatory)
-  * ``newer-than=<id>``
+  * ``newer-than=<datetime>`` (format %Y-%m-%dT%H:%M:%S.%f, example: 2015-12-20T19:58:35.089133)
 
 Messages (détails)
 ------------------

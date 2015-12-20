@@ -1,5 +1,7 @@
+from datetime import datetime
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from tastypie import fields
 from tastypie.authentication import Authentication
 from tastypie.authorization import DjangoAuthorization
@@ -56,7 +58,7 @@ class Message:
         self.sender = thread.expediteur.nom
         self.receiver = thread.destinataire.nom
         self.body = thread.corps
-        self.timestamp = thread.cree
+        self.timestamp = thread.modifie
 
 
 class MessageResource(Resource):
@@ -91,13 +93,14 @@ class MessageResource(Resource):
         threads = MessageThread.objects.filter(evenement=evenement)
 
         newer_than = request.GET.get('newer-than')
+        newer_than = datetime.strptime(newer_than, '%Y-%m-%dT%H:%M:%S.%f')
+        newer_than = timezone.make_aware(newer_than)
         if newer_than:
-            try:
-                newer_than = int(newer_than)
-            except ValueError:
-                pass
-            else:
-                threads = threads.filter(id__gt=newer_than)
+            all_threads = threads
+            threads = []
+            for thread in all_threads:
+                if thread.modifie > newer_than:
+                    threads += [thread]
 
         return [Message(thread) for thread in threads]
 
