@@ -33,6 +33,19 @@ class EvenementResource(ModelResource):
         authorization = DjangoAuthorization()
 
 
+class IndicatifResource(ModelResource):
+    evenement = fields.ForeignKey(EvenementResource, 'evenement')
+
+    class Meta:
+        queryset = Indicatif.objects.all()
+        allowed_methods = ['get']
+        authentication = BaseAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            'evenement': ['exact'],
+        }
+
+
 class Message:
 
     def __init__(self, thread):
@@ -59,6 +72,9 @@ class MessageResource(Resource):
         detail_allowed_methods = ['get', 'put', 'delete']
         authentication = BaseAuthentication()
         authorization = DjangoAuthorization()
+        filtering = {
+            'evenement': ['exact'],
+        }
 
     def detail_uri_kwargs(self, bundle):
         return {
@@ -67,7 +83,16 @@ class MessageResource(Resource):
 
     def get_object_list(self, request):
 
-        return [Message(thread) for thread in MessageThread.objects.all()]
+        try:
+            evenement = Evenement.objects.get(pk=int(request.GET.get('evenement')))
+        except Evenement.DoesNotExist:
+            return []
+        except TypeError:
+            return []
+
+        threads = MessageThread.objects.filter(evenement=evenement)
+
+        return [Message(thread) for thread in threads]
 
     def obj_get_list(self, bundle, **kwargs):
 
@@ -141,12 +166,3 @@ class MessageResource(Resource):
 
     def rollbacks(self, bundles):
         pass
-
-
-class IndicatifResource(ModelResource):
-
-    class Meta:
-        queryset = Indicatif.objects.all()
-        allowed_methods = ['get']
-        authentication = BaseAuthentication()
-        authorization = DjangoAuthorization()
