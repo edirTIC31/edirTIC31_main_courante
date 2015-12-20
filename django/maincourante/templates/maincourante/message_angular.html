@@ -8,6 +8,8 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+<link rel="stylesheet" href="{% static "css/maincourante.css" %}">
+<link rel="stylesheet" href="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.css" %}">
 {% endblock %}
 
 {% block content %}
@@ -100,9 +102,6 @@
     <script src="{% static "scripts/maincourante/controllers/message_controller.js" %}" ></script>
     <script src="{% static "scripts/maincourante/directives/message_directive.js" %}" ></script>
     <script src="{% static "scripts/maincourante/app.js" %}" ></script>
-
-    <link rel="stylesheet" href="{% static "css/maincourante.css" %}">
-    <link rel="stylesheet" href="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.css" %}">
 
 </div>
 {% endblock %}
