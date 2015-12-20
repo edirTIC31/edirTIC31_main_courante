@@ -86,57 +86,6 @@
 
         var toto = "{% static "css/maincourante.css" %}";
     </script>
-    <script type="text/ng-template" id="modal-delete-message.html">
-            <div class="modal-header">
-            <h3 class="modal-title">Suppression de message ?</h3>
-            </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer ce message ? Si oui veuillez donner une raison.
-                <input focus-on="onDelete" type="text" class="form-control" placeholder="Raison" ng-model="suppressionMessage">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" type="button" ng-click="ok()">Oui</button>
-                <button class="btn btn-warning" type="button" ng-click="cancel()">Non</button>
-            </div>
-    </script>
-
-    <script type="text/ng-template" id="modal-reply-message.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Ecrire une réponse</h3>
-        </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Destinataire</label>
-                    <div class="col-md-6">
-                        <input  disabled type="text" class="form-control" name="reponse" ng-model="message.receiver" placeholder="Réponse"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Expéditeur</label>
-                    <div class="col-md-6">
-                        <input disabled type="text" class="form-control" name="reponse" ng-model="message.sender" placeholder="Réponse"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Message</label>
-                    <div class="col-md-6">
-                        <input disabled type="text" class="form-control" name="reponse" ng-model="message.body" placeholder="Réponse"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Réponse</label>
-                    <div class="col-md-6">
-                        <input focus-on="onReply" type="text" class="form-control" name="reponse" ng-model="response" placeholder="Réponse"/>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">Envoyer</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
-        </div>
-    </script>
 
     <script src="{% static "scripts/bower_components/angular/angular.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-route/angular-route.js" %}" ></script>

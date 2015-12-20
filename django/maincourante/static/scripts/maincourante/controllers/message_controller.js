@@ -8,6 +8,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
 	$scope.messages = [];
     $scope.isLoading = true;
     $scope.editionMode = false;
+    $scope.disableAutoLoad = false;
     $scope.indicatifs = new Array();
     $scope.errorMessage = null;
 
@@ -55,7 +56,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
 	}
 
     $scope.enableMessageEdition = function(message){
-        message.editionMode = true;
+        $scope.disableAutoLoad = true;
         message.enableEdition();
         focus("onEdit");
     }
@@ -75,7 +76,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         }
         MessageManager.modify(message).then(
             function(message) {
-                message.editionMode = false;
+                message.disableAutoLoad = false;
                 loadMessages();
                 focus('onNewMessage');
             },
@@ -87,20 +88,22 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
     $scope.cancelMessageEdition = function(message){
         message.cancelEdition();
         focus('onNewMessage');
-        message.editionMode = false;
+        message.disableAutoLoad = false;
     }
 
     function loadMessages() {
-        MessageManager.load().then(
-            function (messages) {
-                $scope.messages = messages;
-                $scope.errorMessage = null;
-                $scope.isLoading = false;
-            },
-            function (errorPayload) {
-                $scope.errorMessage = "Erreur lors du chargement des messages";
-            }
-        );
+        if(!$scope.disableAutoLoad) {
+            MessageManager.load().then(
+                function (messages) {
+                    $scope.messages = messages;
+                    $scope.errorMessage = null;
+                    $scope.isLoading = false;
+                },
+                function (errorPayload) {
+                    $scope.errorMessage = "Erreur lors du chargement des messages";
+                }
+            );
+        }
     }
 
     function loadIndicaifs(){
@@ -160,6 +163,9 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
     loadMessages();
     loadIndicaifs();
     focus('onNewMessage');
+
+    $interval(loadMessages, 120000);
+    $interval(loadIndicaifs, 120000);
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
