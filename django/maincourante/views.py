@@ -21,7 +21,7 @@ class EvenementListView(LoginRequiredMixin, ListView):
     model = Evenement
 
 
-class EvenementCreateView(CreateView):
+class EvenementCreateView(LoginRequiredMixin, CreateView):
     model = Evenement
     fields = ['nom']
 
