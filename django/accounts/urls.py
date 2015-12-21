@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^secure-login/$', 'accounts.views.login_administrator', name='login-admin'),
     url(r'^create/$', 'accounts.views.create_user', name='create-user'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
-        {'next_page': '/'}, name='logout'),
+        {'next_page': 'list-evenements'}, name='logout'),
 ]
