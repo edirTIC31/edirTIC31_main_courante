@@ -11,7 +11,8 @@ from accounts.forms import CreateUserForm
 
 def login_operator(request, username=None):
 
-    form = CreateUserForm()
+    redirect_to = request.GET.get(REDIRECT_FIELD_NAME, reverse('login'))
+    form = CreateUserForm(request.POST or None)
 
     if username:
 
@@ -26,12 +27,21 @@ def login_operator(request, username=None):
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         contrib_login(request, user)
 
-        redirect_to = request.GET.get(REDIRECT_FIELD_NAME, reverse('login'))
+        return redirect(redirect_to)
+
+    elif request.method == 'POST' and form.is_valid():
+
+        username = form.cleaned_data['username']
+        assert(not User.objects.filter(username=username).exists())
+
+        user = User.objects.create_user(username)
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        contrib_login(request, user)
 
         return redirect(redirect_to)
 
     c = {
-        'create_user_form': form,
+        'form': form,
         'operators': User.objects.filter(is_superuser=False, is_active=True),
         'next': request.GET.get(REDIRECT_FIELD_NAME, ''),
     }
@@ -48,24 +58,3 @@ def login_administrator(request, *args, **kwargs):
     return contrib_login_view(request, *args,
             template_name='accounts/login_administrator.html',
             extra_context=c, **kwargs)
-
-def create_user(request):
-
-    redirect_to = request.GET.get(REDIRECT_FIELD_NAME, reverse('login'))
-    form = CreateUserForm(request.POST)
-
-    if request.method != 'POST':
-        raise Http404
-
-    if not form.is_valid():
-        messages.error(request, 'Ce nom d’utilisateur existe déjà.')
-        return redirect(redirect_to) # FIXME
-
-    username = form.cleaned_data['username']
-    assert(not User.objects.filter(username=username).exists())
-
-    user = User.objects.create_user(username)
-    user.backend = 'django.contrib.auth.backends.ModelBackend'
-    contrib_login(request, user)
-
-    return redirect(redirect_to)
