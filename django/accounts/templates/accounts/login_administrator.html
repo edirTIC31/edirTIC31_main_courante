@@ -8,7 +8,7 @@
 <div class="list-group">
 	{% for user in administrators %}
 	<a class="list-group-item admin-link" href="#connexion" onClick="javascript:precomplete_form('{{ user.username }}');">
-		<h4><span class="glyphicon glyphicon-lock"></span> {{ user }}</h4>
+        <span class="glyphicon glyphicon-lock"></span> <b>{{ user }}</b>
 	</a>
 	{% endfor %}
 </div>
