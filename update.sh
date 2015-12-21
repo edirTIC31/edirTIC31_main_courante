@@ -10,6 +10,9 @@ REMOTE=$(git rev-parse origin/$branch)
 [[ "$LOCAL" == "$REMOTE" ]] && exit 0
 
 git checkout origin/$branch
+if [[ ! -d venv ]]; then
+    virtualenv venv
+fi
 source venv/bin/activate
 
 cd django
