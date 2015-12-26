@@ -46,22 +46,24 @@
     <div class="modal-header">
         <h3 class="modal-title">Suppression de message ?</h3>
     </div>
-    <div class="modal-body">
-        Êtes-vous sûr de vouloir supprimer ce message ? Si oui veuillez donner une raison.
-        <input focus-on="onDelete" type="text" class="form-control" placeholder="Raison" ng-model="suppressionMessage">
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">Oui</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Non</button>
-    </div>
+    <form name="deleteForm" class="form-horizontal" novalidate ng-submit="deleteForm.$valid && ok()">
+        <div class="modal-body">
+            Êtes-vous sûr de vouloir supprimer ce message ? Si oui veuillez donner une raison.
+            <input focus-on="onDelete" type="text" class="form-control" placeholder="Raison" ng-model="suppressionMessage" autofocus>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">Oui</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Non</button>
+        </div>
+    </form>
 </script>
 
 <script type="text/ng-template" id="modal-reply-message.html">
     <div class="modal-header">
         <h3 class="modal-title">Ecrire une réponse</h3>
     </div>
-    <div class="modal-body">
-        <form class="form-horizontal">
+    <form name="responseForm" class="form-horizontal" novalidate ng-submit="responseForm.$valid && ok()">
+        <div class="modal-body">
             <div class="form-group">
                 <label class="col-md-3 control-label">Destinataire</label>
                 <div class="col-md-6">
@@ -83,13 +85,13 @@
             <div class="form-group">
                 <label class="col-md-3 control-label">Réponse</label>
                 <div class="col-md-6">
-                    <input focus-on="onReply" type="text" class="form-control" name="reponse" ng-model="response" placeholder="Réponse"/>
+                    <input focus-on="onReply" type="text" class="form-control" name="reponse" ng-model="response" placeholder="Réponse" autofocus/>
                 </div>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">Envoyer</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
-    </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">Envoyer</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
+        </div>
+    </form>
 </script>
