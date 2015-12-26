@@ -100,7 +100,7 @@ function MessageManagerFactory(Message, $q, $http) {
             var _this = this;
             $http.put(entry_point+message.id, message)
                 .success(function (messageData) {
-                    deferred.resolve(new Message(messageData));
+                    deferred.resolve(message);
                 })
                 .error(function () {
                     deferred.reject();

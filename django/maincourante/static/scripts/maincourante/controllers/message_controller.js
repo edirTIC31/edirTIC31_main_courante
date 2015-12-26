@@ -76,11 +76,11 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
             return;
         }
         MessageManager.modify(message).then(
-            function(msg) {
+            function(message) {
                 $scope.disableAutoLoad = false;
                 message.edit = false;
                 message.modified = true;
-                loadMessages();
+                //loadMessages();
                 focus('onNewMessage');
             },
             function(errorPayload) {
@@ -106,7 +106,9 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                                 var found = false;
                                 angular.forEach($scope.messages, function (existingMessage, key) {
                                     if(existingMessage.id == newMessage.id){
-                                        $scope.messages[key] = newMessage;
+                                        $scope.messages[key].body = newMessage.body;
+                                        $scope.messages[key].deleted = newMessage.deleted;
+                                        $scope.messages[key].modified = newMessage.modified;
                                         found = true;
                                     }
                                 });
@@ -116,9 +118,9 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                             });
                         }
                         $scope.lastRetrivalDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sss');
-                        $scope.errorMessage = null;
-                        $scope.isLoading = false;
                     }
+                    $scope.errorMessage = null;
+                    $scope.isLoading = false;
                 },
                 function (errorPayload) {
                     $scope.errorMessage = "Erreur lors du chargement des messages";
