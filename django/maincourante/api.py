@@ -59,7 +59,7 @@ class Message:
         self.operateur = thread.operateur
         self.receiver = thread.destinataire.nom
         self.body = thread.corps
-        self.timestamp = thread.creeq
+        self.timestamp = thread.cree
         self.deleted = thread.deleted
         self.modified = thread.modified
 
@@ -101,9 +101,9 @@ class MessageResource(Resource):
         threads = MessageThread.objects.filter(evenement=evenement)
 
         newer_than = request.GET.get('newer-than')
-        newer_than = datetime.strptime(newer_than, '%Y-%m-%dT%H:%M:%S.%f')
-        newer_than = timezone.make_aware(newer_than)
         if newer_than:
+            newer_than = datetime.strptime(newer_than, '%Y-%m-%dT%H:%M:%S.%f')
+            newer_than = timezone.make_aware(newer_than)
             all_threads = threads
             threads = []
             for thread in all_threads:

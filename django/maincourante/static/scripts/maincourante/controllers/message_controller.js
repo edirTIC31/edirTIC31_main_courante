@@ -110,10 +110,9 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         IndicatifManager.load().then(
             function (indicatifs) {
                 $scope.indicatifs = indicatifs;
-                $scope.errorMessage = null;
             },
             function (errorPayload) {
-                $scope.errorMessage = "Erreur lors du chargement des messages";
+                $scope.errorMessage = "Erreur lors du chargement des indicatifs";
             }
         );
     }

@@ -121,7 +121,8 @@ function MessageManagerFactory(Message, $q, $http) {
         },
         load: function () {
             var deferred = $q.defer();
-            $http.get(entry_point+"?format=json&limit=1000")
+            var loadUrl = entry_point+"?format=json&limit=0&evenement="+EVENEMENT_ID;
+            $http.get(loadUrl)
                 .success(function (data) {
                     var messages = new Array();
                     if(data.messages != null){

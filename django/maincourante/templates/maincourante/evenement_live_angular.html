@@ -26,6 +26,14 @@
     </div>
     </diV>
 
+    <script>
+
+        var csrf = '{{ csrf_token|escapejs }}';
+        var EVENEMENT = '{{ evenement.nom }}';
+        var EVENEMENT_ID = '{{ evenement.id }}';
+
+    </script>
+
     <script src="{% static "scripts/bower_components/angular/angular.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-route/angular-route.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-animate/angular-animate.js" %}" ></script>

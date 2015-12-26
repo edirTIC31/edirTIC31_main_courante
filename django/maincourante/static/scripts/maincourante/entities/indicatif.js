@@ -28,7 +28,7 @@ function IndicatifManagerFactory(Indicatif, $q, $http) {
     var indicatiManager = {
         load: function () {
             var deferred = $q.defer();
-            $http.get(entry_point+"?format=json&limit=1000")
+            $http.get(entry_point+"?format=json&limit=0")
                 .success(function (data) {
                     var indicatifs = new Array();
                     if(data.objects != null){
