@@ -37,13 +37,13 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                         function(resp) {
                         $scope.body = null;
                         $scope.response = null;
-                        loadMessages();
+                        $scope.messages.push(resp);
                     },
                     function(errorPayload) {
                         alert("Erreur lors de l'ajout de la reponse");
                     });
                 }
-                loadMessages();
+                $scope.messages.push(msg);
                 $scope.sender = null;
                 $scope.receiver = null;
                 $scope.body = null;
@@ -103,13 +103,14 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                             $scope.messages = newMessages;
                         }else{
                             angular.forEach(newMessages, function (newMessage){
-                                if(newMessage.modified) {
-                                    angular.forEach($scope.messages, function (existingMessage, key) {
-                                        if(existingMessage.id == newMessage.id){
-                                            $scope.messages[key] = newMessage;
-                                        }
-                                    });
-                                }else{
+                                var found = false;
+                                angular.forEach($scope.messages, function (existingMessage, key) {
+                                    if(existingMessage.id == newMessage.id){
+                                        $scope.messages[key] = newMessage;
+                                        found = true;
+                                    }
+                                });
+                                if(!found){
                                     $scope.messages.push(newMessage);
                                 }
                             });
