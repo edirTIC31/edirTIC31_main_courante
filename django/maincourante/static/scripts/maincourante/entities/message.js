@@ -99,8 +99,8 @@ function MessageManagerFactory(Message, $q, $http) {
             var deferred = $q.defer();
             var _this = this;
             $http.put(entry_point+message.id, message)
-                .success(function (data) {
-                    deferred.resolve(message);
+                .success(function (messageData) {
+                    deferred.resolve(new Message(messageData));
                 })
                 .error(function () {
                     deferred.reject();
@@ -119,9 +119,12 @@ function MessageManagerFactory(Message, $q, $http) {
             return deferred.promise;
 
         },
-        load: function () {
+        load: function (lastTimestamp) {
             var deferred = $q.defer();
             var loadUrl = entry_point+"?format=json&limit=0&evenement="+EVENEMENT_ID;
+            if(lastTimestamp){
+                loadUrl += "&newer-than="+lastTimestamp;
+            }
             $http.get(loadUrl)
                 .success(function (data) {
                     var messages = new Array();

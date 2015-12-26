@@ -1,9 +1,9 @@
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
-  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', 'IndicatifManager', '$modal', '$interval','focus', prepareMainController]);
+  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', 'IndicatifManager', '$modal', '$interval','focus', '$filter', prepareMainController]);
 
-function prepareMainController($scope, Message, MessageManager, IndicatifManager,  $modal, $interval, focus){
+function prepareMainController($scope, Message, MessageManager, IndicatifManager,  $modal, $interval, focus, $filter){
 	
 	$scope.messages = [];
     $scope.isLoading = true;
@@ -11,6 +11,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
     $scope.disableAutoLoad = false;
     $scope.indicatifs = new Array();
     $scope.errorMessage = null;
+    $scope.lastRetrivalDate = null;
 
     $scope.addMessage = function(){
         var message = new Message();
@@ -36,13 +37,13 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                         function(resp) {
                         $scope.body = null;
                         $scope.response = null;
-                        $scope.messages.push(resp);
+                        loadMessages();
                     },
                     function(errorPayload) {
                         alert("Erreur lors de l'ajout de la reponse");
                     });
                 }
-                $scope.messages.push(msg);
+                loadMessages();
                 $scope.sender = null;
                 $scope.receiver = null;
                 $scope.body = null;
@@ -75,9 +76,10 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
             return;
         }
         MessageManager.modify(message).then(
-            function(message) {
-                message.disableAutoLoad = false;
+            function(msg) {
+                $scope.disableAutoLoad = false;
                 message.edit = false;
+                message.modified = true;
                 loadMessages();
                 focus('onNewMessage');
             },
@@ -94,11 +96,28 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
 
     function loadMessages() {
         if(!$scope.disableAutoLoad) {
-            MessageManager.load().then(
-                function (messages) {
-                    $scope.messages = messages;
-                    $scope.errorMessage = null;
-                    $scope.isLoading = false;
+            MessageManager.load($scope.lastRetrivalDate).then(
+                function (newMessages) {
+                    if(newMessages && newMessages.length > 0) {
+                        if( $scope.messages.length == 0){
+                            $scope.messages = newMessages;
+                        }else{
+                            angular.forEach(newMessages, function (newMessage){
+                                if(newMessage.modified) {
+                                    angular.forEach($scope.messages, function (existingMessage, key) {
+                                        if(existingMessage.id == newMessage.id){
+                                            $scope.messages[key] = newMessage;
+                                        }
+                                    });
+                                }else{
+                                    $scope.messages.push(newMessage);
+                                }
+                            });
+                        }
+                        $scope.lastRetrivalDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sss');
+                        $scope.errorMessage = null;
+                        $scope.isLoading = false;
+                    }
                 },
                 function (errorPayload) {
                     $scope.errorMessage = "Erreur lors du chargement des messages";
@@ -107,7 +126,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         }
     }
 
-    function loadIndicaifs(){
+    function loadIndicatifs(){
         IndicatifManager.load().then(
             function (indicatifs) {
                 $scope.indicatifs = indicatifs;
@@ -151,6 +170,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         });
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
+            loadMessages();
         }, function () {
 
         });
@@ -160,11 +180,11 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
     loadMessages();
-    loadIndicaifs();
+    loadIndicatifs();
     focus('onNewMessage');
 
-    $interval(loadMessages, 120000);
-    $interval(loadIndicaifs, 120000);
+    $interval(loadMessages, 12000);
+    $interval(loadIndicatifs, 12000);
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
@@ -200,7 +220,6 @@ angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtr
             function(resp) {
                 $scope.body = null;
                 $scope.response = null;
-                messages.push(resp);
                 $modalInstance.close();
             },
             function(errorPayload) {
