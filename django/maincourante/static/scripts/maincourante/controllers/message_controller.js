@@ -77,6 +77,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         MessageManager.modify(message).then(
             function(message) {
                 message.disableAutoLoad = false;
+                message.edit = false;
                 loadMessages();
                 focus('onNewMessage');
             },
@@ -131,7 +132,6 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
         }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
         });
     };
 
@@ -152,7 +152,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
         }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
+
         });
     };
 
