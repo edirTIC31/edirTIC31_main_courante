@@ -1,7 +1,5 @@
 angular.module("edir.maincourante.entities", []);
 
-"use strict";
-
 angular.module("edir.maincourante.entities")
     .factory("Message", [MessageFactory])
     .factory("MessageManager", ["Message", "$q", "$http", MessageManagerFactory]);
@@ -10,30 +8,55 @@ function MessageFactory() {
     function Message(data) {
         if (data) {
             this.setMessage(data);
+        }else{
+            this.getAsObject();
         }
     }
 
     Message.prototype = {
         id: null,
-        corps: null,
-        expediteur: null,
-        destinataire: null,
-        oldMessage: null,
+        evenement: 1,
+        sender: null,
+        body: null,
+        receiver: null,
         edit: false,
-        showHistory: false,
+        previousBody: null,
         cree: null,
-        parent: null,
-        suppression: null,
+        operateur: null,
+        deleted: null,
+        modified: null,
         displayCreationDate: null,
+        timestamp: null,
         setMessage: function (data) {
-            this.id = data.id;
-            this.corps = data.corps;
-            this.expediteur = data.expediteur;
-            this.destinataire = data.destinataire;
-            this.cree = new Date(data.cree);
-            this.displayCreationDate = new Date(data.cree);
-            this.parent = data.parent;
-            this.suppression = data.suppression;
+            var self = this;
+            self.id = data.id;
+            self.evenement = data.evenement;
+            self.sender = data.sender;
+            self.receiver = data.receiver;
+            self.body = data.body;
+            self.cree = new Date(data.timestamp);
+            self.displayCreationDate = new Date(data.timestamp);
+            self.operateur = data.operateur;
+            self.timestamp = data.timestamp;
+            self.deleted = data.deleted;
+            self.modified = data.modified;
+        },
+        getAsObject: function () {
+            var self = this;
+            return {
+                id: self.id,
+                sender: self.sender,
+                body: self.body,
+                receiver: self.receiver,
+                edit: self.edit,
+                previousBody: self.previousBody,
+                operateur: self.operateur,
+                cree: self.timestamp,
+                deleted: self.deleted,
+                modified: self.modified,
+                displayCreationDate: null,
+                timestamp: self.timestamp
+            };
         },
         equals: function () {
             throw new Error("Not implemented");
@@ -42,15 +65,15 @@ function MessageFactory() {
             return ""
         },
         isValid: function (){
-            return (this.corps != null && this.corps != "" && this.expediteur != null && this.expediteur != "" && this.destinataire != null && this.destinataire != "")
+            return (this.body != null && this.body != "" && this.sender != null && this.sender != "" && this.receiver != null && this.receiver != "")
         },
         enableEdition: function(){
             this.edit = true;
-            this.oldMessage = this.corps;
+            this.previousBody = this.body;
         },
         cancelEdition: function(){
-            this.corps = this.oldMessage;
-            this.oldMessage = null;
+            this.corps = this.previousBody;
+            this.previousBody = null;
             this.edit = false;
         }
     };
@@ -61,14 +84,11 @@ function MessageManagerFactory(Message, $q, $http) {
     var entry_point = '/api/v1/message/';
     var messageManager = {
         ready: false,
-        add: function (message, oldMessage) {
+        add: function (message) {
             var deferred = $q.defer();
-            if(oldMessage != undefined){
-                message.parent = oldMessage.id;
-            }
             $http.post(entry_point, message)
              .success(function (data) {
-                deferred.resolve({message: message, oldMessage: oldMessage});
+                deferred.resolve(new Message(data));
              })
              .error(function () {
                 deferred.reject();
@@ -78,24 +98,9 @@ function MessageManagerFactory(Message, $q, $http) {
         modify: function (message) {
             var deferred = $q.defer();
             var _this = this;
-            var olCreationDate = message.cree;
-            message.cree = null;
             $http.put(entry_point+message.id, message)
-                .success(function (data) {
-                    var newMessage = new Message();
-                    newMessage.expediteur = message.expediteur;
-                    newMessage.destinataire = message.destinataire;
-                    newMessage.corps = message.oldMessage;
-                    newMessage.parent = message.id;
-                    _this.add(newMessage, message).then(
-                        function(message) {
-                            message.oldMessage.cree = olCreationDate;
-                            message.oldMessage.edit = false;
-                            deferred.resolve(message);
-                        },
-                        function(errorPayload) {
-                            alert("Erreur lors de la sauvegarde de l'ancien message");
-                    });
+                .success(function (messageData) {
+                    deferred.resolve(message);
                 })
                 .error(function () {
                     deferred.reject();
@@ -104,8 +109,7 @@ function MessageManagerFactory(Message, $q, $http) {
         },
         delete: function (message, suppressionMessage) {
             var deferred = $q.defer();
-            message.suppression = suppressionMessage;
-            $http.put(entry_point+"/"+message.id, message)
+            $http.delete(entry_point+message.id+"?reason="+suppressionMessage, message)
                 .success(function (data) {
                     deferred.resolve(message);
                 })
@@ -115,28 +119,19 @@ function MessageManagerFactory(Message, $q, $http) {
             return deferred.promise;
 
         },
-        load: function () {
+        load: function (lastTimestamp) {
             var deferred = $q.defer();
-            $http.get(entry_point+"?format=json&limit=1000")
+            var loadUrl = entry_point+"?format=json&limit=0&evenement="+EVENEMENT_ID;
+            if(lastTimestamp){
+                loadUrl += "&newer-than="+lastTimestamp;
+            }
+            $http.get(loadUrl)
                 .success(function (data) {
                     var messages = new Array();
-                    if(data.objects != null){
-                        var childrenMessages = new Array();
-                        angular.forEach(data.objects, function (messageData, key) {
+                    if(data.messages != null){
+                        angular.forEach(data.messages, function (messageData, key) {
                             var message = new Message(messageData)
-                            if(message.parent) {
-                                var parentArray = childrenMessages[message.parent];
-                                if(!parentArray){
-                                    parentArray = new Array();
-                                }
-                                parentArray.push(message);
-                                childrenMessages[message.parent] = parentArray;
-                            }else{
-                                messages.push(message);
-                            }
-                        });
-                        angular.forEach(messages, function (message, key) {
-                           message.history = childrenMessages[message.id];
+                            messages.push(message);
                         });
                     }
                     deferred.resolve(messages);

@@ -1,41 +1,55 @@
-'use strict';
-
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
-  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', '$modal', '$interval','focus', prepareMainController]);
+  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', 'IndicatifManager', '$modal', '$interval','focus', '$filter', prepareMainController]);
 
-function prepareMainController($scope, Message, MessageManager, $modal, $interval, focus){
+function prepareMainController($scope, Message, MessageManager, IndicatifManager,  $modal, $interval, focus, $filter){
 	
 	$scope.messages = [];
-    $scope.childrenMessages = [];
-    $scope.onMessageDelete = false;
+    $scope.isLoading = true;
     $scope.editionMode = false;
-    $scope.openHistory = new Array();
+    $scope.disableAutoLoad = false;
     $scope.indicatifs = new Array();
     $scope.errorMessage = null;
+    $scope.lastRetrivalDate = null;
 
     $scope.addMessage = function(){
         var message = new Message();
-        if(!$scope.from || !$scope.to){
+        if(!$scope.sender || !$scope.receiver){
             return;
         }
-        message.expediteur = $scope.from.title ? $scope.from.title: $scope.from.originalObject;
-        message.destinataire = $scope.to.title ? $scope.to.title: $scope.to.originalObject;
-		message.corps = $scope.body;
+        message.sender = $scope.sender.title ? $scope.sender.title: $scope.sender.originalObject;
+        message.receiver = $scope.receiver.title ? $scope.receiver.title: $scope.receiver.originalObject;
+        message.evenement = EVENEMENT;
+		message.body = $scope.body;
 		if(!message.isValid()){
             return;
         }
 		MessageManager.add(message).then(
-            function(message) {
-                $scope.from = null;
-                $scope.to = null;
+            function(msg) {
+                if($scope.response){
+                    var response = new Message();
+                    response.receiver = msg.sender;
+                    response.sender = msg.receiver;
+                    response.evenement = EVENEMENT;
+                    response.body = $scope.response;
+                    MessageManager.add(response).then(
+                        function(resp) {
+                        $scope.body = null;
+                        $scope.response = null;
+                        $scope.messages.push(resp);
+                    },
+                    function(errorPayload) {
+                        alert("Erreur lors de l'ajout de la reponse");
+                    });
+                }
+                $scope.messages.push(msg);
+                $scope.sender = null;
+                $scope.receiver = null;
                 $scope.body = null;
-                $scope.$broadcast('angucomplete-alt:clearInput', 'from');
-                $scope.$broadcast('angucomplete-alt:clearInput', 'to');
-                loadMessages();
+                $scope.$broadcast('angucomplete-alt:clearInput', 'sender');
+                $scope.$broadcast('angucomplete-alt:clearInput', 'receiver');
                 focus('onNewMessage');
-                $scope.$broadcast('angucomplete-alt:changeInput', 'ex1');
             },
             function(errorPayload) {
                 alert("Erreur lors de l'ajout du nouveau message");
@@ -43,7 +57,7 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
 	}
 
     $scope.enableMessageEdition = function(message){
-        $scope.editionMode = true;
+        $scope.disableAutoLoad = true;
         message.enableEdition();
         focus("onEdit");
     }
@@ -57,15 +71,16 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     }
 
     $scope.validateMessageEdition = function(message){
-        if(message.oldMessage == message.corps){
+        if(message.oldMessage == message.body){
             $scope.cancelMessageEdition(message);
             return;
         }
         MessageManager.modify(message).then(
             function(message) {
-                message.oldMessage.edit = false;
-                $scope.editionMode = false;
-                loadMessages();
+                $scope.disableAutoLoad = false;
+                message.edit = false;
+                message.modified = true;
+                //loadMessages();
                 focus('onNewMessage');
             },
             function(errorPayload) {
@@ -76,74 +91,60 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
     $scope.cancelMessageEdition = function(message){
         message.cancelEdition();
         focus('onNewMessage');
-        $scope.editionMode = false;
-    }
-
-    $scope.toggleMessageHistory = function(message){
-        if(message.showHistory){
-            var idx = $scope.openHistory.indexOf(message.id);
-            if(idx != -1) {
-                $scope.openHistory.splice(idx, 1);
-            }
-            message.showHistory = false;
-        }else{
-            $scope.openHistory.push(message.id);
-            message.showHistory = true;
-        }
+        message.disableAutoLoad = false;
     }
 
     function loadMessages() {
-        if($scope.editionMode){
-            return;
+        if(!$scope.disableAutoLoad) {
+            MessageManager.load($scope.lastRetrivalDate).then(
+                function (newMessages) {
+                    if(newMessages && newMessages.length > 0) {
+                        if( $scope.messages.length == 0){
+                            $scope.messages = newMessages;
+                        }else{
+                            angular.forEach(newMessages, function (newMessage){
+                                var found = false;
+                                angular.forEach($scope.messages, function (existingMessage, key) {
+                                    if(existingMessage.id == newMessage.id){
+                                        $scope.messages[key].body = newMessage.body;
+                                        $scope.messages[key].deleted = newMessage.deleted;
+                                        $scope.messages[key].modified = newMessage.modified;
+                                        found = true;
+                                    }
+                                });
+                                if(!found){
+                                    $scope.messages.push(newMessage);
+                                }
+                            });
+                        }
+                        $scope.lastRetrivalDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sss');
+                    }
+                    $scope.errorMessage = null;
+                    $scope.isLoading = false;
+                },
+                function (errorPayload) {
+                    $scope.errorMessage = "Erreur lors du chargement des messages";
+                }
+            );
         }
-        MessageManager.load().then(
-            function (messages) {
-                $scope.messages = messages;
-                manageOpenHistoryMessage();
-                manageIndicatifs();
-                $scope.errorMessage = null;
+    }
+
+    function loadIndicatifs(){
+        IndicatifManager.load().then(
+            function (indicatifs) {
+                $scope.indicatifs = indicatifs;
             },
             function (errorPayload) {
-                $scope.errorMessage = "Erreur lors du chargement des messages";
+                $scope.errorMessage = "Erreur lors du chargement des indicatifs";
             }
         );
-    }
-
-    function manageOpenHistoryMessage(){
-        angular.forEach($scope.openHistory, function (messageID, key) {
-            angular.forEach($scope.messages, function (message, key) {
-                if(messageID == message.id){
-                    message.showHistory = true;
-                }
-            });
-        });
-    }
-
-    function manageIndicatifs(){
-        $scope.indicatifs = [];
-        angular.forEach($scope.messages, function (message, key) {
-            addIndicatifs(message.expediteur);
-            addIndicatifs(message.destinataire);
-        });
-    }
-
-    function addIndicatifs(indicatif){
-       var found = false;
-        angular.forEach($scope.indicatifs, function (indic, key) {
-            if(indic.name == indicatif){
-                found = true;
-            }
-        });
-        if(!found) {
-            $scope.indicatifs.push({"name": indicatif});
-        }
     }
 
     $scope.deleteMessage = function(message) {
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'myModalContent.html',
-            controller: 'ModalInstanceCtrl',
+            templateUrl: 'modal-delete-message.html',
+            controller: 'ModalDeleteMessageCtrl',
             resolve: {
                 message: function () {
                     return message;
@@ -153,7 +154,28 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
         }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    $scope.replyMessage = function(message) {
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'modal-reply-message.html',
+            controller: 'ModalReplyMessageCtrl',
+            resolve: {
+                message: function () {
+                    return message;
+                },
+                messages: function () {
+                    return $scope.messages;
+                }
+            }
+        });
+        modalInstance.result.then(function (selectedItem) {
+            $scope.selected = selectedItem;
+            loadMessages();
+        }, function () {
+
         });
     };
 
@@ -161,22 +183,50 @@ function prepareMainController($scope, Message, MessageManager, $modal, $interva
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
     loadMessages();
+    loadIndicatifs();
     focus('onNewMessage');
-    $interval(loadMessages, 10000);
+
+    $interval(loadMessages, 12000);
+    $interval(loadIndicatifs, 12000);
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
 
-angular.module('edir.maincourante.controllers').controller('ModalInstanceCtrl', function ($scope, $modalInstance, MessageManager, message) {
+angular.module('edir.maincourante.controllers').controller('ModalDeleteMessageCtrl', function ($scope, $modalInstance, MessageManager, message) {
 
     $scope.ok = function () {
         MessageManager.delete(message, $scope.suppressionMessage).then(
          function(message) {
+             message.deleted = true;
              $modalInstance.close();
          },
          function(errorPayload) {
             alert("Erreur lors de la suppression du message");
+        });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtrl', function ($scope, $modalInstance, MessageManager, Message, message, messages) {
+    $scope.message = message;
+    $scope.ok = function () {
+        var response = new Message();
+        response.receiver = message.sender;
+        response.sender = message.receiver;
+        response.evenement = EVENEMENT;
+        response.body = $scope.response;
+        MessageManager.add(response).then(
+            function(resp) {
+                $scope.body = null;
+                $scope.response = null;
+                $modalInstance.close();
+            },
+            function(errorPayload) {
+                alert("Erreur lors de l'ajout de la reponse");
         });
     };
 

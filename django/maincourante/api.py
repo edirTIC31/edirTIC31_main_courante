@@ -11,7 +11,7 @@ from tastypie.resources import ModelResource, Resource
 from tastypie.constants import ALL
 
 
-from .models import Evenement, Indicatif, MessageThread, MessageVersion
+from .models import Evenement, Indicatif, MessageThread, MessageVersion, MessageSuppression
 
 __all__ = ['IndicatifResource', 'MessageResource', 'EvenementResource']
 
@@ -56,9 +56,13 @@ class Message:
         self.pk = thread.pk
         self.evenement = thread.evenement
         self.sender = thread.expediteur.nom
+        self.operateur = thread.operateur
         self.receiver = thread.destinataire.nom
         self.body = thread.corps
-        self.timestamp = thread.modifie
+        self.timestamp = thread.cree
+        self.deleted = thread.deleted
+        self.modified = thread.modified
+
 
 
 class MessageResource(Resource):
@@ -67,10 +71,14 @@ class MessageResource(Resource):
     evenement = fields.ToOneField(EvenementResource, 'evenement')
     sender = fields.CharField(attribute='sender')
     receiver = fields.CharField(attribute='receiver')
+    operateur = fields.CharField(attribute='operateur')
     body = fields.CharField(attribute='body')
     timestamp = fields.DateTimeField(attribute='timestamp')
+    deleted = fields.BooleanField(attribute='deleted')
+    modified = fields.BooleanField(attribute='modified')
 
     class Meta:
+        always_return_data = True
         resource_name = 'message'
         collection_name = 'messages'
         list_allowed_methods = ['get', 'post']
@@ -93,9 +101,9 @@ class MessageResource(Resource):
         threads = MessageThread.objects.filter(evenement=evenement)
 
         newer_than = request.GET.get('newer-than')
-        newer_than = datetime.strptime(newer_than, '%Y-%m-%dT%H:%M:%S.%f')
-        newer_than = timezone.make_aware(newer_than)
         if newer_than:
+            newer_than = datetime.strptime(newer_than, '%Y-%m-%dT%H:%M:%S.%f')
+            newer_than = timezone.make_aware(newer_than)
             all_threads = threads
             threads = []
             for thread in all_threads:
@@ -151,6 +159,8 @@ class MessageResource(Resource):
         body, sender, receiver = (bundle.data.get(name) for name in ['body', 'sender', 'receiver'])
         if body and body != thread.corps and not thread.deleted:
             user = bundle.request.user
+            sender = Indicatif.objects.get_or_create(nom=sender, evenement=thread.evenement)[0]
+            receiver = Indicatif.objects.get_or_create(nom=receiver, evenement=thread.evenement)[0]
             version = MessageVersion(thread=thread, operateur=user, corps=body, expediteur=sender, destinataire=receiver)
             version.save()
 
@@ -171,8 +181,20 @@ class MessageResource(Resource):
             raise ImmediateHttpResponse(response=HttpBadRequest())
 
         if not thread.deleted:
+            user = bundle.request.user
+            reason = MessageSuppression(raison=reason, operateur=user)
+            reason.save()
             thread.suppression = reason
             thread.save()
 
     def rollbacks(self, bundles):
         pass
+
+
+class IndicatifResource(ModelResource):
+
+    class Meta:
+        queryset = Indicatif.objects.all()
+        allowed_methods = ['get']
+        authentication = BaseAuthentication()
+        authorization = DjangoAuthorization()

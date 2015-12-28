@@ -1,0 +1,101 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="form-horizontal">
+            <div class="form-group form-group-md">
+                <label class="col-md-1 control-label">Recherche</label><div class="col-md-6"><input type="text" class="form-control" name="searchText" ng-model="searchText" placeholder="Recherche"></div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div ng-show="isLoading" class="col-md-12 center-block">
+            <button class="btn btn-lg btn-warning center-block"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Chargement en cours...</button>
+        </div>
+
+        <div ng-show="messages.length==0" class="col-md-12 center-block">
+            <button class="btn btn-lg btn-warning center-block"></span>Pas de messages</button>
+        </div>
+
+        <div class="animate-show" ng-repeat="message in messages | filter:searchText | orderBy: '-displayCreationDate'">
+            <div>
+                <div ng-class="{ 'panel': true, 'panel-sm': true, 'panel-info': !message.deleted ,'panel-default': message.deleted}">
+                    <div class="panel-heading panel-heading-sm">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> | message saisi par <b>{$ message.operateur $} </b>
+                        <div class="pull-right">
+                                    <span ng-if="message.deleted || message.modified" class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                                        <span ng-if="message.deleted && message.modified">Message modifié puis supprimé</span>
+                                        <span ng-if="!(message.deleted && message.modified) && message.deleted">Message supprimé</span>
+                                        <span ng-if="!(message.deleted && message.modified) && message.modified">Message modifié</span>
+                                    </span>
+                            <span ng-show="editionMode">
+                                <a class="btn btn-primary btn-xs" ng-click="replyMessage(message)"><span class="glyphicon glyphicon-share-alt"></span></a>
+                                <a ng-hide="message.edit || message.deleted" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-edit"></span></a>
+                                <a ng-hide="message.edit || message.deleted" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span></a>
+                                <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>Valider</a>
+                                <a ng-show="message.edit" class="btn btn-warning btn-xs"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>Annuler</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="panel-body panel-body-sm">
+                        <div ng-hide="message.edit">{$ message.body $}</div>
+                        <div ng-show="message.edit">
+                            <input type="text" class="form-control" value="message.corps" ng-model="message.body" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="modal-delete-message.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Suppression de message ?</h3>
+    </div>
+    <form name="deleteForm" class="form-horizontal" novalidate ng-submit="deleteForm.$valid && ok()">
+        <div class="modal-body">
+            Êtes-vous sûr de vouloir supprimer ce message ? Si oui veuillez donner une raison.
+            <input focus-on="onDelete" type="text" class="form-control" placeholder="Raison" ng-model="suppressionMessage" autofocus>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">Oui</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Non</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="modal-reply-message.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Ecrire une réponse</h3>
+    </div>
+    <form name="responseForm" class="form-horizontal" novalidate ng-submit="responseForm.$valid && ok()">
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="col-md-3 control-label">Destinataire</label>
+                <div class="col-md-6">
+                    <input  disabled type="text" class="form-control" name="reponse" ng-model="message.receiver" placeholder="Réponse"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">Expéditeur</label>
+                <div class="col-md-6">
+                    <input disabled type="text" class="form-control" name="reponse" ng-model="message.sender" placeholder="Réponse"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">Message</label>
+                <div class="col-md-6">
+                    <input disabled type="text" class="form-control" name="reponse" ng-model="message.body" placeholder="Réponse"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">Réponse</label>
+                <div class="col-md-6">
+                    <input focus-on="onReply" type="text" class="form-control" name="reponse" ng-model="response" placeholder="Réponse" autofocus/>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">Envoyer</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
+        </div>
+    </form>
+</script>

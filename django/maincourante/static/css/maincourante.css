@@ -5,3 +5,60 @@
 .panel-body-danger{
     background-color: #f2dede;
 }
+
+h4 {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.panel-body-md{
+    padding-bottom: 0px;
+}
+
+.form-group-md{
+    margin-bottom: 0px;
+}
+
+.panel-sm{
+    margin-bottom: 10px;
+}
+.panel-body-sm{
+    padding: 5px 5px 5px 15px;
+}
+
+.panel-heading-sm{
+    padding: 5px 5px 5px 15px;
+}
+
+/*Animation css*/
+
+.blue-div{
+    width:100%;
+    height:200px;
+    background-color:blue;
+}
+
+.green-div{
+    width:100%;
+    height:200px;
+    background-color:green;
+}
+
+.animate-show {
+    -moz-transition:all linear 1s;
+    -o-transition:all linear 1s;
+    transition:all linear 1s;
+    display:block!important;
+    -webkit-transition:all linear 1s;
+    transition:all linear 1s;
+    opacity:1;
+}
+
+.animate-show.ng-hide-add,
+.animate-show.ng-hide-remove {
+    display:block!important;
+}
+
+.animate-show.ng-hide {
+    opacity:0;
+}

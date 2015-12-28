@@ -2,8 +2,15 @@
 
 {% load staticfiles %}
 {% load bootstrap3 %}
+{% load message_tags %}
 
 {% block saisitab %} class="active"{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+<link rel="stylesheet" href="{% static "css/maincourante.css" %}">
+<link rel="stylesheet" href="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.css" %}">
+{% endblock %}
 
 {% block content %}
 <diV ng-app="maincouranteApp">
@@ -13,15 +20,16 @@
         <div class="panel-heading">
             <h4>Saisie des messages</h4>
         </div>
-        <div class="panel-body">
+        <div class="panel-body panel-body-md">
             <form class="form-horizontal">
+            {% csrf_token %}
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Destinataire</label>
-                    <div class="col-sm-10">
-                        <angucomplete-alt id="to"
+			    <label class="col-md-3 control-label" for="id_destinataire">Destinataire</label>
+                <div class="col-md-6">
+                        <angucomplete-alt id="receiver"
                                           placeholder="Destinataire"
                                           pause="100"
-                                          selected-object="to"
+                                          selected-object="receiver"
                                           local-data="indicatifs"
                                           search-fields="name"
                                           title-field="name"
@@ -32,12 +40,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Expéditeur</label>
-                    <div class="col-sm-10">
-                        <angucomplete-alt id="from"
+                    <label class="col-md-3 control-label">Expéditeur</label>
+                    <div class="col-md-6">
+                        <angucomplete-alt id="sender"
                                           placeholder="Expéditeur"
                                           pause="100"
-                                          selected-object="from"
+                                          selected-object="sender"
                                           local-data="indicatifs"
                                           search-fields="name"
                                           title-field="name"
@@ -48,85 +56,52 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Message</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Message" ng-model="body">
+                    <label class="col-md-3 control-label">Message</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="body" ng-model="body" placeholder="Message">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" ng-click="addMessage()" class="btn btn-default">Envoyer</button>
+                    <label class="col-md-3 control-label">Réponse</label>
+                    <div class="col-md-6">
+                        <input  type="text" class="form-control" name="reponse" ng-model="response" placeholder="Réponse"/>
                     </div>
                 </div>
+                {% buttons layout="horizontal" %}
+                        <button type="submit" ng-click="addMessage()" class="btn btn-primary">Envoyer</button>
+                {% endbuttons %}
             </form>
         </div>
     </div>
     <div ng-if="errorMessage" class="alert alert-danger">
         <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <strong>Erreur </strong> {$errorMessage$}
+        <strong>Erreur - </strong> {$errorMessage$}
     </div>
-    <div ng-repeat="message in messages | orderBy: '-displayCreationDate' ">
-        <div ng-hide="message.parentId">
-            <div ng-class="{ 'panel': true, 'panel-default': !message.suppression ,'panel-danger': message.suppression}">
-                <div class="panel-heading">de <b>{$ message.expediteur $}</b> à <b>{$ message.destinataire $} </b>créé le {$ message.displayCreationDate | date:"dd/MM/yyyy 'à' HH:mm" $}
-                    <span ng-if="message.suppression">| Message supprimé: {$ message.suppression $}</span>
-                    <div class="btn-group pull-right">
-                        <a ng-hide="message.edit || message.suppression" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-pencil"></span>&#160;Editter</a>
-                        <a ng-hide="message.edit || !message.history" class="btn btn-warning btn-xs"  ng-click="toggleMessageHistory(message)" ><span class="glyphicon glyphicon-time"></span>&#160;Historique</a>
-                        <a ng-hide="message.edit || message.suppression" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span>&#160;Supprimer</a>
-                        <a ng-show="message.edit" class="btn btn-success btn-xs"  ng-click="validateMessageEdition(message)"><span class="glyphicon glyphicon-ok"></span>&#160;Valider</a>
-                        <a ng-show="message.edit" class="btn btn-warning btn-xs"  ng-click="cancelMessageEdition(message)"><span class="glyphicon glyphicon-remove"></span>&#160;Annuler</a>
-                    </div>
-                </div>
-                <div class="panel-body" ng-class="{ 'panel-body': true, 'panel-body-danger': message.suppression}">
-                    <div ng-hide="message.edit">{$ message.corps $}</div>
-                        <div ng-show="message.edit">
-                            <input type="text" class="form-control" value="message.corps" ng-model="message.corps" focus-on="onEdit" ng-keydown="validateMessageEditionListener($event, message)">
-                        </div>
-                        <div ng-if="message.showHistory">
-                            <div ng-repeat="history in message.history | orderBy: '-displayCreationDate' ">
-                                <hr>
-                                <div class="panel-body panel-body-warning"  ng-hide="message.edit">{$ history.corps $} <span class="pull-right"> version du {$ history.displayCreationDate |  date:"dd/MM/yyyy 'à' HH:mm" $}</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    <messages ng-init="editionMode = true;"/>
+
     <br/>
     <script>
 
         var csrf = '{{ csrf_token|escapejs }}';
+        var EVENEMENT = '{{ evenement.nom }}';
+        var EVENEMENT_ID = '{{ evenement.id }}';
 
-    </script>
-    <script type="text/ng-template" id="myModalContent.html">
-            <div class="modal-header">
-            <h3 class="modal-title">Suppression de message ?</h3>
-            </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer ce message ? Si oui veuillez donner une raison.
-                <input type="text" class="form-control" placeholder="Raison" ng-model="suppressionMessage">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" type="button" ng-click="ok()">Oui</button>
-                <button class="btn btn-warning" type="button" ng-click="cancel()">Non</button>
-            </div>
     </script>
 
     <script src="{% static "scripts/bower_components/angular/angular.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-route/angular-route.js" %}" ></script>
+    <script src="{% static "scripts/bower_components/angular-animate/angular-animate.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-resource/angular-resource.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-bootstrap/ui-bootstrap.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angular-bootstrap/ui-bootstrap-tpls.js" %}" ></script>
     <script src="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.js" %}" ></script>
     <script src="{% static "scripts/bower_components/ng-focus-on/ng-focus-on.js" %}" ></script>
     <script src="{% static "scripts/maincourante/entities/message.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/entities/indicatif.js" %}" ></script>
     <script src="{% static "scripts/maincourante/controllers/message_controller.js" %}" ></script>
+    <script src="{% static "scripts/maincourante/directives/message_directive.js" %}" ></script>
     <script src="{% static "scripts/maincourante/app.js" %}" ></script>
-
-    <link rel="stylesheet" href="{% static "css/maincourante.css" %}">
-    <link rel="stylesheet" href="{% static "scripts/bower_components/angucomplete-alt/angucomplete-alt.css" %}">
 
 </div>
 {% endblock %}
