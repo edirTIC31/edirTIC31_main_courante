@@ -5,13 +5,15 @@ from django.contrib.auth.views import login as contrib_login_view
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from accounts.forms import CreateUserForm
 
 
 def login_operator(request, username=None):
 
-    redirect_to = request.GET.get(REDIRECT_FIELD_NAME, reverse('login'))
+    redirect_to = request.GET.get(REDIRECT_FIELD_NAME,
+            reverse(settings.LOGIN_REDIRECT_URL))
     form = CreateUserForm(request.POST or None)
 
     if username:
