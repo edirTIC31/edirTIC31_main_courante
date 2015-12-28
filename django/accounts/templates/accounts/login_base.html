@@ -11,6 +11,8 @@
     </h1>
 </div>
 
+{% bootstrap_messages %}
+
 <ul class="nav nav-tabs" role="tablist">
     <li{% block operatortab %}{% endblock %}><a href="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}" role="tab"><b>Opérateurs</b></a></li>
     <li{% block administratortab %}{% endblock %}><a href="{% url 'login-admin' %}{% if next %}?next={{ next }}{% endif %}" role="tab"><b>Administrateurs</b></a></li>
