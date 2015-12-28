@@ -81,6 +81,8 @@ STATIC_URL = '/static/'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'list-evenements'
 
+ANGULAR = True
+
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',
     'base_url': STATIC_URL,
