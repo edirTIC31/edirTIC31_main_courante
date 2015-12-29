@@ -24,6 +24,7 @@ INSTALLED_APPS = [
 
     'tastypie',
     'bootstrap3',
+    'djangobower',
 
     'accounts',
     'maincourante',
@@ -60,6 +61,12 @@ TEMPLATES = [
     },
 ]
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
 WSGI_APPLICATION = '%s.wsgi.application' % PROJECT
 
 DATABASES = {
@@ -68,6 +75,12 @@ DATABASES = {
         'NAME': join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+BOWER_COMPONENTS_ROOT = join(BASE_DIR, 'components')
+
+BOWER_INSTALLED_APPS = (
+    'jquery',
+)
 
 LANGUAGE_CODE = 'fr-FR'
 TIME_ZONE = 'Europe/Paris'
@@ -84,7 +97,7 @@ LOGIN_REDIRECT_URL = 'list-evenements'
 ANGULAR = True
 
 BOOTSTRAP3 = {
-    'jquery_url': STATIC_URL + 'js/jquery.min.js',
+    'jquery_url': STATIC_URL + 'jquery/dist/jquery.js',
     'base_url': STATIC_URL,
     'horizontal_label_class': 'col-md-3',
     'horizontal_field_class': 'col-md-6',
