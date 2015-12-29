@@ -79,6 +79,7 @@ DATABASES = {
 BOWER_COMPONENTS_ROOT = join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
+    'bootstrap',
     'jquery',
 )
 
@@ -98,7 +99,7 @@ ANGULAR = True
 
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'jquery/dist/jquery.js',
-    'base_url': STATIC_URL,
+    'base_url': STATIC_URL + 'bootstrap/dist/',
     'horizontal_label_class': 'col-md-3',
     'horizontal_field_class': 'col-md-6',
 }

@@ -3,20 +3,22 @@ Dépôt de l'EDIR-TIC de la DDUS31 lié au dévelopemment de la main courante
 
 # Utilisation de django
 
-Il vous faut Python >= 3.4, pip, et éventuellement virtualenv, voire virtualenvwrapper ou virtualfish.
+Il vous faut Python >= 3.4, pip, et éventuellement virtualenv, voire virtualenvwrapper ou virtualfish. Il peut vous falloir également bower.
 
 ```bash
-cd edirtic
+git clone https://github.com/edirTIC31/edirTIC31_main_courante
+cd edirTIC31_main_courante
+git submodule init
+git submodule update
+cd django
 pip install -U -r requirements.dev.txt  # installation des dépendances
 ./manage.py migrate  # création du schéma de la base de données
 ./manage.py createsuperuser  # création d’un superuser
 ./manage.py runserver
 ```
 
-Ensuite, vous pouvez aller sur http://localhost:8000/admin/, vous logger, créer un évènement.
-
-Le reste de l’application est disponible sur http://localhost:8000/
+Ensuite, vous pouvez aller sur http://localhost:8000/, vous logger et créer un évènement.
 
 ## API REST
 
-Par exemple: http://localhost:8000/api/v1/message/?format=json
+cf ``docs/maincourante/api.rst``.
