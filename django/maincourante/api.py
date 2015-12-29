@@ -189,12 +189,3 @@ class MessageResource(Resource):
 
     def rollbacks(self, bundles):
         pass
-
-
-class IndicatifResource(ModelResource):
-
-    class Meta:
-        queryset = Indicatif.objects.all()
-        allowed_methods = ['get']
-        authentication = BaseAuthentication()
-        authorization = DjangoAuthorization()
