@@ -12,7 +12,7 @@ v1_api.register(IndicatifResource())
 v1_api.register(MessageResource())
 
 urlpatterns = [
-    url(r'^api/', include(v1_api.urls)),
+    url(r'^api/', include(v1_api.urls), name='api'),
     # Evenement
     url(r'^$', EvenementListView.as_view(), name='list-evenements'),
     url(r'^add/$', EvenementCreateView.as_view(), name='add-evenement'),
