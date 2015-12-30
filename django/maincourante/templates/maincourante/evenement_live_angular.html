@@ -30,6 +30,7 @@
     <script>
 
         var csrf = '{{ csrf_token|escapejs }}';
+        var api_url = '{% url 'api_v1_top_level' 'v1' %}';
         var EVENEMENT = '{{ evenement.nom }}';
         var EVENEMENT_ID = '{{ evenement.id }}';
 

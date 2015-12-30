@@ -24,7 +24,7 @@ function IndicatifFactory() {
 
 
 function IndicatifManagerFactory(Indicatif, $q, $http) {
-    var entry_point = '/api/v1/indicatif/';
+    var entry_point = api_url + 'indicatif/';
     var indicatiManager = {
         load: function () {
             var deferred = $q.defer();

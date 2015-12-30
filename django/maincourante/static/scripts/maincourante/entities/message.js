@@ -81,7 +81,7 @@ function MessageFactory() {
 }
 
 function MessageManagerFactory(Message, $q, $http) {
-    var entry_point = '/api/v1/message/';
+    var entry_point = api_url + 'message/';
     var messageManager = {
         ready: false,
         add: function (message) {
