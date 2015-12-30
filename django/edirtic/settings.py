@@ -81,6 +81,13 @@ BOWER_COMPONENTS_ROOT = join(BASE_DIR, 'components')
 BOWER_INSTALLED_APPS = (
     'bootstrap',
     'jquery',
+    'angular',
+    'angular-animate',
+    'angular-bootstrap',
+    'angular-resource',
+    'angular-route',
+    'angucomplete-alt',
+    'ng-focus-on',
 )
 
 LANGUAGE_CODE = 'fr-FR'
