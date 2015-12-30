@@ -2,7 +2,7 @@ angular.module("edir.maincourante.directives", []);
 angular.module('edir.maincourante.directives').directive('messages', function(){
     return {
         controller : 'MessageDirectiveCtrl',
-        templateUrl : '/static/scripts/maincourante/directives/message.html'
+        templateUrl : message_directive_template_url
     }
 });
 
