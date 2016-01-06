@@ -85,13 +85,14 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
             },
             function(errorPayload) {
                 alert("Erreur lors de l'edition du message");
+                $scope.disableAutoLoad = false;
             });
     }
 
     $scope.cancelMessageEdition = function(message){
         message.cancelEdition();
         focus('onNewMessage');
-        message.disableAutoLoad = false;
+        $scope.disableAutoLoad = false;
     }
 
     function loadMessages() {
