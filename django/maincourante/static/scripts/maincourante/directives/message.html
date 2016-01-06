@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading" ng-hide="editionMode">
+    <div class="panel-heading" ng-if="!editionMode">
         <div class="form-horizontal">
             <div class="form-group form-group-md">
                 <label class="col-md-1 control-label">Recherche</label><div class="col-md-6"><input type="text" class="form-control" name="searchText" ng-model="searchText" placeholder="Recherche"></div>
@@ -25,7 +25,7 @@
                                         <span ng-if="!(message.deleted && message.modified) && message.deleted">Message supprimé</span>
                                         <span ng-if="!(message.deleted && message.modified) && message.modified">Message modifié</span>
                                     </span>
-                            <span ng-show="editionMode">
+                            <span ng-if="editionMode">
                                 <a class="btn btn-primary btn-xs" ng-click="replyMessage(message)"><span class="glyphicon glyphicon-share-alt"></span></a>
                                 <a ng-hide="message.edit || message.deleted" class="btn btn-primary btn-xs" ng-click="enableMessageEdition(message)"><span class="glyphicon glyphicon-edit"></span></a>
                                 <a ng-hide="message.edit || message.deleted" ng-click="deleteMessage(message)" class="btn btn-danger btn-xs" data-dismiss="alert" aria-label="close" title="close"><span class="glyphicon glyphicon-trash"></span></a>

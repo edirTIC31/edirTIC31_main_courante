@@ -216,7 +216,7 @@ angular.module('edir.maincourante.controllers').controller('ModalDeleteMessageCt
     };
 });
 
-angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtrl', function ($scope, $modalInstance, MessageManager, Message, message, messages) {
+angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtrl', function ($scope, $modalInstance, MessageManager, Message, focus, message, messages) {
     $scope.message = message;
     $scope.ok = function () {
         var response = new Message();
@@ -229,6 +229,7 @@ angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtr
                 $scope.body = null;
                 $scope.response = null;
                 $modalInstance.close();
+                focus('onNewMessage');
             },
             function(errorPayload) {
                 alert("Erreur lors de l'ajout de la reponse");
