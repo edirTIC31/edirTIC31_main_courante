@@ -183,12 +183,16 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
     $scope.toggleAnimation = function () {
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
-    loadMessages();
-    loadIndicatifs();
-    focus('onNewMessage');
 
+    loadMessages();
+    focus('onNewMessage');
     $interval(loadMessages, 12000);
-    $interval(loadIndicatifs, 12000);
+
+    $scope.enableEditionMode = function() {
+        $scope.editionMode = true;
+        loadIndicatifs();
+        $interval(loadIndicatifs, 12000);
+    }
 }
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
