@@ -276,8 +276,9 @@ angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtr
 
 function notifyNewMessage(message) {
     Notification.requestPermission( function(status) {
-        var n = new Notification(document.title, {body: message.receiver+" de "+message.sender+" : "+message.body}); // this also shows the notification
+        var n = new Notification(document.title, { sound: SOUND_MESSAGE_PATH, body: message.receiver+" de "+message.sender+" : "+message.body}); // this also shows the notification
     });
+    PlaySound();
     var oldTitle = document.title;
     var msg = "Nouveaux Messages!";
     var timeoutId;
