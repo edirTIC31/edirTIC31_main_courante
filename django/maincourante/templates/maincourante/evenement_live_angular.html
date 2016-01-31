@@ -28,7 +28,7 @@
 
     </div>
 </diV>
-
+<div id="sound"></div>
 {% endblock %}
 
 
@@ -42,6 +42,11 @@
     var message_directive_template_url = '{% static 'scripts/maincourante/directives/message.html' %}';
     var EVENEMENT = '{{ evenement.nom }}';
     var EVENEMENT_ID = '{{ evenement.id }}';
+    var SOUND_MESSAGE_PATH = '{% static 'sound/sounds-949-you-wouldnt-believe.mp3' %}';
+    function PlaySound() {
+        document.getElementById("sound").innerHTML = "";
+        document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="' + SOUND_MESSAGE_PATH + '" type="audio/mpeg" /></audio>';
+    }
 </script>
 
 <script src="{% static "angular/angular.js" %}" ></script>
