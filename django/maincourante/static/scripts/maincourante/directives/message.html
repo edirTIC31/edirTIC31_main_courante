@@ -17,7 +17,7 @@
 
         <div class="animate-show" ng-repeat="message in messages | filter:searchText | orderBy: '-displayCreationDate'">
             <div>
-                <div ng-class="{ 'panel': true, 'panel-sm': true, 'panel-success': message.isNew ,'panel-info': !message.deleted && !message.isNew ,'panel-default': message.deleted}">
+                <div ng-class="{ 'panel': true, 'panel-sm': true, 'panel-deleted': message.deleted,'panel-success': message.isNew ,'panel-info': !message.deleted && !message.isNew ,'panel-default': message.deleted}">
                     <div class="panel-heading panel-heading-sm">{$ message.displayCreationDate | date:"dd MMM yyyy 'à' HH:mm:ss" $} <b>| {$ message.receiver $} </b> de <b>{$ message.sender $} </b> | message saisi par <b>{$ message.operateur $} </b>
                         <div class="pull-right">
                                     <span ng-if="message.deleted || message.modified" class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>
