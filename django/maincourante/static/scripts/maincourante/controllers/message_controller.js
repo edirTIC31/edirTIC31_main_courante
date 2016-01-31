@@ -1,17 +1,39 @@
 angular.module("edir.maincourante.controllers", []);
 
 angular.module('edir.maincourante.controllers')
-  .controller('MainCtrl', ['$scope', 'Message', 'MessageManager', 'IndicatifManager', '$modal', '$interval','focus', '$filter', prepareMainController]);
+  .controller('MainCtrl', ['$scope', '$window', 'Message', 'MessageManager', 'IndicatifManager', '$modal', '$interval','$timeout','focus', '$filter', prepareMainController]);
 
-function prepareMainController($scope, Message, MessageManager, IndicatifManager,  $modal, $interval, focus, $filter){
-	
-	$scope.messages = [];
+function prepareMainController($scope, $window, Message, MessageManager, IndicatifManager,  $modal, $interval, $timeout, focus, $filter){
+
+   	$scope.messages = [];
+    $scope.newMessages = [];
     $scope.isLoading = true;
+    $scope.isCreator = false;
     $scope.editionMode = false;
     $scope.disableAutoLoad = false;
     $scope.indicatifs = new Array();
     $scope.errorMessage = null;
     $scope.lastRetrivalDate = null;
+    var originalWindowTitle = document.title;
+
+    var isActiveWindow = true;
+    var onFocus = function(){
+        isActiveWindow = true;
+        document.title = originalWindowTitle;
+        angular.forEach($scope.newMessages, function (message, key) {
+            $timeout(function() {
+                message.isNew = false;
+                var index = $scope.newMessages.indexOf(message);
+                $scope.newMessages.splice(index, 1);
+            }, 3000);
+        });
+    }
+    var onBlur = function(){
+        isActiveWindow = false;
+    }
+
+    $window.onfocus = onFocus;
+    $window.onblur = onBlur;
 
     $scope.addMessage = function(){
         var message = new Message();
@@ -114,7 +136,7 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                                     }
                                 });
                                 if(!found){
-                                    $scope.messages.push(newMessage);
+                                    addNewMessage(newMessage);
                                 }
                             });
                         }
@@ -127,6 +149,17 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
                     $scope.errorMessage = "Erreur lors du chargement des messages";
                 }
             );
+        }
+    }
+
+    function addNewMessage(newMessage){
+        newMessage.isNew = true;
+        $scope.messages.push(newMessage);
+        if($scope.lastRetrivalDate != null){
+            $scope.newMessages.push(newMessage);
+            if(!isActiveWindow){
+                notifyNewMessage(newMessage);
+            }
         }
     }
 
@@ -173,8 +206,6 @@ function prepareMainController($scope, Message, MessageManager, IndicatifManager
             }
         });
         modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-            loadMessages();
         }, function () {
 
         });
@@ -218,6 +249,7 @@ angular.module('edir.maincourante.controllers').controller('ModalDeleteMessageCt
 
 angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtrl', function ($scope, $modalInstance, MessageManager, Message, focus, message, messages) {
     $scope.message = message;
+    $scope.messages = messages;
     $scope.ok = function () {
         var response = new Message();
         response.receiver = message.sender;
@@ -228,6 +260,7 @@ angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtr
             function(resp) {
                 $scope.body = null;
                 $scope.response = null;
+                $scope.messages.push(resp);
                 $modalInstance.close();
                 focus('onNewMessage');
             },
@@ -240,3 +273,26 @@ angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtr
         $modalInstance.dismiss('cancel');
     };
 });
+
+function notifyNewMessage(message) {
+    Notification.requestPermission( function(status) {
+        var n = new Notification(document.title, {body: message.receiver+" de "+message.sender+" : "+message.body}); // this also shows the notification
+    });
+    var oldTitle = document.title;
+    var msg = "Nouveaux Messages!";
+    var timeoutId;
+    var blink = function() {
+        document.title = document.title == msg ? oldTitle : msg; };
+    var clear = function() {
+        clearInterval(timeoutId);
+        document.title = oldTitle;
+        window.onmousemove = null;
+        timeoutId = null;
+    };
+
+    if (!timeoutId) {
+        timeoutId = setInterval(blink, 1000);
+        window.onmousemove = clear;
+    }
+
+};
