@@ -84,7 +84,7 @@ def message_add(request, evenement, message=None):
 
     if request.method == 'POST' and form.is_valid():
 
-        expediteur, destinataire = (Indicatif.objects.get_or_create(evenement=evenement, nom=form.cleaned_data[nom])[0]
+        expediteur, destinataire = (Indicatif.objects.get_or_create(evenement=evenement, nom=form.cleaned_data[nom].upper())[0]
                 for nom in ['expediteur', 'destinataire'])
         thread = MessageThread(evenement=evenement)
         thread.save()
@@ -200,6 +200,7 @@ def indicatif_list(request, evenement):
 
     if request.method == 'POST' and form.is_valid():
         indicatif = form.save(commit=False)
+        indicatif.nom = indicatif.nom.upper()
         indicatif.evenement = evenement
         indicatif.save()
         return redirect(reverse('list-indicatifs', args=[evenement.slug]))
