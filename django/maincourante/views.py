@@ -32,7 +32,7 @@ def evenement_manage(request, evenement):
     if evenement.clos:
         raise PermissionDenied
 
-    return redirect(reverse('cloture-evenement', args=[evenement.slug]))
+    return redirect(reverse('list-indicatifs', args=[evenement.slug]))
 
 
 @login_required

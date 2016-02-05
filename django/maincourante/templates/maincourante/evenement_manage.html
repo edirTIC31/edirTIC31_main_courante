@@ -6,8 +6,8 @@
 <div class="navbar">
   <div class="navbar-left">
     <div class="btn-group" role="group">
-      <a href="{% url 'cloture-evenement' evenement.slug %}" class="btn btn-{% block cloturetab %}default{% endblock %}">Cloture</a>
       <a href="{% url 'list-indicatifs' evenement.slug %}" class="btn btn-{% block indicatiftab %}default{% endblock %}">Indicatifs</a>
+      <a href="{% url 'cloture-evenement' evenement.slug %}" class="btn btn-{% block cloturetab %}default{% endblock %}">Cloture</a>
     </div>
   </div>
 </div>
