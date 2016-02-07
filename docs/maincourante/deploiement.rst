@@ -5,6 +5,8 @@ Ce petit guide indique comment déployer le projet Django ``edirtic`` sur une Ra
 
 NB: Les lignes de code commençant par ``#`` sont à éxécuter en root et celles par ``$`` par un utilisateur normal.
 
+NB2: pour l'installation sous Odroid-C1 / Ubuntu, voir la fin du document
+
 Installation de Raspbian
 ------------------------
 
@@ -266,3 +268,23 @@ Apache
 
     # a2enmod proxy proxy_http
     # service apache2 restart
+    
+Installation de sous Odroid-C1/Ubuntu
+-------------------------------------
+
+Actuellement, la distribution Ubuntu est 14.04 LTS
+
+L'installation décrite ci-dessus reste valable à l'exception de virtualenv et uwsgi.
+
+  * Pour installer virtualenv pour Python 3 qui passe par pip
+
+.. code::
+
+   # sudo apt-get install python3-pip
+   # sudo pip3 install virtualenvwrapper
+   
+   * Pour redémarrer uwsgi, on passe par init.d
+   
+.. code::
+
+   # /etc/init.d/uwsgi restart
