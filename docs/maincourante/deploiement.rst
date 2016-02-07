@@ -269,8 +269,10 @@ Apache
     # a2enmod proxy proxy_http
     # service apache2 restart
     
-Installation de sous Odroid-C1/Ubuntu
--------------------------------------
+Installation sous Odroid-C1/Ubuntu
+----------------------------------
+
+Pour une description de la plateforme matérielle : http://www.hardkernel.com/main/products/prdt_info.php?g_code=G143703355573
 
 Actuellement, la distribution Ubuntu est 14.04 LTS
 
