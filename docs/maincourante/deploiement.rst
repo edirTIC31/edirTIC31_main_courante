@@ -276,14 +276,14 @@ Actuellement, la distribution Ubuntu est 14.04 LTS
 
 L'installation décrite ci-dessus reste valable à l'exception de virtualenv et uwsgi.
 
-  * Pour installer virtualenv pour Python 3 qui passe par pip
+* Pour installer virtualenv pour Python 3 qui passe par pip
 
 .. code::
 
    # sudo apt-get install python3-pip
    # sudo pip3 install virtualenvwrapper
    
-   * Pour redémarrer uwsgi, on passe par init.d
+* Pour redémarrer uwsgi, on passe par init.d
    
 .. code::
 
