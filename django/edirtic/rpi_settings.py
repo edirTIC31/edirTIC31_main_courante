@@ -15,6 +15,8 @@ SECRET_KEY = get_conf('SECRET_KEY')
 
 DEBUG = False
 
+PASSLESS_LOGIN = True
+
 ALLOWED_HOSTS = ['*']
 
 STATIC_ROOT = '/srv/www/edirtic/static/'

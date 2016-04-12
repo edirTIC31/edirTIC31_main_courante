@@ -11,6 +11,9 @@ BASE_DIR = dirname(dirname(abspath(__file__)))
 SECRET_KEY = '11+)$2+ulb9nn)x4(g4wedajo4=!olbn%_d8ebqo!xw(j!r8&1'
 DEBUG = True
 
+# Activer l’authentification & la registration sans mot de passe ?
+PASSLESS_LOGIN = False
+
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
