@@ -91,6 +91,7 @@ function MessageManagerFactory(Message, $q, $http) {
                 deferred.resolve(new Message(data));
              })
              .error(function () {
+                alert("Impossible de contacter "+window.location.origin+entry_point);
                 deferred.reject();
              });
             return deferred.promise;
@@ -114,6 +115,7 @@ function MessageManagerFactory(Message, $q, $http) {
                     deferred.resolve(message);
                 })
                 .error(function () {
+                    alert("Impossible de contacter "+window.location.origin+entry_point);
                     deferred.reject();
                 });
             return deferred.promise;
@@ -137,6 +139,7 @@ function MessageManagerFactory(Message, $q, $http) {
                     deferred.resolve(messages);
                 })
                 .error(function () {
+                    alert("Impossible de contacter "+window.location.origin+loadUrl);
                     deferred.reject();
                 });
             return deferred.promise;
