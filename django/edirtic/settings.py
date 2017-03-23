@@ -17,6 +17,9 @@ PASSLESS_IP_NETWORKS = [
     #'192.168.0.0/16',
 ]
 
+# Nom de l’utilisateur « lecture seule »
+RO_USERNAME = 'live'
+
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -61,6 +64,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'maincourante.context_processors.evenement',
+                'maincourante.context_processors.user_is_operator',
             ],
         },
     },

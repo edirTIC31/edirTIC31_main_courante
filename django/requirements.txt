@@ -2,7 +2,6 @@ appdirs==1.4.3
 Django==1.9.12
 django-autoslug==1.9.3
 django-bootstrap3==8.2.1
-django-braces==1.11.0
 django-ipware==1.1.6
 django-tastypie==0.13.3
 ipaddress==1.0.18

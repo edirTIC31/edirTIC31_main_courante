@@ -7,18 +7,24 @@
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="{% url 'list-evenements' %}"><span class="glyphicon glyphicon-list"></span> Liste des évènements</a>
             </li>
+            {% if user_is_operator %}
             <li class="divider"></li>
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="{% url 'add-evenement' %}"><span class="glyphicon glyphicon-plus"></span> Créer un évènement</a>
             </li>
+            {% endif %}
         </ul>
     </li>
     {% if not evenement.clos %}
+    {% if user_is_operator %}
     <li role="presentation"{% block saisitab %}{% endblock %}><a tabindex="-1" href="{% url 'add-message' evenement.slug %}">Saisie</a></li>
+    {% endif %}
     <li role="presentation"{% block livetab %}{% endblock %}><a tabindex="-1" href="{% url 'live' evenement.slug %}">Live</a></li>
     {% endif %}
     <li role="presentation"{% block reporttab %}{% endblock %}><a tabindex="-1" href="{% url 'report' evenement.slug %}">Compte rendu</a></li>
     {% if not evenement.clos %}
+    {% if user_is_operator %}
     <li role="presentation"{% block managetab %}{% endblock %}><a tabindex="-1" href="{% url 'manage-evenement' evenement.slug %}">Gestion</a></li>
+    {% endif %}
     {% endif %}
 {% endblock %}

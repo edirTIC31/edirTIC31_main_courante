@@ -1,6 +1,5 @@
-from braces.views import LoginRequiredMixin
-
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404, JsonResponse
@@ -10,6 +9,9 @@ from django.views.generic import CreateView, ListView
 
 from .forms import ClotureForm, DeleteMessageForm, EditMessageForm, IndicatifForm, MessageForm
 from .models import Evenement, Indicatif, MessageThread, MessageVersion, MessageSuppression
+
+from accounts.decorators import operator_required
+from accounts.mixins import OperatorRequiredMixin
 
 
 ##############
@@ -21,12 +23,12 @@ class EvenementListView(LoginRequiredMixin, ListView):
     model = Evenement
 
 
-class EvenementCreateView(LoginRequiredMixin, CreateView):
+class EvenementCreateView(OperatorRequiredMixin, CreateView):
     model = Evenement
     fields = ['nom']
 
 
-@login_required
+@operator_required
 def evenement_manage(request, evenement):
 
     if evenement.clos:
@@ -35,7 +37,7 @@ def evenement_manage(request, evenement):
     return redirect(reverse('list-indicatifs', args=[evenement.slug]))
 
 
-@login_required
+@operator_required
 def evenement_cloture(request, evenement):
 
     if evenement.clos:
@@ -75,7 +77,7 @@ def evenement_live(request, evenement):
 ############
 
 
-@login_required
+@operator_required
 def message_add(request, evenement, message=None):
 
     form = MessageForm(request.POST or None)
@@ -108,7 +110,7 @@ def message_add(request, evenement, message=None):
     })
 
 
-@login_required
+@operator_required
 def message_edit(request, evenement, message):
 
     thread = get_object_or_404(MessageThread, evenement=evenement, id=message)
@@ -129,7 +131,7 @@ def message_edit(request, evenement, message):
     return redirect(reverse('add-message', args=[evenement.slug]))
 
 
-@login_required
+@operator_required
 @require_http_methods(["POST"])
 def message_delete(request, evenement, message):
 
@@ -190,7 +192,7 @@ def message_last(request, evenement):
 ##############
 
 
-@login_required
+@operator_required
 def indicatif_list(request, evenement):
 
     if evenement.clos:
@@ -211,7 +213,7 @@ def indicatif_list(request, evenement):
     })
 
 
-@login_required
+@operator_required
 def indicatif_delete(request, evenement, indicatif):
 
     if evenement.clos:
@@ -225,7 +227,7 @@ def indicatif_delete(request, evenement, indicatif):
     return redirect(reverse('list-indicatifs', args=[evenement.slug]))
 
 
-@login_required
+@operator_required
 def indicatif_search(request, evenement):
 
     term = request.GET.get('query')
@@ -253,7 +255,7 @@ def indicatif_search(request, evenement):
 ###########
 
 
-@login_required
+@operator_required
 def message_angular(request, evenement):
 
     return render(request, 'maincourante/message_angular.html')

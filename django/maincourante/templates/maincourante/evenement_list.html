@@ -12,7 +12,7 @@
 <h2>Évènements {% if evenement_group.grouper %}passés{% else %}en cours{% endif %}</h2>
 <ul class="list-group">
     {% for evenement in evenement_group.list %}
-    <a class="list-group-item" href="{% url 'add-message' evenement.slug %}">
+    <a class="list-group-item" href="{% if user_is_operator %}{% url 'add-message' evenement.slug %}{% else %}{% url 'live' evenement.slug %}{% endif %}">
         <h4>{{ evenement }}</h4>
     </a>
     {% empty %}

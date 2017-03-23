@@ -1,5 +1,4 @@
-{% load bootstrap3 %}
-{% load staticfiles %}
+{% load bootstrap3 staticfiles %}
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -38,7 +37,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         {% block navbar-left %}
-                        {% if request.user.is_authenticated %}
+                        {% if user_is_operator %}
                         <li role="presentation">
                             <a href="{% url 'add-evenement' %}"><span class="glyphicon glyphicon-plus"></span> Créer un évènement</a>
                         </li>

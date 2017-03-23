@@ -10,3 +10,6 @@ def passless_login_allowed(ip):
         if ip in ip_network(network):
             return True
     return False
+
+def is_operator(user):
+    return user.username != settings.RO_USERNAME
