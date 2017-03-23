@@ -1,5 +1,7 @@
-Django<1.9
+Django<1.10
 django-autoslug
 django-braces
 django-bootstrap3
 django-tastypie
+django-ipware
+ipaddress

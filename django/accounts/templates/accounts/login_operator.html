@@ -8,7 +8,7 @@
 <div class="tab-pane active">
     <div class="list-group">
 		{% for user in operators %}
-		<a class="list-group-item" href="{% url 'login-ope' user.username %}{% if next %}?next={{ next }}{% endif %}">
+		<a class="list-group-item" href="{% url 'login-operator' user.username %}{% if next %}?next={{ next }}{% endif %}">
             <span class="glyphicon glyphicon-arrow-right"></span> <b>{{ user }}</b>
 		</a>
 		{% endfor %}

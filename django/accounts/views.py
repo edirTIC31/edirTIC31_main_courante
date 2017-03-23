@@ -6,10 +6,24 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 
+from ipware.ip import get_ip
+
+from accounts.utils import passless_login_allowed
 from accounts.forms import CreateUserForm
+from accounts.decorators import passless_ip_required
 
 
+def login(request):
+    ip = get_ip(request)
+    if passless_login_allowed(ip):
+        return login_operator(request)
+    else:
+        return auth_views.login(request, template_name='accounts/login_with_password.html')
+
+
+@passless_ip_required
 def login_operator(request, username=None):
 
     redirect_to = request.GET.get(REDIRECT_FIELD_NAME,
@@ -44,12 +58,14 @@ def login_operator(request, username=None):
 
     c = {
         'form': form,
-        'operators': User.objects.filter(is_superuser=False, is_active=True),
+        'operators': User.objects.filter(is_superuser=False, is_active=True).exclude(username=settings.RO_USERNAME),
         'next': request.GET.get(REDIRECT_FIELD_NAME, ''),
     }
 
     return render(request, 'accounts/login_operator.html', c)
 
+
+@passless_ip_required
 def login_administrator(request, *args, **kwargs):
 
     c = {
