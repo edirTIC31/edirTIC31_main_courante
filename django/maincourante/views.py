@@ -248,14 +248,3 @@ def indicatif_search(request, evenement):
     }
 
     return JsonResponse(c, safe=False)
-
-
-###########
-# Angular #
-###########
-
-
-@operator_required
-def message_angular(request, evenement):
-
-    return render(request, 'maincourante/message_angular.html')
