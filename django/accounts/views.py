@@ -13,6 +13,7 @@ from ipware.ip import get_ip
 from accounts.utils import passless_login_allowed
 from accounts.forms import CreateUserForm
 from accounts.decorators import passless_ip_required
+from accounts.models import AuthToken
 
 
 def login(request):
@@ -21,6 +22,14 @@ def login(request):
         return login_operator(request)
     else:
         return auth_views.login(request, template_name='accounts/login_with_password.html')
+
+
+def login_token(request, token):
+    token = get_object_or_404(AuthToken, token=token)
+    token.user.backend = 'django.contrib.auth.backends.ModelBackend'
+    contrib_login(request, token.user)
+    redirect_to = request.GET.get(REDIRECT_FIELD_NAME, reverse(settings.LOGIN_REDIRECT_URL))
+    return redirect(redirect_to)
 
 
 @passless_ip_required

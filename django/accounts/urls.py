@@ -7,6 +7,7 @@ from accounts import views
 urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'next_page': 'list-evenements'}, name='logout'),
     url(r'^login/$', views.login, name='login'),
-    url(r'^login/operator/(?P<username>[\w.@+-]+)$', views.login_operator, name='login-operator'),
+    url(r'^login/token/(?P<token>[a-zA-Z0-9]+)/$', views.login_token, name='login-token'),
+    url(r'^login/operator/(?P<username>[\w.@+-]+)/$', views.login_operator, name='login-operator'),
     url(r'^login/admin/$', views.login_administrator, name='login-admin'),
 ]

@@ -5,7 +5,9 @@ from django.conf import settings
 
 def create_readonly_user(sender, **kwargs):
     from django.contrib.auth.models import User
-    User.objects.get_or_create(username=settings.RO_USERNAME)
+    from accounts.models import AuthToken
+    user, _ = User.objects.get_or_create(username=settings.RO_USERNAME, first_name='Invité')
+    AuthToken.objects.get_or_create(user=user)
 
 
 class AccountsConfig(AppConfig):
