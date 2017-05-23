@@ -29,9 +29,11 @@ if settings.ANGULAR:
     urlpatterns += [
         # Live
         url(r'^(?P<evenement>[-\w]+)/live/$', 'maincourante.views.evenement_live_angular', name='live'),
+        # Message-react
+        url(r'^(?P<evenement>[-\w]+)/react/$', 'maincourante.views.message_react', name='add-message-react'),
         # Message
         url(r'^(?P<evenement>[-\w]+)/$', 'maincourante.views.message_angular', name='add-message'),
-    ]
+        ]
 else:
     urlpatterns += [
         # Live
@@ -41,4 +43,4 @@ else:
         url(r'^(?P<evenement>[-\w]+)/message/(?P<message>[0-9]+)/edit/$', 'maincourante.views.message_edit', name='edit-message'),
         url(r'^(?P<evenement>[-\w]+)/message/(?P<message>[0-9]+)/delete/$', 'maincourante.views.message_delete', name='delete-message'),
         url(r'^(?P<evenement>[-\w]+)/message/last/$', 'maincourante.views.message_last', name='last-messages'),
-    ]
+        ]

@@ -264,3 +264,9 @@ def indicatif_search(request, evenement):
 def message_angular(request, evenement):
 
     return render(request, 'maincourante/message_angular.html')
+
+@login_required
+def message_react(request, evenement):
+
+    return render(request, 'maincourante/message_react.html')
+

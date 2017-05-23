@@ -1,0 +1,55 @@
+{% extends 'maincourante/base.html' %}
+
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load message_tags %}
+
+{% block saisitab %} class="active"{% endblock %}
+
+{% block css %}
+
+{{ block.super }}
+
+<link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+<link rel="stylesheet" href="{% static "css/maincourante.css" %}">
+<link rel="stylesheet" href="{% static "angucomplete-alt/angucomplete-alt.css" %}">
+
+{% endblock %}
+
+{% block content %}
+    <div id="container">
+        <!-- This element's contents will be replaced with your component. -->
+    </div>
+<div id="sound"></div>
+
+{% endblock %}
+
+
+{% block js_end %}
+
+{{ block.super }}
+
+<script>
+    var csrf = '{{ csrf_token|escapejs }}';
+    var api_url = '{% url 'api_v1_top_level' 'v1' %}';
+    var message_directive_template_url = '{% static 'scripts/maincourante/directives/message.html' %}';
+    var EVENEMENT = '{{ evenement.nom }}';
+    var EVENEMENT_ID = '{{ evenement.id }}';
+    var SOUND_MESSAGE_PATH = '{% static 'sound/sounds-949-you-wouldnt-believe.mp3' %}';
+    function PlaySound() {
+        document.getElementById("sound").innerHTML = "";
+        document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="' + SOUND_MESSAGE_PATH + '" type="audio/mpeg" /></audio>';
+    }
+
+</script>
+
+<script src="{% static "react/react-with-addons.js" %}" ></script>
+<script src="{% static "react/react-dom.js" %}" ></script>
+<script src="{% static "react-bootstrap/react-bootstrap.js" %}" ></script>
+{#    <script data-main="{% static ""%}"  src="{% static "requirejs/require.js" %}" ></script>#}
+    <script src="{% static "babel/browser.js" %}" ></script>
+    <script src="{% static "fetch/fetch.js" %}" ></script>
+    <script src="{% static "moment/min/moment-with-locales.min.js" %}" ></script>
+<script type="text/babel" src="{% static "scripts/maincourante/react/app.js" %}" ></script>
+
+{% endblock %}
