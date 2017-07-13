@@ -86,12 +86,13 @@ function MessageManagerFactory(Message, $q, $http) {
         ready: false,
         add: function (message) {
             var deferred = $q.defer();
+            var _this = this;
             $http.post(entry_point, message)
              .success(function (data) {
                 deferred.resolve(new Message(data));
              })
-             .error(function () {
-                alert("Impossible de contacter "+window.location.origin+entry_point);
+             .error(function (resp) {
+                _this.handleErrorMessage("Erreur lors de l'ajout d'un message", resp);
                 deferred.reject();
              });
             return deferred.promise;
@@ -103,19 +104,21 @@ function MessageManagerFactory(Message, $q, $http) {
                 .success(function (messageData) {
                     deferred.resolve(message);
                 })
-                .error(function () {
+                .error(function (resp) {
+                    _this.handleErrorMessage("Erreur lors de la modification d'un message", resp);
                     deferred.reject();
                 });
             return deferred.promise;
         },
         delete: function (message, suppressionMessage) {
             var deferred = $q.defer();
+            var _this = this;
             $http.delete(entry_point+message.id+"?reason="+suppressionMessage, message)
                 .success(function (data) {
                     deferred.resolve(message);
                 })
-                .error(function () {
-                    alert("Impossible de contacter "+window.location.origin+entry_point);
+                .error(function (resp) {
+                    _this.handleErrorMessage("Erreur lors de la suppression d'un message", resp);
                     deferred.reject();
                 });
             return deferred.promise;
@@ -123,6 +126,7 @@ function MessageManagerFactory(Message, $q, $http) {
         },
         load: function (lastTimestamp) {
             var deferred = $q.defer();
+            var _this = this;
             var loadUrl = entry_point+"?format=json&limit=0&evenement="+EVENEMENT_ID;
             if(lastTimestamp){
                 loadUrl += "&newer-than="+lastTimestamp;
@@ -138,11 +142,20 @@ function MessageManagerFactory(Message, $q, $http) {
                     }
                     deferred.resolve(messages);
                 })
-                .error(function () {
-                    alert("Impossible de contacter "+window.location.origin+loadUrl);
+                .error(function (resp) {
+                    _this.handleErrorMessage("Erreur lors du chargement des messages", resp);
                     deferred.reject();
                 });
             return deferred.promise;
+        },
+        handleErrorMessage: function(message, error){
+            console.log(error);
+            console.log("URL " + window.location.origin + entry_point);
+            if(message !== undefined && error.error_message !== undefined){
+                alert(message +" : "+error.error_message);
+            }else{
+                alert(message);
+            }
         }
     };
     return messageManager;
