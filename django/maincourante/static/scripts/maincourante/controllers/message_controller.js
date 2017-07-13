@@ -42,7 +42,7 @@ function prepareMainController($scope, $window, Message, MessageManager, Indicat
         }
         message.sender = $scope.sender.title ? $scope.sender.title: $scope.sender.originalObject;
         message.receiver = $scope.receiver.title ? $scope.receiver.title: $scope.receiver.originalObject;
-        message.evenement = EVENEMENT;
+        message.evenement = EVENEMENT_SLUG;
 		message.body = $scope.body;
 		if(!message.isValid()){
             return;
@@ -53,7 +53,7 @@ function prepareMainController($scope, $window, Message, MessageManager, Indicat
                     var response = new Message();
                     response.receiver = msg.sender;
                     response.sender = msg.receiver;
-                    response.evenement = EVENEMENT;
+                    response.evenement = EVENEMENT_SLUG;
                     response.body = $scope.response;
                     MessageManager.add(response).then(
                         function(resp) {
@@ -254,7 +254,7 @@ angular.module('edir.maincourante.controllers').controller('ModalReplyMessageCtr
         var response = new Message();
         response.receiver = message.sender;
         response.sender = message.receiver;
-        response.evenement = EVENEMENT;
+        response.evenement = EVENEMENT_SLUG;
         response.body = $scope.response;
         MessageManager.add(response).then(
             function(resp) {
