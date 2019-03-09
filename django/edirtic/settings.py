@@ -107,5 +107,3 @@ BOOTSTRAP3 = {
     'horizontal_label_class': 'col-md-3',
     'horizontal_field_class': 'col-md-6',
 }
-
-STATIC_ROOT = '/tmp/statics'
