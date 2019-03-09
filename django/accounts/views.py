@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth import login as contrib_login
 from django.contrib.auth.models import User
-from django.contrib.auth.views import login as contrib_login_view
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -56,5 +55,5 @@ def login_administrator(request, *args, **kwargs):
         'next': request.GET.get(REDIRECT_FIELD_NAME, ''),
     }
 
-    return contrib_login_view(
+    return contrib_login(
         request, *args, template_name='accounts/login_administrator.html', extra_context=c, **kwargs)
