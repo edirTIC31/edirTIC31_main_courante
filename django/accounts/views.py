@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth import login as contrib_login
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -48,12 +49,6 @@ def login_operator(request, username=None):
     return render(request, 'accounts/login_operator.html', c)
 
 
-def login_administrator(request, *args, **kwargs):
-
-    c = {
-        'administrators': User.objects.filter(is_superuser=True),
-        'next': request.GET.get(REDIRECT_FIELD_NAME, ''),
-    }
-
-    return contrib_login(
-        request, *args, template_name='accounts/login_administrator.html', extra_context=c, **kwargs)
+class LoginAdministrator(LoginView):
+    template_name = 'accounts/login_administrator.html'
+    redirect_field_name = REDIRECT_FIELD_NAME
