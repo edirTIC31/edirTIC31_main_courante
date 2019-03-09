@@ -1,11 +1,11 @@
-from django.conf.urls import url
 from django.contrib.auth.views import LogoutView
+from django.urls import path
 
 from . import views
 
 urlpatterns = [
-    url(r'^login/$', views.login_operator, name='login'),
-    url(r'^login/(?P<username>[\w.@+-]+)$', views.login_operator, name='login-ope'),
-    url(r'^secure-login/$', views.login_administrator, name='login-admin'),
-    url(r'^logout/$', LogoutView.as_view(next_page='list-evenements'), name='logout'),
+    path('login/', views.login_operator, name='login'),
+    path('login/<username>', views.login_operator, name='login-ope'),
+    path('secure-login/', views.login_administrator, name='login-admin'),
+    path('logout/', LogoutView.as_view(next_page='list-evenements'), name='logout'),
 ]
