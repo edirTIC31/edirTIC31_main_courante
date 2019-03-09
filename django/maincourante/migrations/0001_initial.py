@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
 from django.conf import settings
+from django.db import migrations, models
+
 import autoslug.fields
 
 
@@ -44,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Evenement',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', primary_key=True, auto_created=True, serialize=False, parent_link=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', primary_key=True, auto_created=True, serialize=False, parent_link=True, on_delete=models.PROTECT)),
                 ('nom', models.CharField(max_length=100)),
                 ('slug', autoslug.fields.AutoSlugField(unique=True, populate_from='nom', editable=False)),
                 ('clos', models.BooleanField(default=False)),
@@ -57,21 +58,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MessageSuppression',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', primary_key=True, auto_created=True, serialize=False, parent_link=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', primary_key=True, auto_created=True, serialize=False, parent_link=True, on_delete=models.PROTECT)),
                 ('raison', models.TextField()),
-                ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.PROTECT)),
             ],
             bases=('maincourante.timestampedmodel',),
         ),
         migrations.CreateModel(
             name='MessageVersion',
             fields=[
-                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', primary_key=True, auto_created=True, serialize=False, parent_link=True)),
+                ('timestampedmodel_ptr', models.OneToOneField(to='maincourante.TimeStampedModel', primary_key=True, auto_created=True, serialize=False, parent_link=True, on_delete=models.PROTECT)),
                 ('corps', models.TextField()),
-                ('destinataire', models.ForeignKey(to='maincourante.Indicatif', related_name='+')),
-                ('expediteur', models.ForeignKey(to='maincourante.Indicatif', related_name='+')),
-                ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('thread', models.ForeignKey(to='maincourante.MessageThread', related_name='versions')),
+                ('destinataire', models.ForeignKey(to='maincourante.Indicatif', related_name='+', on_delete=models.PROTECT)),
+                ('expediteur', models.ForeignKey(to='maincourante.Indicatif', related_name='+', on_delete=models.PROTECT)),
+                ('operateur', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.PROTECT)),
+                ('thread', models.ForeignKey(to='maincourante.MessageThread', related_name='versions', on_delete=models.PROTECT)),
             ],
             options={
                 'ordering': ['pk'],
@@ -81,17 +82,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='messagethread',
             name='evenement',
-            field=models.ForeignKey(to='maincourante.Evenement'),
+            field=models.ForeignKey(to='maincourante.Evenement', on_delete=models.PROTECT),
         ),
         migrations.AddField(
             model_name='messagethread',
             name='suppression',
-            field=models.ForeignKey(to='maincourante.MessageSuppression', null=True),
+            field=models.ForeignKey(to='maincourante.MessageSuppression', null=True, on_delete=models.PROTECT),
         ),
         migrations.AddField(
             model_name='indicatif',
             name='evenement',
-            field=models.ForeignKey(to='maincourante.Evenement'),
+            field=models.ForeignKey(to='maincourante.Evenement', on_delete=models.PROTECT),
         ),
         migrations.AlterUniqueTogether(
             name='indicatif',
