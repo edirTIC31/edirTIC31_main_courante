@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
+from django.utils.deprecation import MiddlewareMixin
 
 from maincourante.models import Evenement
 
 
-class EvenementMiddleware:
-
+class EvenementMiddleware(MiddlewareMixin):
     def process_view(self, request, view, view_args, view_kwargs):
 
         if view.__module__ != 'maincourante.views':

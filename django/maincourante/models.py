@@ -1,13 +1,12 @@
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.db.models import BooleanField, CharField, DateTimeField, ForeignKey, Model, SlugField, TextField
+from django.db.models import PROTECT, BooleanField, CharField, DateTimeField, ForeignKey, Model, TextField
+from django.urls import reverse
 
 from autoslug import AutoSlugField
 
 MAX_LENGTH = 100
 
-__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', \
-        'MessageVersion', 'MessageSuppression']
+__all__ = ['User', 'Evenement', 'Indicatif', 'MessageThread', 'MessageVersion', 'MessageSuppression']
 
 
 class TimeStampedModel(Model):
@@ -35,7 +34,7 @@ class Indicatif(Model):
         ordering = ['nom']
         unique_together = ['evenement', 'nom']
 
-    evenement = ForeignKey(Evenement)
+    evenement = ForeignKey(Evenement, on_delete=PROTECT)
     nom = CharField(max_length=32)
     deleted = BooleanField(default=False)
 
@@ -45,17 +44,16 @@ class Indicatif(Model):
 
 class MessageSuppression(TimeStampedModel):
 
-    operateur = ForeignKey(User)
+    operateur = ForeignKey(User, on_delete=PROTECT)
     raison = TextField()
 
 
 class MessageThread(Model):
-
     class Meta:
         ordering = ['-pk']
 
-    evenement = ForeignKey(Evenement)
-    suppression = ForeignKey(MessageSuppression, null=True)
+    evenement = ForeignKey(Evenement, on_delete=PROTECT)
+    suppression = ForeignKey(MessageSuppression, null=True, on_delete=PROTECT)
 
     @property
     def modified(self):
@@ -98,14 +96,13 @@ class MessageThread(Model):
 
 
 class MessageVersion(TimeStampedModel):
-
     class Meta:
         ordering = ['pk']
 
-    thread = ForeignKey(MessageThread, related_name='versions')
-    operateur = ForeignKey(User)
-    expediteur = ForeignKey(Indicatif, related_name='+')
-    destinataire = ForeignKey(Indicatif, related_name='+')
+    thread = ForeignKey(MessageThread, related_name='versions', on_delete=PROTECT)
+    operateur = ForeignKey(User, on_delete=PROTECT)
+    expediteur = ForeignKey(Indicatif, related_name='+', on_delete=PROTECT)
+    destinataire = ForeignKey(Indicatif, related_name='+', on_delete=PROTECT)
     corps = TextField()
 
     def __str__(self):

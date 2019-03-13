@@ -1,10 +1,10 @@
-from django.conf.urls import include, url
 from django.conf import settings
+from django.urls import include, path
 
 from tastypie.api import Api
 
+from . import views
 from .api import EvenementResource, IndicatifResource, MessageResource
-from .views import EvenementCreateView, EvenementListView
 
 v1_api = Api(api_name='v1')
 v1_api.register(EvenementResource())
@@ -12,33 +12,33 @@ v1_api.register(IndicatifResource())
 v1_api.register(MessageResource())
 
 urlpatterns = [
-    url(r'^api/', include(v1_api.urls)),
+    path('api/', include(v1_api.urls)),
     # Evenement
-    url(r'^$', EvenementListView.as_view(), name='list-evenements'),
-    url(r'^add/$', EvenementCreateView.as_view(), name='add-evenement'),
-    url(r'^(?P<evenement>[-\w]+)/report/$', 'maincourante.views.evenement_report', name='report'),
-    url(r'^(?P<evenement>[-\w]+)/manage/$', 'maincourante.views.evenement_manage', name='manage-evenement'),
-    url(r'^(?P<evenement>[-\w]+)/manage/cloture/$', 'maincourante.views.evenement_cloture', name='cloture-evenement'),
-    url(r'^(?P<evenement>[-\w]+)/manage/indicatifs/$', 'maincourante.views.indicatif_list', name='list-indicatifs'),
-    url(r'^(?P<evenement>[-\w]+)/manage/indicatifs/(?P<indicatif>[0-9]+)/delete/$', 'maincourante.views.indicatif_delete', name='delete-indicatif'),
+    path('', views.EvenementListView.as_view(), name='list-evenements'),
+    path('add/', views.EvenementCreateView.as_view(), name='add-evenement'),
+    path('<slug:evenement>/report/', views.evenement_report, name='report'),
+    path('<slug:evenement>/manage/', views.evenement_manage, name='manage-evenement'),
+    path('<slug:evenement>/manage/cloture/', views.evenement_cloture, name='cloture-evenement'),
+    path('<slug:evenement>/manage/indicatifs/', views.indicatif_list, name='list-indicatifs'),
+    path('<slug:evenement>/manage/indicatifs/<int:indicatif>/delete', views.indicatif_delete, name='delete-indicatif'),
     # Indicatifs
-    url(r'^(?P<evenement>[-\w]+)/indicatifs/$', 'maincourante.views.indicatif_search', name='search-indicatif'),
+    path('<slug:evenement>/indicatifs/', views.indicatif_search, name='search-indicatif'),
 ]
 
 if settings.ANGULAR:
     urlpatterns += [
         # Live
-        url(r'^(?P<evenement>[-\w]+)/live/$', 'maincourante.views.evenement_live_angular', name='live'),
+        path('<slug:evenement>/live/', views.evenement_live_angular, name='live'),
         # Message
-        url(r'^(?P<evenement>[-\w]+)/$', 'maincourante.views.message_angular', name='add-message'),
+        path('<slug:evenement>/', views.message_angular, name='add-message'),
     ]
 else:
     urlpatterns += [
         # Live
-        url(r'^(?P<evenement>[-\w]+)/live/$', 'maincourante.views.evenement_live', name='live'),
+        path('<slug:evenement>/live/', views.evenement_live, name='live'),
         # Message
-        url(r'^(?P<evenement>[-\w]+)/$', 'maincourante.views.message_add', name='add-message'),
-        url(r'^(?P<evenement>[-\w]+)/message/(?P<message>[0-9]+)/edit/$', 'maincourante.views.message_edit', name='edit-message'),
-        url(r'^(?P<evenement>[-\w]+)/message/(?P<message>[0-9]+)/delete/$', 'maincourante.views.message_delete', name='delete-message'),
-        url(r'^(?P<evenement>[-\w]+)/message/last/$', 'maincourante.views.message_last', name='last-messages'),
+        path('<slug:evenement>/', views.message_add, name='add-message'),
+        path('<slug:evenement>/message/<int:message>/edit/', views.message_edit, name='edit-message'),
+        path('<slug:evenement>/message/<int:message>/delete/', views.message_delete, name='delete-message'),
+        path('<slug:evenement>/message/last/', views.message_last, name='last-messages'),
     ]

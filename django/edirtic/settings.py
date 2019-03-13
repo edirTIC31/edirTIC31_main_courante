@@ -2,7 +2,7 @@
 Django settings for edirtic project.
 """
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
 
 PROJECT = "edirtic"
 PROJECT_VERBOSE = "Main Courante edirTIC31"
@@ -21,21 +21,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'tastypie',
     'bootstrap3',
     'djangobower',
-
     'accounts',
     'maincourante',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -96,13 +93,13 @@ USE_I18N = True
 USE_TZ = True
 
 USE_L10N = False
-DATETIME_FORMAT="d b Y à H:i:s"
+DATETIME_FORMAT = "d b Y à H:i:s"
 
 STATIC_URL = '/static/'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'list-evenements'
 
-ANGULAR = True
+ANGULAR = False
 
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'jquery/dist/jquery.js',

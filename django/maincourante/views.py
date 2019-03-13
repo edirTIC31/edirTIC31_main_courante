@@ -1,16 +1,15 @@
-from braces.views import LoginRequiredMixin
-
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, render_to_response
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, ListView
 
-from .forms import ClotureForm, DeleteMessageForm, EditMessageForm, IndicatifForm, MessageForm
-from .models import Evenement, Indicatif, MessageThread, MessageVersion, MessageSuppression
+from braces.views import LoginRequiredMixin
 
+from .forms import ClotureForm, DeleteMessageForm, EditMessageForm, IndicatifForm, MessageForm
+from .models import Evenement, Indicatif, MessageSuppression, MessageThread, MessageVersion
 
 ##############
 # Evenements #
@@ -69,13 +68,14 @@ def evenement_live(request, evenement):
         'msgs': messages,
     })
 
+
 @login_required
 def evenement_live_angular(request, evenement):
 
     messages = MessageThread.objects.filter(evenement=evenement).all()[:10]
     return render(request, 'maincourante/evenement_live_angular.html', {
         'messages': messages,
-        })
+    })
 
 
 ############
@@ -93,27 +93,33 @@ def message_add(request, evenement, message=None):
     if request.method == 'POST' and form.is_valid():
 
         expediteur, destinataire = (Indicatif.objects.get_or_create(evenement=evenement, nom=form.cleaned_data[nom])[0]
-                for nom in ['expediteur', 'destinataire'])
+                                    for nom in ['expediteur', 'destinataire'])
         thread = MessageThread(evenement=evenement)
         thread.save()
-        MessageVersion(thread=thread, operateur=request.user, expediteur=expediteur, destinataire=destinataire,
-                corps=form.cleaned_data['corps']).save()
+        MessageVersion(
+            thread=thread,
+            operateur=request.user,
+            expediteur=expediteur,
+            destinataire=destinataire,
+            corps=form.cleaned_data['corps']).save()
 
         reponse = form.cleaned_data['reponse']
         if reponse:
             thread = MessageThread(evenement=evenement)
             thread.save()
-            MessageVersion(thread=thread, operateur=request.user, expediteur=destinataire, destinataire=expediteur,
-                    corps=reponse).save()
+            MessageVersion(
+                thread=thread, operateur=request.user, expediteur=destinataire, destinataire=expediteur,
+                corps=reponse).save()
 
         return redirect(reverse('add-message', args=[evenement.slug]))
 
-    return render(request, 'maincourante/message_add.html', {
-        'msgs': MessageThread.objects.filter(evenement=evenement).all()[:10],
-        'add_form': form,
-        'edit_form': edit_form,
-        'delete_form': delete_form,
-    })
+    return render(
+        request, 'maincourante/message_add.html', {
+            'msgs': MessageThread.objects.filter(evenement=evenement).all()[:10],
+            'add_form': form,
+            'edit_form': edit_form,
+            'delete_form': delete_form,
+        })
 
 
 @login_required
@@ -129,9 +135,12 @@ def message_edit(request, evenement, message):
     if form.is_valid():
 
         # TODO: modifier aussi l’expéditeur et le destinataire
-        event = MessageVersion(thread=thread, operateur=request.user,
-                expediteur=thread.expediteur, destinataire=thread.destinataire,
-                corps=form.cleaned_data['corps'])
+        event = MessageVersion(
+            thread=thread,
+            operateur=request.user,
+            expediteur=thread.expediteur,
+            destinataire=thread.destinataire,
+            corps=form.cleaned_data['corps'])
         event.save()
 
     return redirect(reverse('add-message', args=[evenement.slug]))
@@ -150,8 +159,7 @@ def message_delete(request, evenement, message):
 
     if form.is_valid():
 
-        suppression = MessageSuppression(operateur=request.user,
-                raison=form.cleaned_data['raison'])
+        suppression = MessageSuppression(operateur=request.user, raison=form.cleaned_data['raison'])
         suppression.save()
         thread.suppression = suppression
         thread.save()

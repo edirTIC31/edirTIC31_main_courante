@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+ipython = "*"
+isort = "*"
+
+[packages]
+django-autoslug = "*"
+django-bootstrap3 = "*"
+django-bower = "*"
+django-braces = "*"
+django-tastypie = "*"
+Django = "<2.2"
+
+[requires]
+python_version = "3.7"
